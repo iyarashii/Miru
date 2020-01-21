@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29709.97
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MALWPF", "MALWPF.csproj", "{F2BD9029-7A34-4552-85B8-94C82FA0F4FA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiruUI", "MiruUI\MiruUI.csproj", "{F2BD9029-7A34-4552-85B8-94C82FA0F4FA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyInternetConnectionLibrary", "..\MyInternetConnectionLibrary\MyInternetConnectionLibrary.csproj", "{12138E24-710D-4F3B-86B4-69C3A8201468}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyInternetConnectionLibrary", "MyInternetConnectionLibrary\MyInternetConnectionLibrary.csproj", "{FC9A5FFA-40E8-4EE2-8739-A0A44A5AC0C9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,10 +17,10 @@ Global
 		{F2BD9029-7A34-4552-85B8-94C82FA0F4FA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F2BD9029-7A34-4552-85B8-94C82FA0F4FA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F2BD9029-7A34-4552-85B8-94C82FA0F4FA}.Release|Any CPU.Build.0 = Release|Any CPU
-		{12138E24-710D-4F3B-86B4-69C3A8201468}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{12138E24-710D-4F3B-86B4-69C3A8201468}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{12138E24-710D-4F3B-86B4-69C3A8201468}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{12138E24-710D-4F3B-86B4-69C3A8201468}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FC9A5FFA-40E8-4EE2-8739-A0A44A5AC0C9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FC9A5FFA-40E8-4EE2-8739-A0A44A5AC0C9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FC9A5FFA-40E8-4EE2-8739-A0A44A5AC0C9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FC9A5FFA-40E8-4EE2-8739-A0A44A5AC0C9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
