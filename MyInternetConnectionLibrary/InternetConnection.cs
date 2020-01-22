@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Net.Http;
 using System.Net;
+using System.Threading.Tasks;
 
 namespace MyInternetConnectionLibrary
 {
@@ -13,17 +14,16 @@ namespace MyInternetConnectionLibrary
         public static readonly HttpClient client = new HttpClient();
 
         // stores the result of the internet connection test
-        public static bool Connection { get; set; }
+        public static bool Connection { get; set; } = false;
 
         // checks internet connection by trying to open readable stream from the site
-        // TODO: change to async
-        public static bool CheckWebResponse()
+        public static async Task<bool> CheckWebResponse()
         {
 
             try
             {
                 using (var webClient = new WebClient())
-                using (webClient.OpenRead("http://www.google.com/"))
+                using (await webClient.OpenReadTaskAsync(new Uri("http://www.google.com/")))
                 {
                     return true;
                 }
@@ -38,9 +38,9 @@ namespace MyInternetConnectionLibrary
         /// </summary>
         /// <param name="labelsTextProperty">Text property of a label which will be changed when no internet connection is available.</param>
         /// <returns></returns>
-        public static string CheckForInternetConnection(string labelsTextProperty) // TODO: change to async
+        public static async Task<string> CheckForInternetConnection(string labelsTextProperty)
         {
-            if (!CheckWebResponse())
+            if (!await CheckWebResponse())
             {
                 Connection = false;
                 return "No internet connection!";
