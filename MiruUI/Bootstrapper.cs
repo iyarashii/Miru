@@ -18,6 +18,7 @@ namespace Miru
 
         protected override void OnStartup(object sender, StartupEventArgs e)
         {
+            // set starting view for this app
             DisplayRootViewFor<ShellViewModel>();
         }
     }
