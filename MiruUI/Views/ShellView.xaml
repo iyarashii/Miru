@@ -6,16 +6,16 @@
         xmlns:local="clr-namespace:Miru.Views"
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         mc:Ignorable="d"
-        Title="Miru" Height="450" Width="800">
+        Title="{Binding Path=AppStatusText, Mode=OneWay}" Height="450" Width="1200">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="20"/>
-            <ColumnDefinition Width="auto"/>
-            <ColumnDefinition Width="auto"/>
-            <ColumnDefinition Width="auto"/>
-            <ColumnDefinition Width="auto"/>
-            <ColumnDefinition Width="auto"/>
-            <ColumnDefinition Width="auto"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="20"/>
         </Grid.ColumnDefinitions>
@@ -30,10 +30,40 @@
         </Grid.RowDefinitions>
         
         <!-- Row 1 -->
-        <xctk:WatermarkTextBox KeepWatermarkOnGotFocus="True" Watermark="Enter MAL username that you wish to sync this app to"
-                               MinWidth="300" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" x:Name="UserName" />
-        <Button x:Name="SyncUserAnimeList" Grid.Row="1" Grid.Column="3" Grid.ColumnSpan="2" Content="Sync" MinWidth="100"/>
-        <TextBlock Grid.Row="1" Grid.Column="5" Grid.ColumnSpan="2" x:Name="SyncStatusText" />
+        <xctk:WatermarkTextBox x:Name="TypedInUsername"
+                               KeepWatermarkOnGotFocus="True" 
+                               Watermark="Enter MAL username that you wish to sync this app to"
+                               MinWidth="300" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3" />
+        <Button Margin="10,0,10,0" x:Name="SyncUserAnimeList" IsDefault="True"
+                Grid.Row="1" Grid.Column="4" Content="Sync" MinWidth="50"/>
+        <TextBlock Grid.Row="1" Grid.Column="5" Grid.ColumnSpan="3" x:Name="SyncStatusText" TextAlignment="Center" HorizontalAlignment="Center" />
 
+        <!-- Row 2 -->
+        <!--<DockPanel Grid.Row="2" Grid.RowSpan="4" Grid.Column="1">
+            <TextBlock DockPanel.Dock="Top" Text="MONDAY" TextAlignment="Center" Background="Aqua"/>
+            <Image Width="90" DockPanel.Dock="Left" Source="https://cdn.myanimelist.net/images/anime/1075/104854.jpg?s=01854c3a3692b838b43d02aef4d40c97" />
+            <TextBlock DockPanel.Dock="Top" Text="Hatena"/>
+            <TextBlock DockPanel.Dock="Top" Text="Hatena"/>
+            <Image Width="90" DockPanel.Dock="Left" Source="https://cdn.myanimelist.net/images/anime/1075/104854.jpg?s=01854c3a3692b838b43d02aef4d40c97" />
+        </DockPanel>-->
+        <StackPanel Grid.Row="2" Grid.RowSpan="4" Grid.Column="1">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition Width="auto"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                </Grid.RowDefinitions>
+                <TextBlock Text="MONDAY" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" TextAlignment="Center" Background="Aqua"/>
+                <Image Grid.Column="0" Grid.Row="1" Grid.RowSpan="3" Width="90" Source="https://cdn.myanimelist.net/images/anime/1075/104854.jpg?s=01854c3a3692b838b43d02aef4d40c97" />
+                <TextBlock Grid.Row="1" Grid.Column="1"  Text="Hatena"/>
+                <TextBlock Grid.Row="2" Grid.Column="1"  Text="Hatena"/>
+            </Grid>
+        </StackPanel>
+        
+        <!--<TextBlock x:Name="AppStatusText" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="7" HorizontalAlignment="Center"/>-->
     </Grid>
 </Window>

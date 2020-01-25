@@ -107,8 +107,13 @@
     <Compile Include="Data\Migrations\202001250123458_InitialCreate.designer.cs">
       <DependentUpon>202001250123458_InitialCreate.cs</DependentUpon>
     </Compile>
+    <Compile Include="Data\Migrations\202001251554307_AddSyncedUsersTable.cs" />
+    <Compile Include="Data\Migrations\202001251554307_AddSyncedUsersTable.designer.cs">
+      <DependentUpon>202001251554307_AddSyncedUsersTable.cs</DependentUpon>
+    </Compile>
     <Compile Include="Data\Migrations\Configuration.cs" />
     <Compile Include="Data\MiruDbContext.cs" />
+    <Compile Include="Models\SyncedMyAnimeListUser.cs" />
     <Compile Include="ViewModels\ShellViewModel.cs" />
     <Compile Include="Views\ShellView.xaml.cs">
       <DependentUpon>ShellView.xaml</DependentUpon>
@@ -132,6 +137,9 @@
     <EmbeddedResource Include="Data\Migrations\202001250123458_InitialCreate.resx">
       <DependentUpon>202001250123458_InitialCreate.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Data\Migrations\202001251554307_AddSyncedUsersTable.resx">
+      <DependentUpon>202001251554307_AddSyncedUsersTable.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -145,9 +153,7 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Models\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Page Include="Views\ShellView.xaml">
       <SubType>Designer</SubType>

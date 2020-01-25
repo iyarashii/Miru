@@ -6,12 +6,14 @@ using System.Text;
 using System.Threading.Tasks;
 using JikanDotNet;
 using System.ComponentModel.DataAnnotations.Schema;
+using Miru.Models;
 
 namespace Miru.Data
 {
     public class MiruDbContext : DbContext
     {
         public DbSet<AnimeListEntry> AnimeListEntries { get; set; }
+        public DbSet<SyncedMyAnimeListUser> SyncedMyAnimeListUsers { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {

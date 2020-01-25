@@ -6,28 +6,54 @@ using System.Text;
 using System.Threading.Tasks;
 using JikanDotNet;
 using Miru.Data;
+using Miru.Models;
 
 namespace Miru.ViewModels
 {
     public class ShellViewModel : Screen
     {
-		private string _userName;
+		private string _typedInUsername;
 		private string _syncStatusText = "Not synced.";
+		private string _appStatusText = "Miru -- Idle";
 
-		UserAnimeList CurrentUserAnimeList { get; set; }
+		public ShellViewModel()
+		{
+			using (var db = new MiruDbContext())
+			{
+				if (db.SyncedMyAnimeListUsers.Any())
+				{
+					SyncDate = db.SyncedMyAnimeListUsers.FirstOrDefault().SyncTime;
+					SyncStatusText = db.SyncedMyAnimeListUsers.FirstOrDefault().Username;
+				}
+			}
+		}
 
-		public string UserName
+        #region properties
+        UserAnimeList CurrentUserAnimeList { get; set; }
+		DateTime SyncDate { get; set; }
+		public string AppStatusText
+		{
+			get { return _appStatusText; }
+			set 
+			{ 
+				_appStatusText = $"Miru -- { value }";
+				NotifyOfPropertyChange(() => AppStatusText);
+			}
+		}
+
+
+		public string TypedInUsername
 		{
 			get 
 			{ 
 				
-				return _userName; 
+				return _typedInUsername; 
 			}
 			set
 			{
-				_userName = value;
-				NotifyOfPropertyChange(() => UserName);
-				NotifyOfPropertyChange(() => SyncStatusText);
+				_typedInUsername = value;
+				NotifyOfPropertyChange(() => TypedInUsername);
+				//NotifyOfPropertyChange(() => SyncStatusText);
 			}
 		}
 
@@ -37,28 +63,17 @@ namespace Miru.ViewModels
 			get { return _syncStatusText; }
 			set 
 			{ 
-				_syncStatusText = value;
+				_syncStatusText = $"Synced to the { value }'s anime list. On { SyncDate }";
 				NotifyOfPropertyChange(() => SyncStatusText);
 			}
 		}
-			
-		//public string SyncStatusText { get; set; } = "Not synced.";
-		//{
-		//	get 
-		//	{
-		//		if (string.IsNullOrWhiteSpace(_userName))
-		//		{
-		//			return "Not synced";
-		//		}
-		//		return $"Synced to the { _userName }'s anime list."; 
-		//	}
-		//}
+        #endregion
 
-		public async Task SyncUserAnimeList()
+        public async Task SyncUserAnimeList()
 		{
-			var getUserAnimeListTask = Constants.jikan.GetUserAnimeList(UserName, UserAnimeListExtension.Watching);
+			AppStatusText = "Syncing...";
+			var getUserAnimeListTask = Constants.jikan.GetUserAnimeList(TypedInUsername, UserAnimeListExtension.Watching);
 			CurrentUserAnimeList = await getUserAnimeListTask;
-			SyncStatusText = $"Synced to the { _userName }'s anime list.";
 			using (var db = new MiruDbContext())
 			{
 				// delete all table rows -- slower version
@@ -72,8 +87,20 @@ namespace Miru.ViewModels
 				}
 
 				db.AnimeListEntries.AddRange(CurrentUserAnimeList.Anime);
+
+				// if syncedusers table is not empty then delete all rows
+				if (db.SyncedMyAnimeListUsers.Any())
+				{
+					db.Database.ExecuteSqlCommand("TRUNCATE TABLE [SyncedMyAnimeListUsers]");
+				}
+				db.SyncedMyAnimeListUsers.Add(new SyncedMyAnimeListUser { Username = TypedInUsername, SyncTime = DateTime.Now });
+
 				await db.SaveChangesAsync();
+
+				SyncDate = db.SyncedMyAnimeListUsers.FirstOrDefault().SyncTime;
 			}
+			SyncStatusText = TypedInUsername;
+			AppStatusText = "Idle";
 		}
 
 	}
