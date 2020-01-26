@@ -38,7 +38,6 @@
                 Grid.Row="1" Grid.Column="4" Content="Sync" MinWidth="50"/>
         <TextBlock Grid.Row="1" Grid.Column="5" Grid.ColumnSpan="3" x:Name="SyncStatusText" TextAlignment="Center" HorizontalAlignment="Center" />
 
-        <!-- Row 2 -->
         <!--<DockPanel Grid.Row="2" Grid.RowSpan="4" Grid.Column="1">
             <TextBlock DockPanel.Dock="Top" Text="MONDAY" TextAlignment="Center" Background="Aqua"/>
             <Image Width="90" DockPanel.Dock="Left" Source="https://cdn.myanimelist.net/images/anime/1075/104854.jpg?s=01854c3a3692b838b43d02aef4d40c97" />
@@ -46,7 +45,7 @@
             <TextBlock DockPanel.Dock="Top" Text="Hatena"/>
             <Image Width="90" DockPanel.Dock="Left" Source="https://cdn.myanimelist.net/images/anime/1075/104854.jpg?s=01854c3a3692b838b43d02aef4d40c97" />
         </DockPanel>-->
-        <StackPanel Grid.Row="2" Grid.RowSpan="4" Grid.Column="1">
+        <!--<StackPanel Grid.Row="2" Grid.RowSpan="4" Grid.Column="1">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="auto"/>
@@ -62,8 +61,49 @@
                 <TextBlock Grid.Row="1" Grid.Column="1"  Text="Hatena"/>
                 <TextBlock Grid.Row="2" Grid.Column="1"  Text="Hatena"/>
             </Grid>
-        </StackPanel>
-        
+        </StackPanel>-->
+
+        <!-- Row 2 -->
+        <TextBlock Text="MONDAY" Grid.Row="2" Grid.Column="1" TextAlignment="Center" Background="Aqua"/>
+        <DataGrid x:Name="SortedAnimeListEntries_MondayAiringAnimeList" HeadersVisibility="None"
+                  Grid.Row="3" Grid.Column="1"
+                  CanUserResizeColumns="False" CanUserResizeRows="False" CanUserDeleteRows="False"
+                  CanUserAddRows="False" CanUserReorderColumns="False" VerticalScrollBarVisibility="Hidden"
+                  Grid.RowSpan="4" AutoGenerateColumns="False">
+            <DataGrid.Columns>
+                <!--<DataGridTextColumn Binding="{Binding Title}" Width="*"/>-->
+                <DataGridTextColumn Width="*">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style>
+                            <Setter Property="TextBlock.TextWrapping" Value="Wrap" />
+                            <Setter Property="TextBlock.TextAlignment" Value="Center"/>
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                    <DataGridTextColumn.Binding>
+                        <MultiBinding StringFormat="{}{0}&#x0d;&#x0a;{1}/{2}">
+                            <Binding Path="Title"/>
+                            <Binding Path="WatchedEpisodes"/>
+                            <Binding Path="TotalEpisodes"/>
+                        </MultiBinding>
+                    </DataGridTextColumn.Binding>
+                </DataGridTextColumn>
+                <DataGridTemplateColumn Width="*"
+                                        IsReadOnly="True">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Image Source="{Binding ImageURL}" Stretch="Fill" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+        <TextBlock Text="TUESDAY" Grid.Row="2" Grid.Column="2" TextAlignment="Center" Background="Aqua"/>
+        <TextBlock Text="WEDNESDAY" Grid.Row="2" Grid.Column="3" TextAlignment="Center" Background="Aqua"/>
+        <TextBlock Text="THURSDAY" Grid.Row="2" Grid.Column="4" TextAlignment="Center" Background="Aqua"/>
+        <TextBlock Text="FRIDAY" Grid.Row="2" Grid.Column="5" TextAlignment="Center" Background="Aqua"/>
+        <TextBlock Text="SATURDAY" Grid.Row="2" Grid.Column="6" TextAlignment="Center" Background="Aqua"/>
+        <TextBlock Text="SUNDAY" Grid.Row="2" Grid.Column="7" TextAlignment="Center" Background="Aqua"/>
+
         <!--<TextBlock x:Name="AppStatusText" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="7" HorizontalAlignment="Center"/>-->
     </Grid>
 </Window>

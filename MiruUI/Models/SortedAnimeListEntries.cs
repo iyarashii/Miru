@@ -4,12 +4,25 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using JikanDotNet;
+using Caliburn.Micro;
 
 namespace Miru.Models
 {
-    public class SortedAnimeListEntries
+    public class SortedAnimeListEntries : PropertyChangedBase
     {
-        public ICollection<AnimeListEntry> MondayAiringAnimeList { get; set; }
+        private ICollection<AnimeListEntry> mondayAiringAnimeList;
+
+        public ICollection<AnimeListEntry> MondayAiringAnimeList
+        {
+            get { return mondayAiringAnimeList; }
+            set 
+            { 
+                mondayAiringAnimeList = value;
+                NotifyOfPropertyChange(() => MondayAiringAnimeList);
+            }
+        }
+
+        //public ICollection<AnimeListEntry> MondayAiringAnimeList { get; set; }
         public ICollection<AnimeListEntry> TuesdayAiringAnimeList { get; set; }
         public ICollection<AnimeListEntry> WednesdayAiringAnimeList { get; set; }
         public ICollection<AnimeListEntry> ThursdayAiringAnimeList { get; set; }

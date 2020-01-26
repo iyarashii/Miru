@@ -15,5 +15,9 @@ namespace Miru.Models
         public long MalId { get; set; }
         public string Broadcast { get; set; }
         public string Title { get; set; }
+        //public DateTime LocalBroadcastTime { get; set; }
+        //public int? WatchedEpisodes { get; set; }
+
+        //public int? TotalEpisodes { get; set; }
     }
 }

@@ -15,6 +15,7 @@ namespace Miru.ViewModels
 		private string _typedInUsername;
 		private string _syncStatusText = "Not synced.";
 		private string _appStatusText = "Miru -- Idle";
+		private SortedAnimeListEntries _sortedAnimeListEntries = new SortedAnimeListEntries();
 
 
 		// constructor
@@ -26,6 +27,7 @@ namespace Miru.ViewModels
 				{
 					SyncDate = db.SyncedMyAnimeListUsers.FirstOrDefault().SyncTime;
 					SyncStatusText = db.SyncedMyAnimeListUsers.FirstOrDefault().Username;
+					SortedAnimeListEntries.MondayAiringAnimeList = db.AnimeListEntries.ToList();
 				}
 			}
 		}
@@ -33,6 +35,18 @@ namespace Miru.ViewModels
         #region properties
         UserAnimeList CurrentUserAnimeList { get; set; }
 		DateTime SyncDate { get; set; }
+
+		public SortedAnimeListEntries SortedAnimeListEntries
+		{
+			get { return _sortedAnimeListEntries; }
+			set 
+			{ 
+				_sortedAnimeListEntries = value;
+				NotifyOfPropertyChange(() => SortedAnimeListEntries);
+				//NotifyOfPropertyChange(() => SortedAnimeListEntries.MondayAiringAnimeList);
+			}
+		}
+
 		public string AppStatusText
 		{
 			get { return _appStatusText; }
@@ -76,6 +90,11 @@ namespace Miru.ViewModels
 			AppStatusText = "Syncing...";
 			var getUserAnimeListTask = Constants.jikan.GetUserAnimeList(TypedInUsername, UserAnimeListExtension.Watching);
 			CurrentUserAnimeList = await getUserAnimeListTask;
+			//while (CurrentUserAnimeList == null)
+			//{
+			//	await Task.Delay(500);
+			//	CurrentUserAnimeList = await getUserAnimeListTask;
+			//}
 			using (var db = new MiruDbContext())
 			{
 				// delete all table rows -- slower version
@@ -101,8 +120,11 @@ namespace Miru.ViewModels
 
 
 				await GetAiringAnimeBroadcastTimes(db, CurrentUserAnimeList.Anime);
+
+				SortedAnimeListEntries.MondayAiringAnimeList = db.AnimeListEntries.ToList();
 				//SyncDate = db.SyncedMyAnimeListUsers.FirstOrDefault().SyncTime;
 			}
+
 			SyncStatusText = TypedInUsername;
 			AppStatusText = "Idle";
 		}
