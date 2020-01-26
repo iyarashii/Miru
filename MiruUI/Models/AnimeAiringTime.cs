@@ -15,9 +15,25 @@ namespace Miru.Models
         public long MalId { get; set; }
         public string Broadcast { get; set; }
         public string Title { get; set; }
-        //public DateTime LocalBroadcastTime { get; set; }
-        //public int? WatchedEpisodes { get; set; }
+        public string URL { get; set; }
+        public string ImageURL { get; set; }
+        public DateTime? LocalBroadcastTime { get; set; }
+        public int? WatchedEpisodes { get; set; }
 
-        //public int? TotalEpisodes { get; set; }
+        private int? _totalEpisodes;
+
+        public int? TotalEpisodes
+        {
+            get 
+            { 
+                if(_totalEpisodes == 0)
+                {
+                    return null;
+                }
+                return _totalEpisodes;
+            }
+            set { _totalEpisodes = value; }
+        }
+
     }
 }

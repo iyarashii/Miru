@@ -62,6 +62,7 @@
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Numerics" />
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>packages\Caliburn.Micro.3.2.0\lib\net45\System.Windows.Interactivity.dll</HintPath>
     </Reference>
@@ -115,6 +116,10 @@
     <Compile Include="Data\Migrations\202001252346182_AddAnimeAiringTimesTable.designer.cs">
       <DependentUpon>202001252346182_AddAnimeAiringTimesTable.cs</DependentUpon>
     </Compile>
+    <Compile Include="Data\Migrations\202001261232547_ModifyAnimeAiringTimeModel.cs" />
+    <Compile Include="Data\Migrations\202001261232547_ModifyAnimeAiringTimeModel.designer.cs">
+      <DependentUpon>202001261232547_ModifyAnimeAiringTimeModel.cs</DependentUpon>
+    </Compile>
     <Compile Include="Data\Migrations\Configuration.cs" />
     <Compile Include="Data\MiruDbContext.cs" />
     <Compile Include="Models\AnimeAiringTime.cs" />
@@ -148,6 +153,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Data\Migrations\202001252346182_AddAnimeAiringTimesTable.resx">
       <DependentUpon>202001252346182_AddAnimeAiringTimesTable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Data\Migrations\202001261232547_ModifyAnimeAiringTimeModel.resx">
+      <DependentUpon>202001261232547_ModifyAnimeAiringTimeModel.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
