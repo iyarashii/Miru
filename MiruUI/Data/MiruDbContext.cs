@@ -14,6 +14,7 @@ namespace Miru.Data
     {
         public DbSet<AnimeListEntry> AnimeListEntries { get; set; }
         public DbSet<SyncedMyAnimeListUser> SyncedMyAnimeListUsers { get; set; }
+        public DbSet<AnimeAiringTime> AnimeAiringTimes { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
@@ -24,6 +25,10 @@ namespace Miru.Data
             modelBuilder.Entity<AnimeListEntry>()
                 .HasKey(a => a.MalId)
                 .Property(p => p.MalId).HasDatabaseGeneratedOption(DatabaseGeneratedOption.None);
+
+            //modelBuilder.Entity<Anime>()
+            //    .HasKey(k => k.MalId)
+            //    .Property(p => p.MalId).HasDatabaseGeneratedOption(DatabaseGeneratedOption.None);
         }
     }
 }

@@ -16,6 +16,8 @@ namespace Miru.ViewModels
 		private string _syncStatusText = "Not synced.";
 		private string _appStatusText = "Miru -- Idle";
 
+
+		// constructor
 		public ShellViewModel()
 		{
 			using (var db = new MiruDbContext())
@@ -93,14 +95,41 @@ namespace Miru.ViewModels
 				{
 					db.Database.ExecuteSqlCommand("TRUNCATE TABLE [SyncedMyAnimeListUsers]");
 				}
-				db.SyncedMyAnimeListUsers.Add(new SyncedMyAnimeListUser { Username = TypedInUsername, SyncTime = DateTime.Now });
+				db.SyncedMyAnimeListUsers.Add(new SyncedMyAnimeListUser { Username = TypedInUsername, SyncTime = SyncDate = DateTime.Now });
 
 				await db.SaveChangesAsync();
 
-				SyncDate = db.SyncedMyAnimeListUsers.FirstOrDefault().SyncTime;
+
+				await GetAiringAnimeBroadcastTimes(db, CurrentUserAnimeList.Anime);
+				//SyncDate = db.SyncedMyAnimeListUsers.FirstOrDefault().SyncTime;
 			}
 			SyncStatusText = TypedInUsername;
 			AppStatusText = "Idle";
+		}
+
+		public async Task GetAiringAnimeBroadcastTimes(MiruDbContext db, ICollection<AnimeListEntry> animeListEntries)
+		{
+			if (db.AnimeAiringTimes.Any())
+			{
+				db.Database.ExecuteSqlCommand("TRUNCATE TABLE [AnimeAiringTimes]");
+			}
+
+			ICollection<AnimeAiringTime> animeAiringTimes = new List<AnimeAiringTime>();
+			Anime animeInfo;
+			foreach (var animeListEntry in animeListEntries.Where(a => a.AiringStatus == AiringStatus.Airing))
+			{
+				animeInfo = await Constants.jikan.GetAnime(animeListEntry.MalId);
+
+				while (animeInfo == null)
+				{
+					await Task.Delay(500);
+					animeInfo = await Constants.jikan.GetAnime(animeListEntry.MalId);
+				}
+
+				animeAiringTimes.Add(new AnimeAiringTime { MalId = animeInfo.MalId, Broadcast = animeInfo.Broadcast, Title = animeInfo.Title });
+			}
+			db.AnimeAiringTimes.AddRange(animeAiringTimes);
+			await db.SaveChangesAsync();
 		}
 
 	}

@@ -111,8 +111,14 @@
     <Compile Include="Data\Migrations\202001251554307_AddSyncedUsersTable.designer.cs">
       <DependentUpon>202001251554307_AddSyncedUsersTable.cs</DependentUpon>
     </Compile>
+    <Compile Include="Data\Migrations\202001252346182_AddAnimeAiringTimesTable.cs" />
+    <Compile Include="Data\Migrations\202001252346182_AddAnimeAiringTimesTable.designer.cs">
+      <DependentUpon>202001252346182_AddAnimeAiringTimesTable.cs</DependentUpon>
+    </Compile>
     <Compile Include="Data\Migrations\Configuration.cs" />
     <Compile Include="Data\MiruDbContext.cs" />
+    <Compile Include="Models\AnimeAiringTime.cs" />
+    <Compile Include="Models\SortedAnimeListEntries.cs" />
     <Compile Include="Models\SyncedMyAnimeListUser.cs" />
     <Compile Include="ViewModels\ShellViewModel.cs" />
     <Compile Include="Views\ShellView.xaml.cs">
@@ -139,6 +145,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Data\Migrations\202001251554307_AddSyncedUsersTable.resx">
       <DependentUpon>202001251554307_AddSyncedUsersTable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Data\Migrations\202001252346182_AddAnimeAiringTimesTable.resx">
+      <DependentUpon>202001252346182_AddAnimeAiringTimesTable.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
