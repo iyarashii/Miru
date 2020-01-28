@@ -121,54 +121,6 @@
         <TextBlock Text="MONDAY" Grid.Row="2" Grid.Column="1" TextAlignment="Center" Background="Aqua"/>
         <ContentControl Grid.Row="3" Grid.Column="1" Template="{StaticResource AiringAnimeDatagridTemplate}" 
                         Content="{Binding SortedAnimeListEntries.MondayAiringAnimeList}"/>
-        <!--<DataGrid x:Name="SortedAnimeListEntries_MondayAiringAnimeList" HeadersVisibility="None"
-                  Grid.Row="3" Grid.Column="1" IsReadOnly="True"
-                  CanUserResizeColumns="False" CanUserResizeRows="False" CanUserDeleteRows="False"
-                  CanUserAddRows="False" CanUserReorderColumns="False" VerticalScrollBarVisibility="Hidden"
-                  Grid.RowSpan="4" AutoGenerateColumns="False">
-            <DataGrid.Columns>
-                
-                --><!-- left column with anime info --><!--
-                <DataGridTemplateColumn Width="*">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <TextBlock TextWrapping="Wrap" TextAlignment="Center">
-                                <TextBlock.Inlines>
-                                    <Run FontWeight="Bold" Text="{Binding LocalBroadcastTime, StringFormat=HH:mm}"/>
-                                    <Run>
-                                        <Run.Text>
-                                            <MultiBinding StringFormat="{}&#x0d;&#x0a;{0}&#x0d;&#x0a;{1}/{2}">
-                                                <Binding Path="Title"/>
-                                                <Binding Path="WatchedEpisodes"/>
-                                                <Binding Path="TotalEpisodes" TargetNullValue="?"/>
-                                            </MultiBinding>
-                                        </Run.Text>
-                                    </Run>
-                                </TextBlock.Inlines>
-                            </TextBlock>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-
-                --><!-- right column with images --><!--
-                <DataGridTemplateColumn Width="*"
-                                        IsReadOnly="True">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <Image Source="{Binding ImageURL}" Stretch="Fill">
-                                <i:Interaction.Triggers>
-                                    <i:EventTrigger EventName="MouseDown">
-                                        <cal:ActionMessage MethodName="OpenAnimeURL">
-                                            <cal:Parameter Value="{Binding URL}" />
-                                        </cal:ActionMessage>
-                                    </i:EventTrigger>
-                                </i:Interaction.Triggers>
-                            </Image>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-            </DataGrid.Columns>
-        </DataGrid>-->
 
         <!-- ############################ Datagrid for anime airing on TUESDAY  ############################ -->
         <TextBlock Text="TUESDAY" Grid.Row="2" Grid.Column="2" TextAlignment="Center" Background="Aqua"/>
