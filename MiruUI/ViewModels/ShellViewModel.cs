@@ -9,6 +9,8 @@ using Miru.Data;
 using Miru.Models;
 using System.Globalization;
 using System.Diagnostics;
+using ToastNotifications.Messages;
+using MyInternetConnectionLibrary;
 
 namespace Miru.ViewModels
 {
@@ -97,12 +99,16 @@ namespace Miru.ViewModels
 
         public async Task SyncUserAnimeList()
 		{
+			AppStatusText = "Checking internet connection...";
+			if (!await CheckInternetConnection()) return;
+
 			AppStatusText = "Syncing...";
 			var getUserAnimeListTask = Constants.jikan.GetUserAnimeList(TypedInUsername, UserAnimeListExtension.Watching);
 			CurrentUserAnimeList = await getUserAnimeListTask;
 			while (CurrentUserAnimeList == null)
 			{
 				await Task.Delay(1000);
+				if (!await CheckInternetConnection()) return;
 				CurrentUserAnimeList = await Constants.jikan.GetUserAnimeList(TypedInUsername, UserAnimeListExtension.Watching);
 			}
 			using (var db = new MiruDbContext())
@@ -152,6 +158,7 @@ namespace Miru.ViewModels
 				while (animeInfo == null)
 				{
 					await Task.Delay(500);
+					if (!await CheckInternetConnection()) return;
 					animeInfo = await Constants.jikan.GetAnime(animeListEntry.MalId);
 				}
 
@@ -232,5 +239,17 @@ namespace Miru.ViewModels
 			Process.Start(URL);
 		}
 
+		public void CopyAnimeTitleToClipboard(string animeTitle)
+		{
+			string copyNotification = $"'{ animeTitle }' copied to the clipboard!";
+			System.Windows.Clipboard.SetText(animeTitle);
+			Constants.notifier.ShowInformation(copyNotification);
+		}
+
+		public async Task<bool> CheckInternetConnection()
+		{
+			await InternetConnection.CheckForInternetConnection(AppStatusText);
+			return InternetConnection.Connection;
+		}
 	}
 }

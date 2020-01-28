@@ -51,7 +51,7 @@
                                             <Run FontWeight="Bold" Text="{Binding LocalBroadcastTime, StringFormat=HH:mm}"/>
                                             <Run>
                                                 <Run.Text>
-                                                    <MultiBinding StringFormat="{}&#x0d;&#x0a;{0}&#x0d;&#x0a;{1}/{2}">
+                                                    <MultiBinding StringFormat="{}&#x0d;&#x0a;{0}&#x0d;&#x0a;{1} / {2}">
                                                         <Binding Path="Title"/>
                                                         <Binding Path="WatchedEpisodes"/>
                                                         <Binding Path="TotalEpisodes" TargetNullValue="?"/>
@@ -59,6 +59,13 @@
                                                 </Run.Text>
                                             </Run>
                                         </TextBlock.Inlines>
+                                        <i:Interaction.Triggers>
+                                            <i:EventTrigger EventName="MouseDown">
+                                                <cal:ActionMessage MethodName="CopyAnimeTitleToClipboard">
+                                                    <cal:Parameter Value="{Binding Title}" />
+                                                </cal:ActionMessage>
+                                            </i:EventTrigger>
+                                        </i:Interaction.Triggers>
                                     </TextBlock>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
