@@ -8,6 +8,7 @@ using JikanDotNet;
 using Miru.Data;
 using Miru.Models;
 using System.Globalization;
+using System.Diagnostics;
 
 namespace Miru.ViewModels
 {
@@ -53,7 +54,6 @@ namespace Miru.ViewModels
 			{ 
 				_sortedAnimeListEntries = value;
 				NotifyOfPropertyChange(() => SortedAnimeListEntries);
-				//NotifyOfPropertyChange(() => SortedAnimeListEntries.MondayAiringAnimeList);
 			}
 		}
 
@@ -225,6 +225,11 @@ namespace Miru.ViewModels
 			SortedAnimeListEntries.SaturdayAiringAnimeList = parsedData.Where(a => a.LocalBroadcastTime.Value.DayOfWeek == DayOfWeek.Saturday).OrderBy(s => s.LocalBroadcastTime).ToList();
 			SortedAnimeListEntries.SundayAiringAnimeList = parsedData.Where(a => a.LocalBroadcastTime.Value.DayOfWeek == DayOfWeek.Sunday).OrderBy(s => s.LocalBroadcastTime).ToList();
 			return parsedData;
+		}
+
+		public void OpenAnimeURL(string URL)
+		{
+			Process.Start(URL);
 		}
 
 	}
