@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using ToastNotifications;
 using ToastNotifications.Lifetime;
 using ToastNotifications.Position;
+using ToastNotifications.Messages.Core;
+using ToastNotifications.Core;
 
 namespace Miru
 {
@@ -28,5 +30,8 @@ namespace Miru
 
             cfg.Dispatcher = App.Current.Dispatcher;
         });
+
+        public static MessageOptions messageOptions = new MessageOptions { FreezeOnMouseEnter = false };
     }
+
 }

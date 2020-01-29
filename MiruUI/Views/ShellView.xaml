@@ -12,6 +12,7 @@
     <!-- view-wide styles -->
     <Window.Resources>
         <ResourceDictionary>
+            
             <Style x:Key="{x:Type DataGridCell}" TargetType="{x:Type DataGridCell}">
                 <Setter Property="Background" Value="{x:Null}" />
                 <Setter Property="BorderBrush" Value="Black" />

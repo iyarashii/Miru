@@ -18,13 +18,15 @@ namespace Miru.ViewModels
     {
 		private string _typedInUsername;
 		private string _syncStatusText = "Not synced.";
-		private string _appStatusText = "Miru -- Idle";
+		private string _appStatusText;
 		private SortedAnimeListEntries _sortedAnimeListEntries = new SortedAnimeListEntries();
+		private MiruAppStatus _appStatus;
 
 
 		// constructor
 		public ShellViewModel()
 		{
+			AppStatus = MiruAppStatus.Idle;
 			using (var db = new MiruDbContext())
 			{
 				if (db.SyncedMyAnimeListUsers.Any())
@@ -62,12 +64,37 @@ namespace Miru.ViewModels
 		public string AppStatusText
 		{
 			get { return _appStatusText; }
-			set 
-			{ 
+			set
+			{
 				_appStatusText = $"Miru -- { value }";
 				NotifyOfPropertyChange(() => AppStatusText);
 			}
 		}
+
+		public MiruAppStatus AppStatus
+		{
+			get { return _appStatus; }
+			set 
+			{ 
+				_appStatus = value;
+				switch (value)
+				{
+					case MiruAppStatus.Idle:
+						AppStatusText = "Idle";
+						break;
+					case MiruAppStatus.CheckingInternetConnection:
+						AppStatusText = "Checking internet connection...";
+						break;
+					case MiruAppStatus.Syncing:
+						AppStatusText = "Syncing...";
+						break;
+					case MiruAppStatus.InternetConnectionProblems:
+						AppStatusText = "Problems with internet connection!";
+						break;
+				}
+			}
+		}
+
 
 
 		public string TypedInUsername
@@ -110,10 +137,10 @@ namespace Miru.ViewModels
 
 		public async Task SyncUserAnimeList(string typedInUsername)
 		{
-			AppStatusText = "Checking internet connection...";
+			//AppStatus = MiruAppStatus.CheckingInternetConnection;
 			if (!await CheckInternetConnection()) return;
 
-			AppStatusText = "Syncing...";
+			//AppStatus = MiruAppStatus.Syncing;
 			var getUserAnimeListTask = Constants.jikan.GetUserAnimeList(TypedInUsername, UserAnimeListExtension.Watching);
 			CurrentUserAnimeList = await getUserAnimeListTask;
 			while (CurrentUserAnimeList == null)
@@ -150,7 +177,8 @@ namespace Miru.ViewModels
 			}
 
 			SyncStatusText = TypedInUsername;
-			AppStatusText = "Idle";
+			//AppStatusText = "Idle";
+			AppStatus = MiruAppStatus.Idle;
 		}
 
 		public async Task GetAiringAnimeBroadcastTimes(MiruDbContext db, ICollection<AnimeListEntry> animeListEntries)
@@ -168,7 +196,7 @@ namespace Miru.ViewModels
 
 				while (animeInfo == null)
 				{
-					await Task.Delay(500);
+					await Task.Delay(1100);
 					if (!await CheckInternetConnection()) return;
 					animeInfo = await Constants.jikan.GetAnime(animeListEntry.MalId);
 				}
@@ -254,12 +282,14 @@ namespace Miru.ViewModels
 		{
 			string copyNotification = $"'{ animeTitle }' copied to the clipboard!";
 			System.Windows.Clipboard.SetText(animeTitle);
-			Constants.notifier.ShowInformation(copyNotification);
+			Constants.notifier.ShowInformation(copyNotification, Constants.messageOptions);
 		}
 
 		public async Task<bool> CheckInternetConnection()
 		{
+			AppStatus = MiruAppStatus.CheckingInternetConnection;
 			await InternetConnection.CheckForInternetConnection(AppStatusText);
+			AppStatus = InternetConnection.Connection ? MiruAppStatus.Syncing : MiruAppStatus.InternetConnectionProblems;
 			return InternetConnection.Connection;
 		}
 	}
