@@ -8,7 +8,7 @@
         xmlns:cal="http://www.caliburnproject.org"
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         mc:Ignorable="d"
-        Title="{Binding Path=AppStatusText, Mode=OneWay}" Height="450" Width="1200">
+        Title="{Binding Path=AppStatusText, Mode=OneWay}" WindowState="Maximized">
     <!-- view-wide styles -->
     <Window.Resources>
         <ResourceDictionary>
