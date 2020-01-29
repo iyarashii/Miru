@@ -205,6 +205,7 @@ namespace Miru.ViewModels
 					Title = animeInfo.Title, ImageURL = animeInfo.ImageURL, 
 					TotalEpisodes = animeListEntry.TotalEpisodes, URL = animeListEntry.URL, WatchedEpisodes = animeListEntry.WatchedEpisodes });
 			}
+
 			// parse day and time from broadcast string
 			animeAiringTimes = ParseTimeFromBroadcast(animeAiringTimes);
 
