@@ -30,7 +30,7 @@ namespace Miru.ViewModels
 				if (db.SyncedMyAnimeListUsers.Any())
 				{
 					SyncDate = db.SyncedMyAnimeListUsers.FirstOrDefault().SyncTime;
-					SyncStatusText = db.SyncedMyAnimeListUsers.FirstOrDefault().Username;
+					SyncStatusText = TypedInUsername = db.SyncedMyAnimeListUsers.FirstOrDefault().Username;
 					//SortedAnimeListEntries.MondayAiringAnimeList = db.AnimeAiringTimes.ToList();
 					var airingAnimeList = db.AnimeAiringTimes.ToList();
 					
@@ -96,8 +96,19 @@ namespace Miru.ViewModels
 			}
 		}
         #endregion
+		
+		// method that checks whether sync button should be enabled (wired up by caliburn micro)
+		public bool CanSyncUserAnimeList(string typedInUsername)
+		{
+			if (string.IsNullOrWhiteSpace(typedInUsername) || typedInUsername.Length < 2 || typedInUsername.Length > 16)
+			{
+				return false;
+			}
+			return true;
+		}
 
-        public async Task SyncUserAnimeList()
+
+		public async Task SyncUserAnimeList(string typedInUsername)
 		{
 			AppStatusText = "Checking internet connection...";
 			if (!await CheckInternetConnection()) return;
