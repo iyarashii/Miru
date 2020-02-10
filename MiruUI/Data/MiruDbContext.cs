@@ -12,6 +12,11 @@ namespace Miru.Data
 {
     public class MiruDbContext : DbContext
     {
+        // specify database name
+        public MiruDbContext() : base("MiruDatabase")
+        {
+        }
+
         public DbSet<AnimeListEntry> AnimeListEntries { get; set; }
         public DbSet<SyncedMyAnimeListUser> SyncedMyAnimeListUsers { get; set; }
         public DbSet<AnimeAiringTime> AnimeAiringTimes { get; set; }
