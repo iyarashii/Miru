@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Miru.Models
 {
-    public class AnimeAiringTime
+    public class MiruAiringAnimeModel
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]

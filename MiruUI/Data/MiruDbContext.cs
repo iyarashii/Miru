@@ -19,7 +19,7 @@ namespace Miru.Data
 
         public DbSet<AnimeListEntry> AnimeListEntries { get; set; }
         public DbSet<SyncedMyAnimeListUser> SyncedMyAnimeListUsers { get; set; }
-        public DbSet<AnimeAiringTime> AnimeAiringTimes { get; set; }
+        public DbSet<MiruAiringAnimeModel> MiruAiringAnimeModels { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {

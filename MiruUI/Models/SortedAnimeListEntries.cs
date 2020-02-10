@@ -10,16 +10,16 @@ namespace Miru.Models
 {
     public class SortedAnimeListEntries : PropertyChangedBase
     {
-        private ICollection<AnimeAiringTime> _mondayAiringAnimeList;
-        private ICollection<AnimeAiringTime> _tuesdayAiringAnimeList;
-        private ICollection<AnimeAiringTime> _wednesdayAiringAnimeList;
-        private ICollection<AnimeAiringTime> _thursdayAiringAnimeList;
-        private ICollection<AnimeAiringTime> _fridayAiringAnimeList;
-        private ICollection<AnimeAiringTime> _saturdayAiringAnimeList;
-        private ICollection<AnimeAiringTime> _sundayAiringAnimeList;
+        private ICollection<MiruAiringAnimeModel> _mondayAiringAnimeList;
+        private ICollection<MiruAiringAnimeModel> _tuesdayAiringAnimeList;
+        private ICollection<MiruAiringAnimeModel> _wednesdayAiringAnimeList;
+        private ICollection<MiruAiringAnimeModel> _thursdayAiringAnimeList;
+        private ICollection<MiruAiringAnimeModel> _fridayAiringAnimeList;
+        private ICollection<MiruAiringAnimeModel> _saturdayAiringAnimeList;
+        private ICollection<MiruAiringAnimeModel> _sundayAiringAnimeList;
         private ICollection<AnimeListEntry> _airedAnimeList;
 
-        public ICollection<AnimeAiringTime> MondayAiringAnimeList
+        public ICollection<MiruAiringAnimeModel> MondayAiringAnimeList
         {
             get { return _mondayAiringAnimeList; }
             set 
@@ -31,32 +31,32 @@ namespace Miru.Models
 
         //public ICollection<AnimeAiringTime> MondayAiringAnimeList { get; set; }
         //public ICollection<AnimeAiringTime> TuesdayAiringAnimeList { get; set; }
-        public ICollection<AnimeAiringTime> TuesdayAiringAnimeList
+        public ICollection<MiruAiringAnimeModel> TuesdayAiringAnimeList
         {
             get { return _tuesdayAiringAnimeList; }
             set { _tuesdayAiringAnimeList = value; NotifyOfPropertyChange(() => TuesdayAiringAnimeList); }
         }
-        public ICollection<AnimeAiringTime> WednesdayAiringAnimeList
+        public ICollection<MiruAiringAnimeModel> WednesdayAiringAnimeList
         {
             get { return _wednesdayAiringAnimeList; }
             set { _wednesdayAiringAnimeList = value; NotifyOfPropertyChange(() => WednesdayAiringAnimeList); }
         }
-        public ICollection<AnimeAiringTime> ThursdayAiringAnimeList
+        public ICollection<MiruAiringAnimeModel> ThursdayAiringAnimeList
         {
             get { return _thursdayAiringAnimeList; }
             set { _thursdayAiringAnimeList = value; NotifyOfPropertyChange(() => ThursdayAiringAnimeList); }
         }
-        public ICollection<AnimeAiringTime> FridayAiringAnimeList
+        public ICollection<MiruAiringAnimeModel> FridayAiringAnimeList
         {
             get { return _fridayAiringAnimeList; }
             set { _fridayAiringAnimeList = value; NotifyOfPropertyChange(() => FridayAiringAnimeList); }
         }
-        public ICollection<AnimeAiringTime> SaturdayAiringAnimeList
+        public ICollection<MiruAiringAnimeModel> SaturdayAiringAnimeList
         {
             get { return _saturdayAiringAnimeList; }
             set { _saturdayAiringAnimeList = value; NotifyOfPropertyChange(() => SaturdayAiringAnimeList); }
         }
-        public ICollection<AnimeAiringTime> SundayAiringAnimeList
+        public ICollection<MiruAiringAnimeModel> SundayAiringAnimeList
         {
             get { return _sundayAiringAnimeList; }
             set { _sundayAiringAnimeList = value; NotifyOfPropertyChange(() => SundayAiringAnimeList); }

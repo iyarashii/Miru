@@ -180,10 +180,14 @@
     <Compile Include="Data\Migrations\202001261232547_ModifyAnimeAiringTimeModel.designer.cs">
       <DependentUpon>202001261232547_ModifyAnimeAiringTimeModel.cs</DependentUpon>
     </Compile>
+    <Compile Include="Data\Migrations\202002101159035_RenameAnimeAiringTimesTable.cs" />
+    <Compile Include="Data\Migrations\202002101159035_RenameAnimeAiringTimesTable.designer.cs">
+      <DependentUpon>202002101159035_RenameAnimeAiringTimesTable.cs</DependentUpon>
+    </Compile>
     <Compile Include="Data\Migrations\Configuration.cs" />
     <Compile Include="Data\MiruDbContext.cs" />
     <Compile Include="Enums.cs" />
-    <Compile Include="Models\AnimeAiringTime.cs" />
+    <Compile Include="Models\MiruAiringAnimeModel.cs" />
     <Compile Include="Models\SortedAnimeListEntries.cs" />
     <Compile Include="Models\SyncedMyAnimeListUser.cs" />
     <Compile Include="ViewModels\ShellViewModel.cs" />
@@ -217,6 +221,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Data\Migrations\202001261232547_ModifyAnimeAiringTimeModel.resx">
       <DependentUpon>202001261232547_ModifyAnimeAiringTimeModel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Data\Migrations\202002101159035_RenameAnimeAiringTimesTable.resx">
+      <DependentUpon>202002101159035_RenameAnimeAiringTimesTable.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

@@ -12,7 +12,7 @@ namespace Miru.Models
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
-        [MaxLength(16)]
+        [MaxLength(16), MinLength(2)]
         public string Username { get; set; }
         
         public DateTime SyncTime { get; set; }

@@ -26,15 +26,14 @@ namespace Miru.ViewModels
 		// constructor
 		public ShellViewModel()
 		{
-			AppStatus = MiruAppStatus.Idle;
+			AppStatus = MiruAppStatus.Loading;
 			using (var db = new MiruDbContext())
 			{
 				if (db.SyncedMyAnimeListUsers.Any())
 				{
 					SyncDate = db.SyncedMyAnimeListUsers.FirstOrDefault().SyncTime;
 					SyncStatusText = TypedInUsername = db.SyncedMyAnimeListUsers.FirstOrDefault().Username;
-					//SortedAnimeListEntries.MondayAiringAnimeList = db.AnimeAiringTimes.ToList();
-					var airingAnimeList = db.AnimeAiringTimes.ToList();
+					var airingAnimeList = db.MiruAiringAnimeModels.ToList();
 					
 					SortedAnimeListEntries.MondayAiringAnimeList = airingAnimeList.Where(a => a.LocalBroadcastTime.Value.DayOfWeek == DayOfWeek.Monday).OrderBy(s => s.LocalBroadcastTime).ToList();
 					SortedAnimeListEntries.TuesdayAiringAnimeList = airingAnimeList.Where(a => a.LocalBroadcastTime.Value.DayOfWeek == DayOfWeek.Tuesday).OrderBy(s => s.LocalBroadcastTime).ToList();
@@ -45,6 +44,7 @@ namespace Miru.ViewModels
 					SortedAnimeListEntries.SundayAiringAnimeList = airingAnimeList.Where(a => a.LocalBroadcastTime.Value.DayOfWeek == DayOfWeek.Sunday).OrderBy(s => s.LocalBroadcastTime).ToList();
 				}
 			}
+			AppStatus = MiruAppStatus.Idle;
 		}
 
         #region properties
@@ -90,6 +90,9 @@ namespace Miru.ViewModels
 						break;
 					case MiruAppStatus.InternetConnectionProblems:
 						AppStatusText = "Problems with internet connection!";
+						break;
+					case MiruAppStatus.Loading:
+						AppStatusText = "Loading data from the last synchronization...";
 						break;
 				}
 			}
@@ -183,12 +186,12 @@ namespace Miru.ViewModels
 
 		public async Task GetAiringAnimeBroadcastTimes(MiruDbContext db, ICollection<AnimeListEntry> animeListEntries)
 		{
-			if (db.AnimeAiringTimes.Any())
+			if (db.MiruAiringAnimeModels.Any())
 			{
 				db.Database.ExecuteSqlCommand("TRUNCATE TABLE [AnimeAiringTimes]");
 			}
 
-			List<AnimeAiringTime> animeAiringTimes = new List<AnimeAiringTime>();
+			List<MiruAiringAnimeModel> animeAiringTimes = new List<MiruAiringAnimeModel>();
 			Anime animeInfo;
 			foreach (var animeListEntry in animeListEntries.Where(a => a.AiringStatus == AiringStatus.Airing))
 			{
@@ -201,7 +204,7 @@ namespace Miru.ViewModels
 					animeInfo = await Constants.jikan.GetAnime(animeListEntry.MalId);
 				}
 
-				animeAiringTimes.Add(new AnimeAiringTime { MalId = animeInfo.MalId, Broadcast = animeInfo.Broadcast, 
+				animeAiringTimes.Add(new MiruAiringAnimeModel { MalId = animeInfo.MalId, Broadcast = animeInfo.Broadcast, 
 					Title = animeInfo.Title, ImageURL = animeInfo.ImageURL, 
 					TotalEpisodes = animeListEntry.TotalEpisodes, URL = animeListEntry.URL, WatchedEpisodes = animeListEntry.WatchedEpisodes });
 			}
@@ -209,14 +212,14 @@ namespace Miru.ViewModels
 			// parse day and time from broadcast string
 			animeAiringTimes = ParseTimeFromBroadcast(animeAiringTimes);
 
-			db.AnimeAiringTimes.AddRange(animeAiringTimes);
+			db.MiruAiringAnimeModels.AddRange(animeAiringTimes);
 			await db.SaveChangesAsync();
 		}
 
-		public List<AnimeAiringTime> ParseTimeFromBroadcast(List<AnimeAiringTime> animeAiringTimes)
+		public List<MiruAiringAnimeModel> ParseTimeFromBroadcast(List<MiruAiringAnimeModel> animeAiringTimes)
 		{
 			// local variables
-			List<AnimeAiringTime> parsedData;
+			List<MiruAiringAnimeModel> parsedData;
 			string dayOfTheWeek;
 			string[] broadcastWords;
 			DateTime broadcastTime;

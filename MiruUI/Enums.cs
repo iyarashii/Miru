@@ -8,6 +8,7 @@ namespace Miru
 {
     public enum MiruAppStatus
     {
+        Loading,
         Idle,
         CheckingInternetConnection,
         Syncing,
