@@ -13,6 +13,7 @@
     <Window.Resources>
         <ResourceDictionary>
             
+            <!-- Datagrid cell style -->
             <Style x:Key="{x:Type DataGridCell}" TargetType="{x:Type DataGridCell}">
                 <Setter Property="Background" Value="{x:Null}" />
                 <Setter Property="BorderBrush" Value="Black" />
@@ -35,11 +36,13 @@
                 </Style.Triggers>
             </Style>
 
+            <!-- ################# Datagrid template ################# -->
             <ControlTemplate x:Key="AiringAnimeDatagridTemplate" TargetType="ContentControl">
+                <!-- Disabled ScrollViewer virtualization by setting CanContentScroll to false -->
                 <DataGrid HeadersVisibility="None" Background="White" BorderBrush="Transparent"
                   ItemsSource="{TemplateBinding Content}" IsReadOnly="True" GridLinesVisibility="None"
-                  CanUserResizeColumns="False" CanUserResizeRows="False" CanUserDeleteRows="False"
-                  CanUserAddRows="False" CanUserReorderColumns="False" VerticalScrollBarVisibility="Hidden"
+                  CanUserResizeColumns="False" CanUserResizeRows="False" CanUserDeleteRows="False" ScrollViewer.CanContentScroll="False" 
+                  CanUserAddRows="False" CanUserReorderColumns="False" VerticalScrollBarVisibility="Hidden"  HorizontalScrollBarVisibility="Hidden"
                    AutoGenerateColumns="False">
                     <DataGrid.Columns>
     
@@ -93,6 +96,7 @@
             </ControlTemplate>
         </ResourceDictionary>
     </Window.Resources>
+    
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="20"/>
@@ -109,8 +113,6 @@
             <RowDefinition Height="20"/>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="auto"/>
-            <RowDefinition Height="auto"/>
-            <RowDefinition Height="auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="20"/>
         </Grid.RowDefinitions>
@@ -125,42 +127,46 @@
         <TextBlock Grid.Row="1" Grid.Column="5" Grid.ColumnSpan="3" x:Name="SyncStatusText" TextAlignment="Center" HorizontalAlignment="Center" />
 
         <!-- Row 2 -->
-        <!-- ############################ Datagrid for anime airing on MONDAY  ############################ -->
         <TextBlock Text="MONDAY" Grid.Row="2" Grid.Column="1" TextAlignment="Center" Background="Aqua"/>
+        <TextBlock Text="TUESDAY" Grid.Row="2" Grid.Column="2" TextAlignment="Center" Background="Aqua"/>
+        <TextBlock Text="WEDNESDAY" Grid.Row="2" Grid.Column="3" TextAlignment="Center" Background="Aqua"/>
+        <TextBlock Text="THURSDAY" Grid.Row="2" Grid.Column="4" TextAlignment="Center" Background="Aqua"/>
+        <TextBlock Text="FRIDAY" Grid.Row="2" Grid.Column="5" TextAlignment="Center" Background="Aqua"/>
+        <TextBlock Text="SATURDAY" Grid.Row="2" Grid.Column="6" TextAlignment="Center" Background="Aqua"/>
+        <TextBlock Text="SUNDAY" Grid.Row="2" Grid.Column="7" TextAlignment="Center" Background="Aqua"/>
+
+
+        <!-- Row 3 -->
+        <!-- ############################ Datagrid for anime airing on MONDAY  ############################ -->
         <ContentControl Grid.Row="3" Grid.Column="1" Template="{StaticResource AiringAnimeDatagridTemplate}" 
                         Content="{Binding SortedAnimeListEntries.MondayAiringAnimeList}"/>
 
         <!-- ############################ Datagrid for anime airing on TUESDAY  ############################ -->
-        <TextBlock Text="TUESDAY" Grid.Row="2" Grid.Column="2" TextAlignment="Center" Background="Aqua"/>
         <ContentControl Grid.Row="3" Grid.Column="2" Template="{StaticResource AiringAnimeDatagridTemplate}" 
                         Content="{Binding SortedAnimeListEntries.TuesdayAiringAnimeList}"/>
         
 
         <!-- ############################ Datagrid for anime airing on WEDNESDAY  ############################ -->
-        <TextBlock Text="WEDNESDAY" Grid.Row="2" Grid.Column="3" TextAlignment="Center" Background="Aqua"/>
         <ContentControl Grid.Row="3" Grid.Column="3" Template="{StaticResource AiringAnimeDatagridTemplate}" 
                         Content="{Binding SortedAnimeListEntries.WednesdayAiringAnimeList}"/>
 
         <!-- ############################ Datagrid for anime airing on THURSDAY  ############################ -->
-        <TextBlock Text="THURSDAY" Grid.Row="2" Grid.Column="4" TextAlignment="Center" Background="Aqua"/>
         <ContentControl Grid.Row="3" Grid.Column="4" Template="{StaticResource AiringAnimeDatagridTemplate}" 
                         Content="{Binding SortedAnimeListEntries.ThursdayAiringAnimeList}" />
         
 
         <!-- ############################ Datagrid for anime airing on FRIDAY  ############################ -->
-        <TextBlock Text="FRIDAY" Grid.Row="2" Grid.Column="5" TextAlignment="Center" Background="Aqua"/>
         <ContentControl Grid.Row="3" Grid.Column="5" Template="{StaticResource AiringAnimeDatagridTemplate}" 
                         Content="{Binding SortedAnimeListEntries.FridayAiringAnimeList}" />
 
         <!-- ############################ Datagrid for anime airing on SATURDAY  ############################ -->
-        <TextBlock Text="SATURDAY" Grid.Row="2" Grid.Column="6" TextAlignment="Center" Background="Aqua"/>
         <ContentControl Grid.Row="3" Grid.Column="6" Template="{StaticResource AiringAnimeDatagridTemplate}" 
                         Content="{Binding SortedAnimeListEntries.SaturdayAiringAnimeList}"/>
 
         <!-- ############################ Datagrid for anime airing on SUNDAY  ############################ -->
-        <TextBlock Text="SUNDAY" Grid.Row="2" Grid.Column="7" TextAlignment="Center" Background="Aqua"/>
         <ContentControl Grid.Row="3" Grid.Column="7" Template="{StaticResource AiringAnimeDatagridTemplate}" 
                         Content="{Binding SortedAnimeListEntries.SundayAiringAnimeList}" />
         
     </Grid>
+
 </Window>
