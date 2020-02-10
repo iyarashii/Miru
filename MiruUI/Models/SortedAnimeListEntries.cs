@@ -29,8 +29,6 @@ namespace Miru.Models
             }
         }
 
-        //public ICollection<AnimeAiringTime> MondayAiringAnimeList { get; set; }
-        //public ICollection<AnimeAiringTime> TuesdayAiringAnimeList { get; set; }
         public ICollection<MiruAiringAnimeModel> TuesdayAiringAnimeList
         {
             get { return _tuesdayAiringAnimeList; }
@@ -66,11 +64,5 @@ namespace Miru.Models
             get { return _airedAnimeList; }
             set { _airedAnimeList = value; NotifyOfPropertyChange(() => AiredAnimeList); }
         }
-            //public ICollection<AnimeAiringTime> WednesdayAiringAnimeList { get; set; }
-            //public ICollection<AnimeAiringTime> ThursdayAiringAnimeList { get; set; }
-            //public ICollection<AnimeAiringTime> FridayAiringAnimeList { get; set; }
-            //public ICollection<AnimeAiringTime> SaturdayAiringAnimeList { get; set; }
-            //public ICollection<AnimeAiringTime> SundayAiringAnimeList { get; set; }
-            //public ICollection<AnimeAiringTime> AiredAnimeList { get; set; }
-        }
+    }
 }
