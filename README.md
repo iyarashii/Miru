@@ -1,4 +1,4 @@
-# Miru
+# Miru <img src=https://github.com/iyarashii/Miru/blob/master/miru_icon2.ico width="25" height="25">
 Miru is a WPF app used to display data from the jikan MyAnimeList API.  
 Idea for the app is based on [senpai](http://www.senpai.moe/) a great site that shows airing anime in a neat way.  
 For now, it lets you display airing animes from user's MAL watching list.
