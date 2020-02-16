@@ -77,6 +77,7 @@ namespace Miru.ViewModels
 			set
 			{
 				_appStatusText = $"Miru -- { value }";
+				NotifyOfPropertyChange(() => AppStatus);
 				NotifyOfPropertyChange(() => AppStatusText);
 			}
 		}
@@ -137,9 +138,9 @@ namespace Miru.ViewModels
         #endregion
 		
 		// checks whether sync button should be enabled (wired up by caliburn micro)
-		public bool CanSyncUserAnimeList(string typedInUsername)
+		public bool CanSyncUserAnimeList(string typedInUsername, MiruAppStatus appStatus)
 		{
-			if (string.IsNullOrWhiteSpace(typedInUsername) || typedInUsername.Length < 2 || typedInUsername.Length > 16)
+			if (string.IsNullOrWhiteSpace(typedInUsername) || typedInUsername.Length < 2 || typedInUsername.Length > 16 || appStatus != MiruAppStatus.Idle)
 			{
 				return false;
 			}
@@ -151,7 +152,7 @@ namespace Miru.ViewModels
 		/// </summary>
 		/// <param name="typedInUsername"></param>
 		/// <returns></returns>
-		public async Task SyncUserAnimeList(string typedInUsername)
+		public async Task SyncUserAnimeList(string typedInUsername, MiruAppStatus appStatus)
 		{
 			// stop method execution if there is a problem with internet connection
 			if (!await CheckInternetConnection()) return;

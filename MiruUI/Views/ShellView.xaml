@@ -122,8 +122,17 @@
                                KeepWatermarkOnGotFocus="True" 
                                Watermark="Enter MAL username that you wish to sync this app to"
                                MinWidth="300" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3" />
-        <Button Margin="10,0,10,0" x:Name="SyncUserAnimeList" IsDefault="True"
-                Grid.Row="1" Grid.Column="4" Content="Sync" MinWidth="50"/>
+        <Button Margin="10,0,10,0" IsDefault="True"
+                Grid.Row="1" Grid.Column="4" Content="Sync" MinWidth="50">
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="Click">
+                    <cal:ActionMessage MethodName="SyncUserAnimeList">
+                        <cal:Parameter Value="{Binding ElementName=TypedInUsername, Path=Text}" />
+                        <cal:Parameter Value="{Binding AppStatus}" />
+                    </cal:ActionMessage>
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
+        </Button>
         <TextBlock Grid.Row="1" Grid.Column="5" Grid.ColumnSpan="3" x:Name="SyncStatusText" TextAlignment="Center" HorizontalAlignment="Center" />
 
         <!-- Row 2 -->
