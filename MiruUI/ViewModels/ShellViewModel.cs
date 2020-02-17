@@ -11,6 +11,8 @@ using System.Globalization;
 using System.Diagnostics;
 using ToastNotifications.Messages;
 using MyInternetConnectionLibrary;
+using ModernWpf;
+using System.Windows.Media;
 
 namespace Miru.ViewModels
 {
@@ -22,11 +24,14 @@ namespace Miru.ViewModels
 		private string _appStatusText;
 		private SortedAnimeListEntries _sortedAnimeListEntries = new SortedAnimeListEntries();
 		private MiruAppStatus _appStatus;
-
+		private ApplicationTheme _currentApplicationTheme;
 
 		// constructor
 		public ShellViewModel()
 		{
+			OnThemeChange();
+			ThemeManager.Current.ApplicationTheme = CurrentApplicationTheme;
+
 			// open temporary connection to the database
 			using (var db = new MiruDbContext())
 			{
@@ -51,10 +56,65 @@ namespace Miru.ViewModels
 			AppStatus = MiruAppStatus.Idle;
 		}
 
-        #region properties
+		#region properties
+		//public ThemeManager AppThemeManager { get; set; }
+		public bool IsDarkModeOn { get; set; }
+
+
+		private SolidColorBrush _daysOfTheWeekBrush;
+
+		public SolidColorBrush DaysOfTheWeekBrush
+		{
+			get { return _daysOfTheWeekBrush; }
+			set 
+			{
+				_daysOfTheWeekBrush = value;
+				NotifyOfPropertyChange(() => DaysOfTheWeekBrush);
+			}
+		}
+
+
+		// stores currently used UI theme
+		public ApplicationTheme CurrentApplicationTheme
+		{
+			get { return _currentApplicationTheme; }
+			set 
+			{ 
+				_currentApplicationTheme = value;
+				IsDarkModeOn = _currentApplicationTheme == ApplicationTheme.Dark ? true : false;
+				NotifyOfPropertyChange(() => IsDarkModeOn);
+				NotifyOfPropertyChange(() => CurrentApplicationTheme);
+			}
+		}
+		public void ChangeTheme()
+		{
+			ThemeManager.Current.ApplicationTheme = CurrentApplicationTheme == ApplicationTheme.Dark ? ApplicationTheme.Light : ApplicationTheme.Dark;
+			OnThemeChange();
+		}
+
+		// fired on theme change
+		public void OnThemeChange()
+		{
+			CurrentApplicationTheme = ThemeManager.Current.ActualApplicationTheme;
+			if(CurrentApplicationTheme == ApplicationTheme.Dark)
+			{
+				DaysOfTheWeekBrush = Brushes.SeaGreen;
+				
+			}
+			else if(CurrentApplicationTheme == ApplicationTheme.Light)
+			{
+				DaysOfTheWeekBrush = Brushes.Lime;
+			}
+			else
+			{
+				DaysOfTheWeekBrush = Brushes.Red;
+			}
+		}
+
+
 
 		// stores anime list of the currently synced user
-        UserAnimeList CurrentUserAnimeList { get; set; }
+		UserAnimeList CurrentUserAnimeList { get; set; }
 
 		// stores last sync date
 		DateTime SyncDate { get; set; }

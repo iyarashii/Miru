@@ -1,14 +1,50 @@
 ﻿<Application x:Class="Miru.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ui="http://schemas.modernwpf.com/2019"
              xmlns:local="clr-namespace:Miru">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary>
+                    <SolidColorBrush x:Key="MakeDataGridElementTransparent" Color="Transparent"></SolidColorBrush>
+                </ResourceDictionary>
+
+                <ResourceDictionary>
                     <local:Bootstrapper x:Key="Bootstrapper"/>
                 </ResourceDictionary>
                 <ResourceDictionary Source="pack://application:,,,/ToastNotifications.Messages;component/Themes/Default.xaml" />
+                <ui:ThemeResources>
+                    <ui:ThemeResources.ThemeDictionaries>
+                        <ResourceDictionary x:Key="Dark">
+                            <ResourceDictionary.MergedDictionaries>
+                                <ui:DefaultThemeResources Key="Dark" />
+                            </ResourceDictionary.MergedDictionaries>
+                            <ui:StaticResource x:Key="DataGridRowSelectedBackground" ResourceKey="MakeDataGridElementTransparent" />
+                            <!-- change highlight color to system default instead of not highlighting at all -->
+                            <ui:StaticResource x:Key="DataGridRowSelectedHoveredUnfocusedBackground" ResourceKey="SystemControlHighlightListLowBrush" />
+                            <ui:StaticResource x:Key="DataGridRowSelectedHoveredBackground" ResourceKey="SystemControlHighlightListLowBrush" />
+                            <ui:StaticResource x:Key="DataGridRowSelectedUnfocusedBackground" ResourceKey="MakeDataGridElementTransparent" />
+                            <ui:StaticResource x:Key="DataGridCellFocusVisualPrimaryBrush" ResourceKey="MakeDataGridElementTransparent" />
+                            <ui:StaticResource x:Key="DataGridCellFocusVisualSecondaryBrush" ResourceKey="MakeDataGridElementTransparent" />
+                            <ui:StaticResource x:Key="GridLinesBrush" ResourceKey="MakeDataGridElementTransparent" />
+                        </ResourceDictionary>
+                        <ResourceDictionary x:Key="Light">
+                            <ResourceDictionary.MergedDictionaries>
+                                <ui:DefaultThemeResources Key="Light" />
+                            </ResourceDictionary.MergedDictionaries>
+                            <ui:StaticResource x:Key="DataGridRowSelectedBackground" ResourceKey="MakeDataGridElementTransparent" />
+                            <!-- change highlight color to system default instead of not highlighting at all -->
+                            <ui:StaticResource x:Key="DataGridRowSelectedHoveredUnfocusedBackground" ResourceKey="SystemControlHighlightListLowBrush" />
+                            <ui:StaticResource x:Key="DataGridRowSelectedHoveredBackground" ResourceKey="SystemControlHighlightListLowBrush" />
+                            <ui:StaticResource x:Key="DataGridRowSelectedUnfocusedBackground" ResourceKey="MakeDataGridElementTransparent" />
+                            <ui:StaticResource x:Key="DataGridCellFocusVisualPrimaryBrush" ResourceKey="MakeDataGridElementTransparent" />
+                            <ui:StaticResource x:Key="DataGridCellFocusVisualSecondaryBrush" ResourceKey="MakeDataGridElementTransparent" />
+                            <ui:StaticResource x:Key="GridLinesBrush" ResourceKey="MakeDataGridElementTransparent" />
+                        </ResourceDictionary>
+                    </ui:ThemeResources.ThemeDictionaries>
+                </ui:ThemeResources>
+                <ui:XamlControlsResources />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>
