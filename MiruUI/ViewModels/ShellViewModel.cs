@@ -25,11 +25,18 @@ namespace Miru.ViewModels
 		private SortedAnimeListEntries _sortedAnimeListEntries = new SortedAnimeListEntries();
 		private MiruAppStatus _appStatus;
 		private ApplicationTheme _currentApplicationTheme;
+		private SolidColorBrush _daysOfTheWeekBrush;
+		private AnimeListType _selectedDisplayedAnimeList;
+
+		
 
 		// constructor
 		public ShellViewModel()
 		{
+			// apply correct colors to the days of the week depending on windows theme during runtime
 			OnThemeChange();
+
+			// set app theme to prevent the app to react to windows theme change while the app is running
 			ThemeManager.Current.ApplicationTheme = CurrentApplicationTheme;
 
 			// open temporary connection to the database
@@ -57,11 +64,28 @@ namespace Miru.ViewModels
 		}
 
 		#region properties
-		//public ThemeManager AppThemeManager { get; set; }
+
+		// stores anime list of the currently synced user
+		UserAnimeList CurrentUserAnimeList { get; set; }
+		public Season CurrentSeason { get; set; }
+
+		// stores last sync date
+		DateTime SyncDate { get; set; }
+
 		public bool IsDarkModeOn { get; set; }
 
 
-		private SolidColorBrush _daysOfTheWeekBrush;
+		public AnimeListType SelectedDisplayedAnimeList
+		{
+			get { return _selectedDisplayedAnimeList; }
+			set
+			{
+				_selectedDisplayedAnimeList = value;
+				ChangeDisplayedAnimeList(value);
+				NotifyOfPropertyChange(() => SelectedDisplayedAnimeList);
+			}
+		}
+
 
 		public SolidColorBrush DaysOfTheWeekBrush
 		{
@@ -72,7 +96,6 @@ namespace Miru.ViewModels
 				NotifyOfPropertyChange(() => DaysOfTheWeekBrush);
 			}
 		}
-
 
 		// stores currently used UI theme
 		public ApplicationTheme CurrentApplicationTheme
@@ -86,39 +109,7 @@ namespace Miru.ViewModels
 				NotifyOfPropertyChange(() => CurrentApplicationTheme);
 			}
 		}
-		public void ChangeTheme()
-		{
-			ThemeManager.Current.ApplicationTheme = CurrentApplicationTheme == ApplicationTheme.Dark ? ApplicationTheme.Light : ApplicationTheme.Dark;
-			OnThemeChange();
-		}
-
-		// fired on theme change
-		public void OnThemeChange()
-		{
-			CurrentApplicationTheme = ThemeManager.Current.ActualApplicationTheme;
-			if(CurrentApplicationTheme == ApplicationTheme.Dark)
-			{
-				DaysOfTheWeekBrush = Brushes.SeaGreen;
-				
-			}
-			else if(CurrentApplicationTheme == ApplicationTheme.Light)
-			{
-				DaysOfTheWeekBrush = Brushes.Lime;
-			}
-			else
-			{
-				DaysOfTheWeekBrush = Brushes.Red;
-			}
-		}
-
-
-
-		// stores anime list of the currently synced user
-		UserAnimeList CurrentUserAnimeList { get; set; }
-
-		// stores last sync date
-		DateTime SyncDate { get; set; }
-
+		
 		// stores anime models sorted for each day of the week
 		public SortedAnimeListEntries SortedAnimeListEntries
 		{
@@ -195,8 +186,34 @@ namespace Miru.ViewModels
 				NotifyOfPropertyChange(() => SyncStatusText);
 			}
 		}
-        #endregion
-		
+		#endregion
+
+		// called by dark mode toggle switch
+		public void ChangeTheme()
+		{
+			ThemeManager.Current.ApplicationTheme = CurrentApplicationTheme == ApplicationTheme.Dark ? ApplicationTheme.Light : ApplicationTheme.Dark;
+			OnThemeChange();
+		}
+
+		// fired on theme change
+		public void OnThemeChange()
+		{
+			CurrentApplicationTheme = ThemeManager.Current.ActualApplicationTheme;
+			if (CurrentApplicationTheme == ApplicationTheme.Dark)
+			{
+				DaysOfTheWeekBrush = Brushes.SeaGreen;
+
+			}
+			else if (CurrentApplicationTheme == ApplicationTheme.Light)
+			{
+				DaysOfTheWeekBrush = Brushes.Lime;
+			}
+			else
+			{
+				DaysOfTheWeekBrush = Brushes.Red;
+			}
+		}
+
 		// checks whether sync button should be enabled (wired up by caliburn micro)
 		public bool CanSyncUserAnimeList(string typedInUsername, MiruAppStatus appStatus)
 		{
@@ -226,6 +243,16 @@ namespace Miru.ViewModels
 				await Task.Delay(1000);
 				if (!await CheckInternetConnection()) return;
 				CurrentUserAnimeList = await Constants.jikan.GetUserAnimeList(TypedInUsername, UserAnimeListExtension.Watching);
+			}
+
+			// get current season
+			CurrentSeason = await Constants.jikan.GetSeason();
+
+			while (CurrentSeason == null)
+			{
+				await Task.Delay(2000);
+				if (!await CheckInternetConnection()) return;
+				CurrentSeason = await Constants.jikan.GetSeason();
 			}
 
 			// open temporary connection to the database
@@ -305,7 +332,50 @@ namespace Miru.ViewModels
 				// add airing anime created from the animeInfo data to the airingAnimes list
 				airingAnimes.Add(new MiruAiringAnimeModel { MalId = animeInfo.MalId, Broadcast = animeInfo.Broadcast, 
 					Title = animeInfo.Title, ImageURL = animeInfo.ImageURL, 
-					TotalEpisodes = animeListEntry.TotalEpisodes, URL = animeListEntry.URL, WatchedEpisodes = animeListEntry.WatchedEpisodes });
+					TotalEpisodes = animeListEntry.TotalEpisodes, URL = animeListEntry.URL, WatchedEpisodes = animeListEntry.WatchedEpisodes, IsOnWatchingList = true });
+			}
+
+			HashSet<long> airingAnimesMalIDs = new HashSet<long>(airingAnimes.Select(x => x.MalId));
+
+			// TODO: check if it works
+			var currentSeasonList = CurrentSeason.SeasonEntries.ToList();
+			var seasonListStrings = currentSeasonList.Select(x => x.Type);
+			currentSeasonList.RemoveAll(x => x.Type != "TV");
+			currentSeasonList.RemoveAll(x => x.Kids == true);
+			currentSeasonList.RemoveAll(x => x.Continued == true);
+
+			//currentSeasonList.RemoveAll(x => x.Type == "OVA");
+			//currentSeasonList.RemoveAll(x => x.Type == "Special");
+			//currentSeasonList.RemoveAll(x => x.Type == "Movie");
+
+			currentSeasonList.RemoveAll(x => airingAnimesMalIDs.Contains(x.MalId));
+
+			// add season animes that are not on watching list
+			foreach (var seasonEntry in currentSeasonList)
+			{
+				// get detailed anime info from the jikan API
+				animeInfo = await Constants.jikan.GetAnime(seasonEntry.MalId);
+
+				// if there is no response from API wait 2 seconds and retry
+				while (animeInfo == null)
+				{
+					await Task.Delay(3000);
+					if (!await CheckInternetConnection()) return;
+					animeInfo = await Constants.jikan.GetAnime(seasonEntry.MalId);
+				}
+				//int eps = 0;
+				//int.TryParse(animeInfo.Episodes, out eps);
+				// add airing anime created from the animeInfo data to the airingAnimes list
+				airingAnimes.Add(new MiruAiringAnimeModel
+				{
+					MalId = animeInfo.MalId,
+					Broadcast = animeInfo.Broadcast,
+					Title = animeInfo.Title,
+					ImageURL = animeInfo.ImageURL,
+					//TotalEpisodes = eps,
+					URL = seasonEntry.URL,
+					IsOnWatchingList = false
+				});
 			}
 
 			// parse day and time from broadcast string
@@ -334,6 +404,7 @@ namespace Miru.ViewModels
 
 			// remove airing animes without specified broadcast time (like OVAs)
 			airingAnimes.RemoveAll(x => string.IsNullOrWhiteSpace(x.Broadcast));
+			airingAnimes.RemoveAll(x => x.Broadcast == "Unknown");
 
 			// for each airingAnime parse time and day of the week from the broadcast string
 			foreach (var airingAnime in airingAnimes)
@@ -376,6 +447,8 @@ namespace Miru.ViewModels
 						break;
 				}
 
+				airingAnime.JSTBroadcastTime = broadcastTime;
+
 				// convert JST to GMT+1 time
 				localBroadcastTime = broadcastTime.AddHours(-8);
 
@@ -416,13 +489,44 @@ namespace Miru.ViewModels
 		// orders the airing anime list entries by the days
 		public void SortAiringAnime(List<MiruAiringAnimeModel> airingAnimeModels)
 		{
-			SortedAnimeListEntries.MondayAiringAnimeList = airingAnimeModels.Where(a => a.LocalBroadcastTime.Value.DayOfWeek == DayOfWeek.Monday).OrderBy(s => s.LocalBroadcastTime).ToList();
-			SortedAnimeListEntries.TuesdayAiringAnimeList = airingAnimeModels.Where(a => a.LocalBroadcastTime.Value.DayOfWeek == DayOfWeek.Tuesday).OrderBy(s => s.LocalBroadcastTime).ToList();
-			SortedAnimeListEntries.WednesdayAiringAnimeList = airingAnimeModels.Where(a => a.LocalBroadcastTime.Value.DayOfWeek == DayOfWeek.Wednesday).OrderBy(s => s.LocalBroadcastTime).ToList();
-			SortedAnimeListEntries.ThursdayAiringAnimeList = airingAnimeModels.Where(a => a.LocalBroadcastTime.Value.DayOfWeek == DayOfWeek.Thursday).OrderBy(s => s.LocalBroadcastTime).ToList();
-			SortedAnimeListEntries.FridayAiringAnimeList = airingAnimeModels.Where(a => a.LocalBroadcastTime.Value.DayOfWeek == DayOfWeek.Friday).OrderBy(s => s.LocalBroadcastTime).ToList();
-			SortedAnimeListEntries.SaturdayAiringAnimeList = airingAnimeModels.Where(a => a.LocalBroadcastTime.Value.DayOfWeek == DayOfWeek.Saturday).OrderBy(s => s.LocalBroadcastTime).ToList();
-			SortedAnimeListEntries.SundayAiringAnimeList = airingAnimeModels.Where(a => a.LocalBroadcastTime.Value.DayOfWeek == DayOfWeek.Sunday).OrderBy(s => s.LocalBroadcastTime).ToList();
+			SortedAnimeListEntries.MondayAiringAnimeList = airingAnimeModels.Where(a => a.LocalBroadcastTime.Value.DayOfWeek == DayOfWeek.Monday && a.IsOnWatchingList == true).OrderBy(s => s.LocalBroadcastTime.Value.TimeOfDay).ToList();
+			SortedAnimeListEntries.TuesdayAiringAnimeList = airingAnimeModels.Where(a => a.LocalBroadcastTime.Value.DayOfWeek == DayOfWeek.Tuesday && a.IsOnWatchingList == true).OrderBy(s => s.LocalBroadcastTime.Value.TimeOfDay).ToList();
+			SortedAnimeListEntries.WednesdayAiringAnimeList = airingAnimeModels.Where(a => a.LocalBroadcastTime.Value.DayOfWeek == DayOfWeek.Wednesday && a.IsOnWatchingList == true).OrderBy(s => s.LocalBroadcastTime.Value.TimeOfDay).ToList();
+			SortedAnimeListEntries.ThursdayAiringAnimeList = airingAnimeModels.Where(a => a.LocalBroadcastTime.Value.DayOfWeek == DayOfWeek.Thursday && a.IsOnWatchingList == true).OrderBy(s => s.LocalBroadcastTime.Value.TimeOfDay).ToList();
+			SortedAnimeListEntries.FridayAiringAnimeList = airingAnimeModels.Where(a => a.LocalBroadcastTime.Value.DayOfWeek == DayOfWeek.Friday && a.IsOnWatchingList == true).OrderBy(s => s.LocalBroadcastTime.Value.TimeOfDay).ToList();
+			SortedAnimeListEntries.SaturdayAiringAnimeList = airingAnimeModels.Where(a => a.LocalBroadcastTime.Value.DayOfWeek == DayOfWeek.Saturday && a.IsOnWatchingList == true).OrderBy(s => s.LocalBroadcastTime.Value.TimeOfDay).ToList();
+			SortedAnimeListEntries.SundayAiringAnimeList = airingAnimeModels.Where(a => a.LocalBroadcastTime.Value.DayOfWeek == DayOfWeek.Sunday && a.IsOnWatchingList == true).OrderBy(s => s.LocalBroadcastTime.Value.TimeOfDay).ToList();
+		}
+
+		// orders the airing animes from the current season by the days
+		public void SortCurrentSeasonAiringAnime(List<MiruAiringAnimeModel> airingAnimeModels)
+		{
+			SortedAnimeListEntries.MondayAiringAnimeList = airingAnimeModels.Where(a => a.LocalBroadcastTime.Value.DayOfWeek == DayOfWeek.Monday).OrderBy(s => s.LocalBroadcastTime.Value.TimeOfDay).ToList();
+			SortedAnimeListEntries.TuesdayAiringAnimeList = airingAnimeModels.Where(a => a.LocalBroadcastTime.Value.DayOfWeek == DayOfWeek.Tuesday).OrderBy(s => s.LocalBroadcastTime.Value.TimeOfDay).ToList();
+			SortedAnimeListEntries.WednesdayAiringAnimeList = airingAnimeModels.Where(a => a.LocalBroadcastTime.Value.DayOfWeek == DayOfWeek.Wednesday).OrderBy(s => s.LocalBroadcastTime.Value.TimeOfDay).ToList();
+			SortedAnimeListEntries.ThursdayAiringAnimeList = airingAnimeModels.Where(a => a.LocalBroadcastTime.Value.DayOfWeek == DayOfWeek.Thursday).OrderBy(s => s.LocalBroadcastTime.Value.TimeOfDay).ToList();
+			SortedAnimeListEntries.FridayAiringAnimeList = airingAnimeModels.Where(a => a.LocalBroadcastTime.Value.DayOfWeek == DayOfWeek.Friday).OrderBy(s => s.LocalBroadcastTime.Value.TimeOfDay).ToList();
+			SortedAnimeListEntries.SaturdayAiringAnimeList = airingAnimeModels.Where(a => a.LocalBroadcastTime.Value.DayOfWeek == DayOfWeek.Saturday).OrderBy(s => s.LocalBroadcastTime.Value.TimeOfDay).ToList();
+			SortedAnimeListEntries.SundayAiringAnimeList = airingAnimeModels.Where(a => a.LocalBroadcastTime.Value.DayOfWeek == DayOfWeek.Sunday).OrderBy(s => s.LocalBroadcastTime.Value.TimeOfDay).ToList();
+		}
+
+		public void ChangeDisplayedAnimeList(AnimeListType animeListType)
+		{
+			using (var db = new MiruDbContext())
+			{
+				// get the user's list of the airing animes from the db
+				var airingAnimeList = db.MiruAiringAnimeModels.ToList();
+
+				if (animeListType == AnimeListType.Watching)
+				{
+					// set airing anime list entries for each day of the week
+					SortAiringAnime(airingAnimeList);
+				}
+				else if(animeListType == AnimeListType.Season)
+				{
+					SortCurrentSeasonAiringAnime(airingAnimeList);
+				}
+			}
 		}
 	}
 }

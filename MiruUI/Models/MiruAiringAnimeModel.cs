@@ -18,6 +18,8 @@ namespace Miru.Models
         public string URL { get; set; }
         public string ImageURL { get; set; }
         public DateTime? LocalBroadcastTime { get; set; }
+        public DateTime? JSTBroadcastTime { get; set; }
+        public bool IsOnWatchingList { get; set; }
         public int? WatchedEpisodes { get; set; }
 
         private int? _totalEpisodes;
