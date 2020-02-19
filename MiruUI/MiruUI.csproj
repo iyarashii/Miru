@@ -203,7 +203,7 @@
     <Compile Include="Data\MiruDbContext.cs" />
     <Compile Include="Enums.cs" />
     <Compile Include="Models\MiruAiringAnimeModel.cs" />
-    <Compile Include="Models\SortedAnimeListEntries.cs" />
+    <Compile Include="ViewModels\SortedAnimeListEntries.cs" />
     <Compile Include="Models\SyncedMyAnimeListUser.cs" />
     <Compile Include="ViewModels\ShellViewModel.cs" />
     <Compile Include="Views\EnumBindingSourceExtension.cs" />

@@ -5,8 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using JikanDotNet;
 using Caliburn.Micro;
+using Miru.Models;
 
-namespace Miru.Models
+namespace Miru.ViewModels
 {
     public class SortedAnimeListEntries : PropertyChangedBase
     {

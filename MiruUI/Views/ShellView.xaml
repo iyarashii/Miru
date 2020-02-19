@@ -23,25 +23,25 @@
                 <!-- Disabled ScrollViewer virtualization by setting CanContentScroll to false -->
                 <DataGrid HeadersVisibility="None"
                   ItemsSource="{TemplateBinding Content}" IsReadOnly="True" GridLinesVisibility="None"
-                  CanUserResizeColumns="False" CanUserResizeRows="False" CanUserDeleteRows="False" ScrollViewer.CanContentScroll="False" 
+                  CanUserResizeColumns="False" CanUserResizeRows="False" CanUserDeleteRows="False" ScrollViewer.CanContentScroll="False"
                   CanUserAddRows="False" CanUserReorderColumns="False" VerticalScrollBarVisibility="Hidden"  HorizontalScrollBarVisibility="Hidden"
                    AutoGenerateColumns="False">
 
                     <DataGrid.Columns>
-                        
+
                         <!-- left column with anime info -->
                         <DataGridTemplateColumn Width="*">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <TextBlock TextWrapping="Wrap" TextAlignment="Center" HorizontalAlignment="Center">
+                                    <TextBlock TextWrapping="Wrap" TextAlignment="Center" HorizontalAlignment="Stretch">
                                         <TextBlock.Inlines>
-                                            <Run FontWeight="Bold" Text="{Binding LocalBroadcastTime, StringFormat=HH:mm}"/>
+                                            <Run FontWeight="Bold" Text="{Binding LocalBroadcastTime, StringFormat=HH:mm}" />
                                             <Run>
                                                 <Run.Text>
                                                     <MultiBinding StringFormat="{}&#x0d;&#x0a;{0}&#x0d;&#x0a;{1} / {2}">
-                                                        <Binding Path="Title"/>
-                                                        <Binding Path="WatchedEpisodes"/>
-                                                        <Binding Path="TotalEpisodes" TargetNullValue="?"/>
+                                                        <Binding Path="Title" />
+                                                        <Binding Path="WatchedEpisodes" />
+                                                        <Binding Path="TotalEpisodes" TargetNullValue="?" />
                                                     </MultiBinding>
                                                 </Run.Text>
                                             </Run>
@@ -62,7 +62,7 @@
                         <DataGridTemplateColumn Width="*">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <Image Source="{Binding ImageURL}" Stretch="Fill" >
+                                    <Image Source="{Binding ImageURL}" Stretch="Fill">
                                         <i:Interaction.Triggers>
                                             <i:EventTrigger EventName="MouseDown">
                                                 <cal:ActionMessage MethodName="OpenAnimeURL">
@@ -77,46 +77,35 @@
                     </DataGrid.Columns>
                 </DataGrid>
             </ControlTemplate>
-            
-            <!--<ObjectDataProvider x:Key="dataFromAnimeListEnum" MethodName="GetValues"
-                            ObjectType="{x:Type System:Enum}">
-                <ObjectDataProvider.MethodParameters>
-                    <x:Type TypeName="enums:AnimeListType"/>
-                </ObjectDataProvider.MethodParameters>
-            </ObjectDataProvider>-->
         </ResourceDictionary>
     </Window.Resources>
-    
+
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="20"/>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="20"/>
+            <ColumnDefinition Width="20" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="20" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="20"/>
-            <RowDefinition Height="auto"/>
-            <RowDefinition Height="auto"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="20"/>
+            <RowDefinition Height="20" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="20" />
         </Grid.RowDefinitions>
-        
+
         <!-- Row 1 -->
-        <!--<xctk:WatermarkTextBox x:Name="TypedInUsername"
-                               KeepWatermarkOnGotFocus="True" 
-                               Watermark="Enter MAL username that you wish to sync this app to"
-                               MinWidth="300" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3" />-->
         <TextBox FontSize="22" Margin="0,0,0,10" ui:ControlHelper.PlaceholderText="Enter MAL username that you wish to sync this app to" x:Name="TypedInUsername"
                   Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3" />
 
         <StackPanel Grid.Row="1" Grid.Column="4" Grid.ColumnSpan="4" Orientation="Horizontal">
-            
+
             <Button Margin="10,0,10,10" IsDefault="True" MinWidth="100"
                  Content="Sync">
                 <i:Interaction.Triggers>
@@ -124,13 +113,31 @@
                         <cal:ActionMessage MethodName="SyncUserAnimeList">
                             <cal:Parameter Value="{Binding ElementName=TypedInUsername, Path=Text}" />
                             <cal:Parameter Value="{Binding AppStatus}" />
+                            <cal:Parameter Value="False" />
                         </cal:ActionMessage>
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
             </Button>
-            
-            <TextBlock x:Name="SyncStatusText" VerticalAlignment="Center" TextAlignment="Center"/>
-            
+
+            <TextBlock x:Name="SyncStatusText" VerticalAlignment="Center" TextAlignment="Center" />
+
+            <Button Margin="10,0,10,10" MinWidth="100"
+                 Content="Get current season list">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="Click">
+                        <cal:ActionMessage MethodName="SyncUserAnimeList">
+                            <cal:Parameter Value="{Binding ElementName=TypedInUsername, Path=Text}" />
+                            <cal:Parameter Value="{Binding AppStatus}" />
+                            <cal:Parameter Value="True" />
+                        </cal:ActionMessage>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </Button>
+
+            <ComboBox x:Name="DisplayedAnimeList" ui:ControlHelper.Header="Displayed anime list" SelectedItem="{Binding SelectedDisplayedAnimeList}"
+                      ItemsSource="{Binding Source={local:EnumBindingSource {x:Type enums:AnimeListType}}}">
+            </ComboBox>
+
             <ui:ToggleSwitch Margin="30,0,0,10" Header="Dark mode" OffContent="Off" OnContent="On" IsOn="{Binding IsDarkModeOn}">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="Toggled">
@@ -139,12 +146,7 @@
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
             </ui:ToggleSwitch>
-            <ComboBox x:Name="DisplayedAnimeList" ui:ControlHelper.Header="Displayed anime list" SelectedItem="{Binding SelectedDisplayedAnimeList}"
-                      ItemsSource="{Binding Source={local:EnumBindingSource {x:Type enums:AnimeListType}}}"
-                      >
-            </ComboBox>
         </StackPanel>
-        
 
         <!-- Row 2 -->
         <TextBlock Text="MONDAY" Grid.Row="2" Grid.Column="1" TextAlignment="Center" Background="{Binding DaysOfTheWeekBrush}" />
@@ -155,38 +157,33 @@
         <TextBlock Text="SATURDAY" Grid.Row="2" Grid.Column="6" TextAlignment="Center" Background="{Binding DaysOfTheWeekBrush}" />
         <TextBlock Text="SUNDAY" Grid.Row="2" Grid.Column="7" TextAlignment="Center" Background="{Binding DaysOfTheWeekBrush}" />
 
-
         <!-- Row 3 -->
         <!-- ############################ Datagrid for anime airing on MONDAY  ############################ -->
-        <ContentControl Grid.Row="3" Grid.Column="1" Template="{StaticResource AiringAnimeDatagridTemplate}" 
-                        Content="{Binding SortedAnimeListEntries.MondayAiringAnimeList}"/>
+        <ContentControl Grid.Row="3" Grid.Column="1" Template="{StaticResource AiringAnimeDatagridTemplate}"
+                        Content="{Binding SortedAnimeListEntries.MondayAiringAnimeList}" />
 
         <!-- ############################ Datagrid for anime airing on TUESDAY  ############################ -->
-        <ContentControl Grid.Row="3" Grid.Column="2" Template="{StaticResource AiringAnimeDatagridTemplate}" 
-                        Content="{Binding SortedAnimeListEntries.TuesdayAiringAnimeList}"/>
-        
+        <ContentControl Grid.Row="3" Grid.Column="2" Template="{StaticResource AiringAnimeDatagridTemplate}"
+                        Content="{Binding SortedAnimeListEntries.TuesdayAiringAnimeList}" />
 
         <!-- ############################ Datagrid for anime airing on WEDNESDAY  ############################ -->
-        <ContentControl Grid.Row="3" Grid.Column="3" Template="{StaticResource AiringAnimeDatagridTemplate}" 
-                        Content="{Binding SortedAnimeListEntries.WednesdayAiringAnimeList}"/>
+        <ContentControl Grid.Row="3" Grid.Column="3" Template="{StaticResource AiringAnimeDatagridTemplate}"
+                        Content="{Binding SortedAnimeListEntries.WednesdayAiringAnimeList}" />
 
         <!-- ############################ Datagrid for anime airing on THURSDAY  ############################ -->
-        <ContentControl Grid.Row="3" Grid.Column="4" Template="{StaticResource AiringAnimeDatagridTemplate}" 
+        <ContentControl Grid.Row="3" Grid.Column="4" Template="{StaticResource AiringAnimeDatagridTemplate}"
                         Content="{Binding SortedAnimeListEntries.ThursdayAiringAnimeList}" />
-        
 
         <!-- ############################ Datagrid for anime airing on FRIDAY  ############################ -->
-        <ContentControl Grid.Row="3" Grid.Column="5" Template="{StaticResource AiringAnimeDatagridTemplate}" 
+        <ContentControl Grid.Row="3" Grid.Column="5" Template="{StaticResource AiringAnimeDatagridTemplate}"
                         Content="{Binding SortedAnimeListEntries.FridayAiringAnimeList}" />
 
         <!-- ############################ Datagrid for anime airing on SATURDAY  ############################ -->
-        <ContentControl Grid.Row="3" Grid.Column="6" Template="{StaticResource AiringAnimeDatagridTemplate}" 
-                        Content="{Binding SortedAnimeListEntries.SaturdayAiringAnimeList}"/>
+        <ContentControl Grid.Row="3" Grid.Column="6" Template="{StaticResource AiringAnimeDatagridTemplate}"
+                        Content="{Binding SortedAnimeListEntries.SaturdayAiringAnimeList}" />
 
         <!-- ############################ Datagrid for anime airing on SUNDAY  ############################ -->
-        <ContentControl Grid.Row="3" Grid.Column="7" Template="{StaticResource AiringAnimeDatagridTemplate}" 
+        <ContentControl Grid.Row="3" Grid.Column="7" Template="{StaticResource AiringAnimeDatagridTemplate}"
                         Content="{Binding SortedAnimeListEntries.SundayAiringAnimeList}" />
-        
     </Grid>
-
 </Window>
