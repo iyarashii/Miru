@@ -134,7 +134,10 @@
                 </i:Interaction.Triggers>
             </Button>
 
-            <ComboBox x:Name="DisplayedAnimeList" ui:ControlHelper.Header="Displayed anime list" SelectedItem="{Binding SelectedDisplayedAnimeList}"
+            <ComboBox x:Name="DisplayedAnimeList" 
+                      IsEnabled="{Binding CanChangeDisplayedAnimeList}" 
+                      ui:ControlHelper.Header="Displayed anime list" 
+                      SelectedItem="{Binding SelectedDisplayedAnimeList}"
                       ItemsSource="{Binding Source={local:EnumBindingSource {x:Type enums:AnimeListType}}}">
             </ComboBox>
 
