@@ -36,10 +36,11 @@
                                     <TextBlock TextWrapping="Wrap" TextAlignment="Center" HorizontalAlignment="Stretch">
                                         <TextBlock.Inlines>
                                             <Run FontWeight="Bold" Text="{Binding LocalBroadcastTime, StringFormat=HH:mm}" />
-                                            <Run>
+                                            <LineBreak/>
+                                            <Run Text="{Binding Title}"/>
+                                            <Run local:RunVisibility.Visible="{Binding IsOnWatchingList}">
                                                 <Run.Text>
-                                                    <MultiBinding StringFormat="{}&#x0d;&#x0a;{0}&#x0d;&#x0a;{1} / {2}">
-                                                        <Binding Path="Title" />
+                                                    <MultiBinding StringFormat="{}&#x0d;&#x0a;{0} / {1}">
                                                         <Binding Path="WatchedEpisodes" />
                                                         <Binding Path="TotalEpisodes" TargetNullValue="?" />
                                                     </MultiBinding>

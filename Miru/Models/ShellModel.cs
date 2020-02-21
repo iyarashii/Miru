@@ -103,6 +103,8 @@ namespace Miru.Models
                 // delete all table rows -- slower version
                 //db.AnimeListEntries.RemoveRange(db.AnimeListEntries);
 
+
+                // TODO: remove AnimeListEntries table
                 // check if anime entries table is empty
                 if (db.AnimeListEntries.Any())
                 {
@@ -145,27 +147,17 @@ namespace Miru.Models
         /// <returns></returns>
         public async Task<bool> GetAiringAnimeBroadcastTimes(MiruDbContext db, ICollection<AnimeListEntry> animeListEntries, bool syncSeasonList)
         {
-            // clear MiruAiringAnimeModels table from any data
-            if (db.MiruAiringAnimeModels.Any())
-            {
-                // TODO: find a fix
-                //if (syncSeasonList)
-                //{
-                //    db.Database.ExecuteSqlCommand("TRUNCATE TABLE [MiruAiringAnimeModels]");
-                //}
-                //else
-                //{
-                //    var miruAnimeModelsList = db.MiruAiringAnimeModels.ToList();
-                //    miruAnimeModelsList.RemoveAll(x => x.IsOnWatchingList == false);
-                //    db.MiruAiringAnimeModels.RemoveRange(miruAnimeModelsList);
-                //    //db.SaveChanges();
-                //    miruAnimeModelsList = null;
-                //}
-                db.Database.ExecuteSqlCommand("TRUNCATE TABLE [MiruAiringAnimeModels]");
-            }
+            // get anime data from the db
+            var miruAnimeModelsList = db.MiruAiringAnimeModels.ToList();
 
-            // initialize empty list of MiruAiringAnimeModels
-            List<MiruAiringAnimeModel> airingAnimes = new List<MiruAiringAnimeModel>();
+            // set IsOnWatchingList flag to false for all anime models in the db
+            miruAnimeModelsList.ForEach(x => x.IsOnWatchingList = false);
+
+            // get mal ids of the anime models that were in the db
+            var malIdsFromDb = new HashSet<long>(miruAnimeModelsList.Select(x => x.MalId));
+
+            // clear MiruAiringAnimeModels table from any data
+            db.Database.ExecuteSqlCommand("TRUNCATE TABLE [MiruAiringAnimeModels]");
 
             // local variable that temporarily stores detailed anime info from the jikan API
             Anime animeInfo;
@@ -184,33 +176,39 @@ namespace Miru.Models
                     animeInfo = await Constants.jikan.GetAnime(animeListEntry.MalId);
                 }
 
-                // add airing anime created from the animeInfo data to the airingAnimes list
-                airingAnimes.Add(new MiruAiringAnimeModel
+
+                // if the anime is already in the db just set IsOnWatchingList flag instead of adding it again
+                if (malIdsFromDb.Contains(animeInfo.MalId))
                 {
-                    MalId = animeInfo.MalId,
-                    Broadcast = animeInfo.Broadcast,
-                    Title = animeInfo.Title,
-                    ImageURL = animeInfo.ImageURL,
-                    TotalEpisodes = animeListEntry.TotalEpisodes,
-                    URL = animeListEntry.URL,
-                    WatchedEpisodes = animeListEntry.WatchedEpisodes,
-                    IsOnWatchingList = true
-                });
+                    miruAnimeModelsList.Where(x => x.MalId == animeInfo.MalId).FirstOrDefault().IsOnWatchingList = true;
+                }
+                else
+                {
+                    // add airing anime created from the animeInfo data to the airingAnimes list
+                    miruAnimeModelsList.Add(new MiruAiringAnimeModel
+                    {
+                        MalId = animeInfo.MalId,
+                        Broadcast = animeInfo.Broadcast,
+                        Title = animeInfo.Title,
+                        ImageURL = animeInfo.ImageURL,
+                        TotalEpisodes = animeListEntry.TotalEpisodes,
+                        URL = animeListEntry.URL,
+                        WatchedEpisodes = animeListEntry.WatchedEpisodes,
+                        IsOnWatchingList = true
+                    });
+                }
+                
             }
 
             if (syncSeasonList)
             {
-                HashSet<long> airingAnimesMalIDs = new HashSet<long>(airingAnimes.Select(x => x.MalId));
+                HashSet<long> airingAnimesMalIDs = new HashSet<long>(miruAnimeModelsList.Select(x => x.MalId));
 
                 var currentSeasonList = CurrentSeason.SeasonEntries.ToList();
                 var seasonListStrings = currentSeasonList.Select(x => x.Type);
                 currentSeasonList.RemoveAll(x => x.Type != "TV");
                 currentSeasonList.RemoveAll(x => x.Kids == true);
-                currentSeasonList.RemoveAll(x => x.Continued == true);
-
-                //currentSeasonList.RemoveAll(x => x.Type == "OVA");
-                //currentSeasonList.RemoveAll(x => x.Type == "Special");
-                //currentSeasonList.RemoveAll(x => x.Type == "Movie");
+                //currentSeasonList.RemoveAll(x => x.Continued == true);
 
                 currentSeasonList.RemoveAll(x => airingAnimesMalIDs.Contains(x.MalId));
 
@@ -229,7 +227,7 @@ namespace Miru.Models
                     }
 
                     // add airing anime created from the animeInfo data to the airingAnimes list
-                    airingAnimes.Add(new MiruAiringAnimeModel
+                    miruAnimeModelsList.Add(new MiruAiringAnimeModel
                     {
                         MalId = animeInfo.MalId,
                         Broadcast = animeInfo.Broadcast,
@@ -243,10 +241,10 @@ namespace Miru.Models
             }
 
             // parse day and time from broadcast string
-            airingAnimes = ParseTimeFromBroadcast(airingAnimes);
+            miruAnimeModelsList = ParseTimeFromBroadcast(miruAnimeModelsList);
 
             // add airingAnimes list to the MiruAiringAnimeModels table
-            db.MiruAiringAnimeModels.AddRange(airingAnimes);
+            db.MiruAiringAnimeModels.AddRange(miruAnimeModelsList);
 
             // update database
             await db.SaveChangesAsync();
@@ -270,7 +268,7 @@ namespace Miru.Models
 
             // remove airing animes without specified broadcast time (like OVAs)
             airingAnimes.RemoveAll(x => string.IsNullOrWhiteSpace(x.Broadcast));
-            airingAnimes.RemoveAll(x => x.Broadcast == "Unknown");
+            airingAnimes.RemoveAll(x => x.Broadcast.Contains("Unknown") || x.Broadcast.Contains("Not scheduled"));
 
             // for each airingAnime parse time and day of the week from the broadcast string
             foreach (var airingAnime in airingAnimes)
@@ -328,9 +326,6 @@ namespace Miru.Models
                 // save parsed date and time to the model's property
                 airingAnime.LocalBroadcastTime = localBroadcastTime;
             }
-
-            // set airing anime list entries for each day of the week
-            ViewModelContext.SortedAnimeListEntries.SortAiringAnime(airingAnimes);
 
             // return list of airing animes with parsed data saved in LocalBroadcastTime properties
             return airingAnimes;

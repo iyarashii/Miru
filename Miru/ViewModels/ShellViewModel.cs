@@ -250,6 +250,9 @@ namespace Miru.ViewModels
             // update displayed username and sync date
             SyncStatusText = TypedInUsername;
 
+            // display sorted animes from user's watching anime list
+            SelectedDisplayedAnimeList = AnimeListType.Watching;
+
             // update app status
             AppStatus = MiruAppStatus.Idle;
         }
