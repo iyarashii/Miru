@@ -13,6 +13,7 @@
         xmlns:ui="http://schemas.modernwpf.com/2019"
         ui:WindowHelper.UseModernWindowStyle="True"
         ui:TitleBar.IsIconVisible="True"
+        MinWidth="{Binding ElementName=FirstRowPanel, Path=ActualWidth}"
         Title="{Binding Path=AppStatusText, Mode=OneWay}" WindowState="Maximized">
     <!-- view-wide styles -->
     <Window.Resources>
@@ -36,8 +37,8 @@
                                     <TextBlock TextWrapping="Wrap" TextAlignment="Center" HorizontalAlignment="Stretch">
                                         <TextBlock.Inlines>
                                             <Run FontWeight="Bold" Text="{Binding LocalBroadcastTime, StringFormat=HH:mm}" />
-                                            <LineBreak/>
-                                            <Run Text="{Binding Title}"/>
+                                            <LineBreak />
+                                            <Run Text="{Binding Title}" />
                                             <Run local:RunVisibility.Visible="{Binding IsOnWatchingList}">
                                                 <Run.Text>
                                                     <MultiBinding StringFormat="{}&#x0d;&#x0a;{0} / {1}">
@@ -102,54 +103,69 @@
         </Grid.RowDefinitions>
 
         <!-- Row 1 -->
-        <TextBox FontSize="22" Margin="0,0,0,10" ui:ControlHelper.PlaceholderText="Enter MAL username that you wish to sync this app to" x:Name="TypedInUsername"
-                  Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3" />
+        <StackPanel Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="7" Orientation="Horizontal">
+            <WrapPanel x:Name="FirstRowPanel">
 
-        <StackPanel Grid.Row="1" Grid.Column="4" Grid.ColumnSpan="4" Orientation="Horizontal">
+                <TextBox x:Name="TypedInUsername"
+                    FontSize="16"
+                    ui:ControlHelper.Header="MAL Username"
+                    Margin="0,0,0,10"
+                    ui:ControlHelper.PlaceholderText="Enter MAL username to get that user's anime list data" />
 
-            <Button Margin="10,0,10,10" IsDefault="True" MinWidth="100"
+                <Button Margin="10,0,10,10" IsDefault="True" MinWidth="100"
                  Content="Sync">
-                <i:Interaction.Triggers>
-                    <i:EventTrigger EventName="Click">
-                        <cal:ActionMessage MethodName="SyncUserAnimeList">
-                            <cal:Parameter Value="{Binding ElementName=TypedInUsername, Path=Text}" />
-                            <cal:Parameter Value="{Binding AppStatus}" />
-                            <cal:Parameter Value="False" />
-                        </cal:ActionMessage>
-                    </i:EventTrigger>
-                </i:Interaction.Triggers>
-            </Button>
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="Click">
+                            <cal:ActionMessage MethodName="SyncUserAnimeList">
+                                <cal:Parameter Value="{Binding ElementName=TypedInUsername, Path=Text}" />
+                                <cal:Parameter Value="{Binding AppStatus}" />
+                                <cal:Parameter Value="False" />
+                            </cal:ActionMessage>
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </Button>
 
-            <TextBlock x:Name="SyncStatusText" VerticalAlignment="Center" TextAlignment="Center" />
+                <TextBlock x:Name="SyncStatusText" VerticalAlignment="Center" TextAlignment="Center" />
 
-            <Button Margin="10,0,10,10" MinWidth="100"
+                <Button Margin="10,0,10,10" MinWidth="100"
                  Content="Get current season list">
-                <i:Interaction.Triggers>
-                    <i:EventTrigger EventName="Click">
-                        <cal:ActionMessage MethodName="SyncUserAnimeList">
-                            <cal:Parameter Value="{Binding ElementName=TypedInUsername, Path=Text}" />
-                            <cal:Parameter Value="{Binding AppStatus}" />
-                            <cal:Parameter Value="True" />
-                        </cal:ActionMessage>
-                    </i:EventTrigger>
-                </i:Interaction.Triggers>
-            </Button>
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="Click">
+                            <cal:ActionMessage MethodName="SyncUserAnimeList">
+                                <cal:Parameter Value="{Binding ElementName=TypedInUsername, Path=Text}" />
+                                <cal:Parameter Value="{Binding AppStatus}" />
+                                <cal:Parameter Value="True" />
+                            </cal:ActionMessage>
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </Button>
 
-            <ComboBox x:Name="DisplayedAnimeList" 
-                      IsEnabled="{Binding CanChangeDisplayedAnimeList}" 
-                      ui:ControlHelper.Header="Displayed anime list" 
+                <ComboBox x:Name="DisplayedAnimeList"
+                      Margin="0,0,0,10"
+                      IsEnabled="{Binding CanChangeDisplayedAnimeList}"
+                      ui:ControlHelper.Header="Displayed anime list"
                       SelectedItem="{Binding SelectedDisplayedAnimeList}"
                       ItemsSource="{Binding Source={local:EnumBindingSource {x:Type enums:AnimeListType}}}">
-            </ComboBox>
+                </ComboBox>
 
-            <ui:ToggleSwitch Margin="30,0,0,10" Header="Dark mode" OffContent="Off" OnContent="On" IsOn="{Binding IsDarkModeOn}">
-                <i:Interaction.Triggers>
-                    <i:EventTrigger EventName="Toggled">
-                        <cal:ActionMessage MethodName="ChangeTheme">
-                        </cal:ActionMessage>
-                    </i:EventTrigger>
-                </i:Interaction.Triggers>
-            </ui:ToggleSwitch>
+                <ui:ToggleSwitch Width="100" Margin="30,0,0,10" Header="Dark mode" OffContent="Off" OnContent="On" IsOn="{Binding IsDarkModeOn}">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="Toggled">
+                            <cal:ActionMessage MethodName="ChangeTheme">
+                            </cal:ActionMessage>
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </ui:ToggleSwitch>
+
+                <ComboBox x:Name="TimeZone"
+                      Margin="0,0,0,10"
+                      IsEnabled="{Binding CanChangeDisplayedAnimeList}"
+                      ui:ControlHelper.Header="Time zone"
+                      SelectedItem="{Binding SelectedTimeZone}"
+                      ItemsSource="{Binding ShellModel.TimeZones}"
+                      DisplayMemberPath="DisplayName">
+                </ComboBox>
+            </WrapPanel>
         </StackPanel>
 
         <!-- Row 2 -->

@@ -3,6 +3,7 @@ using Miru.Data;
 using Miru.ViewModels;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -22,6 +23,8 @@ namespace Miru.Models
         public Season CurrentSeason { get; set; }
 
         private ShellViewModel ViewModelContext;
+
+        public ReadOnlyCollection<TimeZoneInfo> TimeZones { get; } = TimeZoneInfo.GetSystemTimeZones();
 
         // get user's watching status anime list
         public async Task<bool> GetCurrentUserAnimeList()
@@ -76,12 +79,21 @@ namespace Miru.Models
             }
         }
 
-        public void ChangeDisplayedAnimeList(AnimeListType animeListType)
+        public void ChangeDisplayedAnimeList(AnimeListType animeListType, TimeZoneInfo selectedTimeZone)
         {
             using (var db = new MiruDbContext())
             {
                 // get the user's list of the airing animes from the db
                 var airingAnimeList = db.MiruAiringAnimeModels.ToList();
+                DateTime utc;
+                foreach (var airingAnime in airingAnimeList)
+                {
+                    // covert JST to utc
+                    utc = airingAnime.JSTBroadcastTime.Value.AddHours(-9);
+                    // set selected timezone as local broadcast time
+                    airingAnime.LocalBroadcastTime = utc.AddHours(selectedTimeZone.BaseUtcOffset.Hours);
+                }
+
 
                 if (animeListType == AnimeListType.Watching)
                 {
@@ -320,8 +332,14 @@ namespace Miru.Models
 
                 airingAnime.JSTBroadcastTime = broadcastTime;
 
-                // convert JST to GMT+1 time
-                localBroadcastTime = broadcastTime.AddHours(-8);
+                // covert JST to utc
+                var utc = broadcastTime.AddHours(-9);
+
+                // get local time zone info
+                var localTimeZone = TimeZoneInfo.Local;
+
+                // convert JST to your computer's local time
+                localBroadcastTime = utc.AddHours(localTimeZone.BaseUtcOffset.Hours);
 
                 // save parsed date and time to the model's property
                 airingAnime.LocalBroadcastTime = localBroadcastTime;

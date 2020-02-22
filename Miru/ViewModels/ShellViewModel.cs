@@ -25,6 +25,7 @@ namespace Miru.ViewModels
         private ApplicationTheme _currentApplicationTheme;
         private SolidColorBrush _daysOfTheWeekBrush;
         private AnimeListType _selectedDisplayedAnimeList;
+        private TimeZoneInfo _selectedTimeZone;
         private bool _canChangeDisplayedAnimeList;
 
         // constructor
@@ -32,6 +33,8 @@ namespace Miru.ViewModels
         {
             // create new instance of shellmodel
             ShellModel = new ShellModel(this);
+
+            SelectedTimeZone = TimeZoneInfo.Local;
 
             // apply correct colors to the days of the week depending on windows theme during runtime
             OnThemeChange();
@@ -55,17 +58,31 @@ namespace Miru.ViewModels
 
         public bool IsDarkModeOn { get; set; }
 
+        // stores currently selected anime list display type
         public AnimeListType SelectedDisplayedAnimeList
         {
             get { return _selectedDisplayedAnimeList; }
             set
             {
                 _selectedDisplayedAnimeList = value;
-                ShellModel.ChangeDisplayedAnimeList(value);
+                ShellModel.ChangeDisplayedAnimeList(value, SelectedTimeZone);
                 NotifyOfPropertyChange(() => SelectedDisplayedAnimeList);
             }
         }
 
+        // stores currently selected time zone
+        public TimeZoneInfo SelectedTimeZone
+        {
+            get { return _selectedTimeZone; }
+            set 
+            { 
+                _selectedTimeZone = value;
+                ShellModel.ChangeDisplayedAnimeList(SelectedDisplayedAnimeList, value);
+                NotifyOfPropertyChange(() => SelectedTimeZone);
+            }
+        }
+
+        // stores color for the days of the week column headers
         public SolidColorBrush DaysOfTheWeekBrush
         {
             get { return _daysOfTheWeekBrush; }
@@ -169,7 +186,7 @@ namespace Miru.ViewModels
             get { return _syncStatusText; }
             set
             {
-                _syncStatusText = $"Synced to the { value }'s anime list on { SyncDate }";
+                _syncStatusText = $"Synced to the { value }'s\n anime list on { SyncDate }";
                 NotifyOfPropertyChange(() => SyncStatusText);
             }
         }
@@ -252,6 +269,7 @@ namespace Miru.ViewModels
 
             // display sorted animes from user's watching anime list
             SelectedDisplayedAnimeList = AnimeListType.Watching;
+            SelectedTimeZone = TimeZoneInfo.Local;
 
             // update app status
             AppStatus = MiruAppStatus.Idle;
