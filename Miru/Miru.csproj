@@ -175,10 +175,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Constants.cs" />
-    <Compile Include="Data\Migrations\202001250123458_InitialCreate.cs" />
-    <Compile Include="Data\Migrations\202001250123458_InitialCreate.designer.cs">
-      <DependentUpon>202001250123458_InitialCreate.cs</DependentUpon>
-    </Compile>
     <Compile Include="Data\Migrations\202001251554307_AddSyncedUsersTable.cs" />
     <Compile Include="Data\Migrations\202001251554307_AddSyncedUsersTable.designer.cs">
       <DependentUpon>202001251554307_AddSyncedUsersTable.cs</DependentUpon>
@@ -230,9 +226,6 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <EmbeddedResource Include="Data\Migrations\202001250123458_InitialCreate.resx">
-      <DependentUpon>202001250123458_InitialCreate.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Data\Migrations\202001251554307_AddSyncedUsersTable.resx">
       <DependentUpon>202001251554307_AddSyncedUsersTable.cs</DependentUpon>
     </EmbeddedResource>

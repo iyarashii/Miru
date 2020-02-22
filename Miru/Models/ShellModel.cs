@@ -22,7 +22,7 @@ namespace Miru.Models
 
         public Season CurrentSeason { get; set; }
 
-        private ShellViewModel ViewModelContext;
+        private readonly ShellViewModel ViewModelContext;
 
         public ReadOnlyCollection<TimeZoneInfo> TimeZones { get; } = TimeZoneInfo.GetSystemTimeZones();
 
@@ -112,21 +112,6 @@ namespace Miru.Models
             // open temporary connection to the database
             using (var db = new MiruDbContext())
             {
-                // delete all table rows -- slower version
-                //db.AnimeListEntries.RemoveRange(db.AnimeListEntries);
-
-
-                // TODO: remove AnimeListEntries table
-                // check if anime entries table is empty
-                if (db.AnimeListEntries.Any())
-                {
-                    // delete all table rows -- faster version
-                    db.Database.ExecuteSqlCommand("TRUNCATE TABLE [AnimeListEntries]");
-                }
-
-                // add anime info from the user's watching anime list to the AnimeListEntries table
-                db.AnimeListEntries.AddRange(CurrentUserAnimeList.Anime);
-
                 // if SyncedMyAnimeListUsers table is not empty then delete all rows
                 if (db.SyncedMyAnimeListUsers.Any())
                 {
