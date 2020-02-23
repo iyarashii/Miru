@@ -15,8 +15,8 @@ namespace Miru
     public static class Constants
     {
         // Initialize JikanWrapper
-        public static IJikan jikan = new Jikan();
-        public static Notifier notifier = new Notifier(cfg =>
+        public readonly static IJikan jikan = new Jikan();
+        public readonly static Notifier notifier = new Notifier(cfg =>
         {
             cfg.PositionProvider = new WindowPositionProvider(
                 parentWindow: App.Current.MainWindow,
@@ -31,7 +31,7 @@ namespace Miru
             cfg.Dispatcher = App.Current.Dispatcher;
         });
 
-        public static MessageOptions messageOptions = new MessageOptions { FreezeOnMouseEnter = false };
+        public readonly static MessageOptions messageOptions = new MessageOptions { FreezeOnMouseEnter = false };
     }
 
 }
