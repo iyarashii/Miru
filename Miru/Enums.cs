@@ -1,12 +1,7 @@
 ﻿using Miru.Views;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
+// file used as a storage for enums used in this app
 namespace Miru
 {
     public enum MiruAppStatus

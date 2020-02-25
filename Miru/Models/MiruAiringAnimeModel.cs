@@ -1,18 +1,16 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Miru.Models
 {
+    // data model for the anime entries used by this app
     public class MiruAiringAnimeModel
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public long MalId { get; set; }
+
         public string Broadcast { get; set; }
         public string Title { get; set; }
         public string URL { get; set; }
@@ -26,9 +24,9 @@ namespace Miru.Models
 
         public int? TotalEpisodes
         {
-            get 
-            { 
-                if(_totalEpisodes == 0)
+            get
+            {
+                if (_totalEpisodes == 0)
                 {
                     return null;
                 }
@@ -36,6 +34,5 @@ namespace Miru.Models
             }
             set { _totalEpisodes = value; }
         }
-
     }
 }

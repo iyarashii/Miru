@@ -1,14 +1,9 @@
 ﻿using JikanDotNet;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using ToastNotifications;
+using ToastNotifications.Core;
 using ToastNotifications.Lifetime;
 using ToastNotifications.Position;
-using ToastNotifications.Messages.Core;
-using ToastNotifications.Core;
 
 namespace Miru
 {
@@ -16,6 +11,7 @@ namespace Miru
     {
         // Initialize JikanWrapper
         public readonly static IJikan jikan = new Jikan();
+
         public readonly static Notifier notifier = new Notifier(cfg =>
         {
             cfg.PositionProvider = new WindowPositionProvider(
@@ -33,5 +29,4 @@ namespace Miru
 
         public readonly static MessageOptions messageOptions = new MessageOptions { FreezeOnMouseEnter = false };
     }
-
 }

@@ -1,8 +1,7 @@
 ﻿namespace Miru.Data.Migrations
 {
-    using System;
     using System.Data.Entity.Migrations;
-    
+
     public partial class ModifyAnimeAiringTimeModel : DbMigration
     {
         public override void Up()
@@ -13,7 +12,7 @@
             AddColumn("dbo.AnimeAiringTimes", "WatchedEpisodes", c => c.Int());
             AddColumn("dbo.AnimeAiringTimes", "TotalEpisodes", c => c.Int());
         }
-        
+
         public override void Down()
         {
             DropColumn("dbo.AnimeAiringTimes", "TotalEpisodes");

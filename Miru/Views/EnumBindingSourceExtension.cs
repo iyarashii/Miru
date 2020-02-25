@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Markup;
 
 namespace Miru.Views
@@ -10,6 +6,7 @@ namespace Miru.Views
     public class EnumBindingSourceExtension : MarkupExtension
     {
         private Type _enumType;
+
         public Type EnumType
         {
             get { return this._enumType; }
@@ -30,7 +27,9 @@ namespace Miru.Views
             }
         }
 
-        public EnumBindingSourceExtension() { }
+        public EnumBindingSourceExtension()
+        {
+        }
 
         public EnumBindingSourceExtension(Type enumType)
         {
