@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Net.Http;
 using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace MyInternetConnectionLibrary
@@ -19,7 +17,6 @@ namespace MyInternetConnectionLibrary
         // checks internet connection by trying to open readable stream from the site
         public static async Task<bool> CheckWebResponse()
         {
-
             try
             {
                 using (var webClient = new WebClient())
@@ -33,6 +30,7 @@ namespace MyInternetConnectionLibrary
                 return false;
             }
         }
+
         /// <summary>
         /// Checks internet connection by using the CheckWebResponse method and changes the text property given as parameter if no internet connection is available.
         /// </summary>
@@ -48,5 +46,25 @@ namespace MyInternetConnectionLibrary
             Connection = true;
             return labelsTextProperty;
         }
+    }
+
+    [Serializable]
+    public class NoInternetConnectionException : Exception
+    {
+        public NoInternetConnectionException()
+        {
+        }
+
+        public NoInternetConnectionException(string message) : base(message)
+        {
+        }
+
+        public NoInternetConnectionException(string message, Exception inner) : base(message, inner)
+        {
+        }
+
+        protected NoInternetConnectionException(
+          System.Runtime.Serialization.SerializationInfo info,
+          System.Runtime.Serialization.StreamingContext context) : base(info, context) { }
     }
 }

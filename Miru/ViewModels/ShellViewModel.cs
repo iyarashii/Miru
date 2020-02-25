@@ -1,13 +1,8 @@
 ﻿using Caliburn.Micro;
-using JikanDotNet;
-using Miru.Data;
 using Miru.Models;
 using ModernWpf;
-using MyInternetConnectionLibrary;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Media;
 using ToastNotifications.Messages;
@@ -18,6 +13,7 @@ namespace Miru.ViewModels
     {
         // private fields that are used with properties in this class
         private string _typedInUsername;
+
         private string _syncStatusText = "Not synced.";
         private string _appStatusText;
         private SortedAnimeListEntries _sortedAnimeListEntries = new SortedAnimeListEntries();
@@ -44,7 +40,7 @@ namespace Miru.ViewModels
 
             // load synced data from the db
             ShellModel.LoadLastSyncedData();
-            
+
             // set default app status
             AppStatus = MiruAppStatus.Idle;
         }
@@ -74,8 +70,8 @@ namespace Miru.ViewModels
         public TimeZoneInfo SelectedTimeZone
         {
             get { return _selectedTimeZone; }
-            set 
-            { 
+            set
+            {
                 _selectedTimeZone = value;
                 ShellModel.ChangeDisplayedAnimeList(SelectedDisplayedAnimeList, value);
                 NotifyOfPropertyChange(() => SelectedTimeZone);
@@ -100,7 +96,7 @@ namespace Miru.ViewModels
             set
             {
                 _currentApplicationTheme = value;
-                IsDarkModeOn = _currentApplicationTheme == ApplicationTheme.Dark ? true : false;
+                IsDarkModeOn = (_currentApplicationTheme == ApplicationTheme.Dark);
                 NotifyOfPropertyChange(() => IsDarkModeOn);
                 NotifyOfPropertyChange(() => CurrentApplicationTheme);
             }
@@ -155,7 +151,7 @@ namespace Miru.ViewModels
 
                     case MiruAppStatus.InternetConnectionProblems:
                         AppStatusText = "Problems with internet connection!";
-                        CanChangeDisplayedAnimeList = false;
+                        CanChangeDisplayedAnimeList = true;
                         break;
 
                     case MiruAppStatus.Loading:
@@ -204,7 +200,6 @@ namespace Miru.ViewModels
 
         #endregion properties
 
-
         #region event handlers and guard methods
 
         // called by dark mode toggle switch
@@ -235,7 +230,8 @@ namespace Miru.ViewModels
         // checks whether sync button should be enabled (wired up by caliburn micro)
         public bool CanSyncUserAnimeList(string typedInUsername, MiruAppStatus appStatus, bool syncSeasonList)
         {
-            if (string.IsNullOrWhiteSpace(typedInUsername) || typedInUsername.Length < 2 || typedInUsername.Length > 16 || appStatus != MiruAppStatus.Idle)
+            if (string.IsNullOrWhiteSpace(typedInUsername) || typedInUsername.Length < 2 || typedInUsername.Length > 16 || (appStatus != MiruAppStatus.Idle
+                && appStatus != MiruAppStatus.InternetConnectionProblems))
             {
                 return false;
             }
@@ -253,16 +249,16 @@ namespace Miru.ViewModels
             if (!await InternetConnectionViewModel.CheckAppInternetConnectionStatus(this)) return;
 
             // get user's watching status anime list
-            if (await ShellModel.GetCurrentUserAnimeList() == false) return;
+            if (!await ShellModel.GetCurrentUserAnimeList()) return;
 
-            if (syncSeasonList)
+            if (syncSeasonList && !await ShellModel.GetCurrentSeasonList())
             {
                 // get current season
-                if (await ShellModel.GetCurrentSeasonList() == false) return;
+                return;
             }
 
             // save api data to the database
-            if( await ShellModel.SaveSyncData(syncSeasonList) == false) return;
+            if (!await ShellModel.SaveSyncData(syncSeasonList)) return;
 
             // update displayed username and sync date
             SyncStatusText = TypedInUsername;
@@ -289,6 +285,6 @@ namespace Miru.ViewModels
             Constants.notifier.ShowInformation(copyNotification, Constants.messageOptions);
         }
 
-        #endregion
+        #endregion event handlers and guard methods
     }
 }
