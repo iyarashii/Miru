@@ -1,13 +1,13 @@
 # Miru
 Miru is a WPF app used to display data from the jikan MyAnimeList API.  
 Idea for the app is based on [senpai](http://www.senpai.moe/) a great site that shows airing anime in a neat way.  
-For now, it lets you display airing animes from user's MAL watching list.
-This app displays airing animes for each day of the week in the GMT+1 timezone (more time zone options coming soon).  
+It lets you display airing animes from the user's MAL watching list. Also it can display list of TV animes from the current season.
+This app displays airing animes for each day of the week in the specified timezone.  
 It uses EF6 and SQL Server's LocalDB to store the data.
 # Building
 Build the solution with Visual Studio 2019 or newer.
 # Installation guide
-### Follow these steps to install on Windows:
+### Follow these steps to install on Windows 10:
 
 1.  **Check if you have LocalDB installed on your PC:**
     1. Open Control Panel.
@@ -29,11 +29,20 @@ Build the solution with Visual Studio 2019 or newer.
 3.  **Install the app:**
     1. Download the app [zip](https://github.com/iyarashii/Miru/releases/download/v1.0/Miru.zip).
     2. Extract the archive and run `setup.exe`.
+    3. After installation is complete wait for the app window to show.
 # Usage
-After successful installation run the app. You should see an app window that looks like image below.
-![Image of the app window after 1st run](https://i.imgur.com/u1fb1wI.png)
+After starting the application (or after app installation), you should see an app window that looks like image below.
+Theme and time zone should be the same as your system's by the default.
+![Image of the app window after 1st run](https://i.imgur.com/LZOdrA9.png)
 Enter your username in the textbox and click `Sync` button or hit `Enter` key.
 Wait for synchronization, after it you should see something like this:
-![Image of synchronized app window](https://i.imgur.com/zCubMDf.png)
-You can click on the anime image to go to the MAL site associated with this anime and you can click on the
-anime name next to the image to copy it to your clipboard.
+![Image of synchronized app window](https://i.imgur.com/ygC68P6.png)
+You can click on the anime image to go to the MAL site associated with that anime and you can click on the
+anime name next to the image to copy it to your clipboard.  
+If anime list does not fit on the screen, you can scroll it up and down using a mouse scroll on each day anime list.   
+You can use the `Time zone` drop-down to change the time zone in which the anime list is displayed.
+
+
+`Displayed anime list` drop-down is used to change displayed list between the current season list and the user's watching anime list.  
+You can get a list of all TV animes in the current season by clicking `Get current season list` button:
+![Image of the current season](https://i.imgur.com/bxROuao.png)
