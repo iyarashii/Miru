@@ -3,6 +3,7 @@ using System.Windows.Markup;
 
 namespace Miru.Views
 {
+    // used for binding enum to the combobox items source
     public class EnumBindingSourceExtension : MarkupExtension
     {
         private Type _enumType;

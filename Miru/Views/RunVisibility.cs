@@ -3,6 +3,7 @@ using System.Windows.Documents;
 
 namespace Miru.Views
 {
+    // adds the 'visible' property to the Run visual element
     public static class RunVisibility
     {
         public static readonly DependencyProperty VisibleProperty =

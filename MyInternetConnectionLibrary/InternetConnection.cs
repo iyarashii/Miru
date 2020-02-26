@@ -48,6 +48,7 @@ namespace MyInternetConnectionLibrary
         }
     }
 
+    // custom exception thrown when InternetConnection.Connection property returns false
     [Serializable]
     public class NoInternetConnectionException : Exception
     {

@@ -4,6 +4,7 @@ using System.Reflection;
 
 namespace Miru.Views
 {
+    // used for displaying enum description attribute instead of enum value
     public class EnumDescriptionTypeConverter : EnumConverter
     {
         public EnumDescriptionTypeConverter(Type type)

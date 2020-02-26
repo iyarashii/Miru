@@ -7,6 +7,7 @@ using System.Linq;
 
 namespace Miru.ViewModels
 {
+    // wires up sorted anime list data to the correct properties that are used by the view
     public class SortedAnimeListEntries : PropertyChangedBase
     {
         private ICollection<MiruAiringAnimeModel> _mondayAiringAnimeList;

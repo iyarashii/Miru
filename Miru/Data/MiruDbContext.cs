@@ -5,6 +5,7 @@ using System.Data.Entity;
 
 namespace Miru.Data
 {
+    // app's default db context
     public class MiruDbContext : DbContext
     {
         // specify database name
