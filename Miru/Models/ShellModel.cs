@@ -192,7 +192,7 @@ namespace Miru.Models
             var miruAnimeModelsList = db.MiruAiringAnimeModels.ToList();
 
             // set IsOnWatchingList flag to false for all anime models in the db
-            miruAnimeModelsList.ForEach(x => x.IsOnWatchingList = false);
+            miruAnimeModelsList.ForEach(x => { x.IsOnWatchingList = false; x.WatchedEpisodes = 0; });
 
             // get mal ids of the anime models that were in the db
             var malIdsFromDb = new HashSet<long>(miruAnimeModelsList.Select(x => x.MalId));
@@ -216,7 +216,10 @@ namespace Miru.Models
                 // if the anime is already in the db just set IsOnWatchingList flag instead of adding it again
                 if (malIdsFromDb.Contains(animeInfo.MalId))
                 {
-                    miruAnimeModelsList.FirstOrDefault(x => x.MalId == animeInfo.MalId).IsOnWatchingList = true;
+                    var modelToBeUpdated = miruAnimeModelsList.FirstOrDefault(x => x.MalId == animeInfo.MalId);
+                    modelToBeUpdated.IsOnWatchingList = true;
+                    modelToBeUpdated.WatchedEpisodes = animeListEntry.WatchedEpisodes;
+                    modelToBeUpdated.TotalEpisodes = animeListEntry.TotalEpisodes;
                 }
                 else
                 {
