@@ -255,9 +255,9 @@ namespace Miru.ViewModels
             // stop method execution if there is a problem with internet connection
             if (!await InternetConnectionViewModel.CheckAppInternetConnectionStatus(this))
             {
-                AppStatus = MiruAppStatus.InternetConnectionProblems;
                 return;
             }
+
             // get user's watching status anime list
             if (!await ShellModel.GetCurrentUserAnimeList())
             {
