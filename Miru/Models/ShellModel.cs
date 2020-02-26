@@ -10,8 +10,11 @@ using MyInternetConnectionLibrary;
 
 namespace Miru.Models
 {
+    // contains most of the business logic used by the ShellView
     public class ShellModel
     {
+
+        // constructor
         public ShellModel(ShellViewModel viewModelContext)
         {
             ViewModelContext = viewModelContext;
@@ -20,42 +23,77 @@ namespace Miru.Models
         // stores anime list of the currently synced user
         public UserAnimeList CurrentUserAnimeList { get; set; }
 
+        // stores data model of the current anime season
         public Season CurrentSeason { get; set; }
 
+        // stores view model's context
         private readonly ShellViewModel ViewModelContext;
 
+        // stores collection of the time zones used by the system
         public ReadOnlyCollection<TimeZoneInfo> TimeZones { get; } = TimeZoneInfo.GetSystemTimeZones();
 
         // get user's watching status anime list
         public async Task<bool> GetCurrentUserAnimeList()
         {
-            // get user's watching status anime list
-            CurrentUserAnimeList = await Constants.jikan.GetUserAnimeList(ViewModelContext.TypedInUsername, UserAnimeListExtension.Watching);
+            try
+            {
+                // get user's watching status anime list
+                CurrentUserAnimeList = await Constants.jikan.GetUserAnimeList(ViewModelContext.TypedInUsername, UserAnimeListExtension.Watching);
+            }
+            catch (System.Net.Http.HttpRequestException)
+            {
+                return false;
+            }
 
             // if there is no response from API wait 1 second and retry
             while (CurrentUserAnimeList == null)
             {
                 await Task.Delay(1000);
                 if (!await InternetConnectionViewModel.CheckAppInternetConnectionStatus(ViewModelContext)) return false;
-                CurrentUserAnimeList = await Constants.jikan.GetUserAnimeList(ViewModelContext.TypedInUsername, UserAnimeListExtension.Watching);
+                try
+                {
+                    // get user's watching status anime list
+                    CurrentUserAnimeList = await Constants.jikan.GetUserAnimeList(ViewModelContext.TypedInUsername, UserAnimeListExtension.Watching);
+                }
+                catch (System.Net.Http.HttpRequestException)
+                {
+                    return false;
+                }
             }
             return true;
         }
 
+        // get current anime season data
         public async Task<bool> GetCurrentSeasonList()
         {
             // get current season
-            CurrentSeason = await Constants.jikan.GetSeason();
+            try
+            {
+                CurrentSeason = await Constants.jikan.GetSeason();
+            }
+            catch (System.Net.Http.HttpRequestException)
+            {
+                return false;
+            }
 
+            // if there is no response from API wait 2 seconds and retry
             while (CurrentSeason == null)
             {
                 await Task.Delay(2000);
                 if (!await InternetConnectionViewModel.CheckAppInternetConnectionStatus(ViewModelContext)) return false;
-                CurrentSeason = await Constants.jikan.GetSeason();
+                try
+                {
+                    CurrentSeason = await Constants.jikan.GetSeason();
+                }
+                catch (System.Net.Http.HttpRequestException)
+                {
+                    return false;
+                }
             }
             return true;
         }
 
+        // load data from the last sync
         public void LoadLastSyncedData()
         {
             // open temporary connection to the database
@@ -79,6 +117,7 @@ namespace Miru.Models
             }
         }
 
+        // changes data for the displayed anime list to match time zone and anime list type passed as parameters
         public void ChangeDisplayedAnimeList(AnimeListType animeListType, TimeZoneInfo selectedTimeZone)
         {
             using (var db = new MiruDbContext())
@@ -106,6 +145,7 @@ namespace Miru.Models
             }
         }
 
+        // saves data received from the jikan API to the local database
         public async Task<bool> SaveSyncData(bool syncSeasonList)
         {
             // open temporary connection to the database
@@ -118,7 +158,11 @@ namespace Miru.Models
                 }
 
                 // store the current user's username and sync date to the SyncedMyAnimeListUsers table
-                db.SyncedMyAnimeListUsers.Add(new SyncedMyAnimeListUser { Username = ViewModelContext.TypedInUsername, SyncTime = ViewModelContext.SyncDate = DateTime.Now });
+                db.SyncedMyAnimeListUsers.Add(new SyncedMyAnimeListUser 
+                { 
+                    Username = ViewModelContext.TypedInUsername, 
+                    SyncTime = ViewModelContext.SyncDate = DateTime.Now 
+                });
 
                 // save changes to the database
                 await db.SaveChangesAsync();
@@ -127,7 +171,7 @@ namespace Miru.Models
                 if (!await GetAiringAnimeBroadcastTimes(db, CurrentUserAnimeList.Anime, syncSeasonList)) return false;
             }
 
-            // clear data from properties
+            // clear data from the properties
             CurrentSeason = null;
             CurrentUserAnimeList = null;
 
@@ -140,6 +184,7 @@ namespace Miru.Models
         /// </summary>
         /// <param name="db">Context of the database that is going to be updated.</param>
         /// <param name="animeListEntries">Collection of AnimeListEntries that are going to receive broadcast time data.</param>
+        /// <param name="syncSeasonList">Indicates whether to get season sync data in addition to the user's data.</param>
         /// <returns></returns>
         public async Task<bool> GetAiringAnimeBroadcastTimes(MiruDbContext db, ICollection<AnimeListEntry> animeListEntries, bool syncSeasonList)
         {
@@ -190,18 +235,25 @@ namespace Miru.Models
                 }
             }
 
+            // if 'get current season list' button was used to sync data
             if (syncSeasonList)
             {
+                // set of all anime ids from the db
                 HashSet<long> airingAnimesMalIDs = new HashSet<long>(miruAnimeModelsList.Select(x => x.MalId));
 
+                // list of anime entries in the current season
                 var currentSeasonList = CurrentSeason.SeasonEntries.ToList();
 
+                // remove anime entries with types other than 'TV' from the list
                 currentSeasonList.RemoveAll(x => x.Type != "TV");
+
+                // remove anime entries marked as 'for kids' from the list
                 currentSeasonList.RemoveAll(x => x.Kids == true);
 
+                // remove anime entries that are already in the local db from the list
                 currentSeasonList.RemoveAll(x => airingAnimesMalIDs.Contains(x.MalId));
 
-                // add season animes that are not on watching list
+                // add season animes that are not a part of miruAnimeModelsList
                 foreach (var seasonEntry in currentSeasonList)
                 {
                     // get detailed anime info from the jikan API
@@ -213,7 +265,7 @@ namespace Miru.Models
                     {
                         return false;
                     }
-                    // add airing anime created from the animeInfo data to the airingAnimes list
+                    // add airing anime created from the animeInfo data to the miruAnimeModelsList
                     miruAnimeModelsList.Add(new MiruAiringAnimeModel
                     {
                         MalId = animeInfo.MalId,
@@ -227,13 +279,13 @@ namespace Miru.Models
                 }
             }
 
-            // parse day and time from broadcast string
+            // parse day and time from the broadcast string
             miruAnimeModelsList = ParseTimeFromBroadcast(miruAnimeModelsList);
 
             // clear MiruAiringAnimeModels table from any data
             db.Database.ExecuteSqlCommand("TRUNCATE TABLE [MiruAiringAnimeModels]");
 
-            // add airingAnimes list to the MiruAiringAnimeModels table
+            // add miruAnimeModelsList to the MiruAiringAnimeModels table
             db.MiruAiringAnimeModels.AddRange(miruAnimeModelsList);
 
             // update database
@@ -308,9 +360,10 @@ namespace Miru.Models
                         break;
                 }
 
+                // save JST broadcast time parsed from the Broadcast string
                 airingAnime.JSTBroadcastTime = broadcastTime;
 
-                // covert JST to utc
+                // covert JST to UTC
                 var utc = broadcastTime.AddHours(-9);
 
                 // get local time zone info

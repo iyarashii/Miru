@@ -13,7 +13,6 @@ namespace Miru.ViewModels
     {
         // private fields that are used with properties in this class
         private string _typedInUsername;
-
         private string _syncStatusText = "Not synced.";
         private string _appStatusText;
         private SortedAnimeListEntries _sortedAnimeListEntries = new SortedAnimeListEntries();
@@ -30,6 +29,7 @@ namespace Miru.ViewModels
             // create new instance of shellmodel
             ShellModel = new ShellModel(this);
 
+            // set system's local time zone as initially selected time zone
             SelectedTimeZone = TimeZoneInfo.Local;
 
             // apply correct colors to the days of the week depending on windows theme during runtime
@@ -46,12 +46,13 @@ namespace Miru.ViewModels
         }
 
         #region properties
-
+        // stores shellmodel's instance that contains most of the business logic
         public ShellModel ShellModel { get; set; }
 
         // stores last sync date
         public DateTime SyncDate { get; set; }
 
+        // stores dark mode theme toggle value
         public bool IsDarkModeOn { get; set; }
 
         // stores currently selected anime list display type
@@ -61,6 +62,8 @@ namespace Miru.ViewModels
             set
             {
                 _selectedDisplayedAnimeList = value;
+
+                // update displayed animes
                 ShellModel.ChangeDisplayedAnimeList(value, SelectedTimeZone);
                 NotifyOfPropertyChange(() => SelectedDisplayedAnimeList);
             }
@@ -73,6 +76,8 @@ namespace Miru.ViewModels
             set
             {
                 _selectedTimeZone = value;
+                
+                // update displayed animes
                 ShellModel.ChangeDisplayedAnimeList(SelectedDisplayedAnimeList, value);
                 NotifyOfPropertyChange(() => SelectedTimeZone);
             }
@@ -230,8 +235,10 @@ namespace Miru.ViewModels
         // checks whether sync button should be enabled (wired up by caliburn micro)
         public bool CanSyncUserAnimeList(string typedInUsername, MiruAppStatus appStatus, bool syncSeasonList)
         {
-            if (string.IsNullOrWhiteSpace(typedInUsername) || typedInUsername.Length < 2 || typedInUsername.Length > 16 || (appStatus != MiruAppStatus.Idle
-                && appStatus != MiruAppStatus.InternetConnectionProblems))
+            if (string.IsNullOrWhiteSpace(typedInUsername) || 
+                typedInUsername.Length < 2 || 
+                typedInUsername.Length > 16 || 
+                (appStatus != MiruAppStatus.Idle && appStatus != MiruAppStatus.InternetConnectionProblems))
             {
                 return false;
             }
@@ -246,19 +253,31 @@ namespace Miru.ViewModels
         public async Task SyncUserAnimeList(string typedInUsername, MiruAppStatus appStatus, bool syncSeasonList)
         {
             // stop method execution if there is a problem with internet connection
-            if (!await InternetConnectionViewModel.CheckAppInternetConnectionStatus(this)) return;
-
+            if (!await InternetConnectionViewModel.CheckAppInternetConnectionStatus(this))
+            {
+                AppStatus = MiruAppStatus.InternetConnectionProblems;
+                return;
+            }
             // get user's watching status anime list
-            if (!await ShellModel.GetCurrentUserAnimeList()) return;
+            if (!await ShellModel.GetCurrentUserAnimeList())
+            {
+                AppStatus = MiruAppStatus.InternetConnectionProblems;
+                return;
+            }
 
+            // get current season
             if (syncSeasonList && !await ShellModel.GetCurrentSeasonList())
             {
-                // get current season
+                AppStatus = MiruAppStatus.InternetConnectionProblems;
                 return;
             }
 
             // save api data to the database
-            if (!await ShellModel.SaveSyncData(syncSeasonList)) return;
+            if (!await ShellModel.SaveSyncData(syncSeasonList))
+            {
+                AppStatus = MiruAppStatus.InternetConnectionProblems;
+                return;
+            }
 
             // update displayed username and sync date
             SyncStatusText = TypedInUsername;
