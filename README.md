@@ -27,7 +27,7 @@ Build the solution with Visual Studio 2019 or newer.
     6. Run downloaded `SqlLocalDB.msi` installer.
 
 3.  **Install the app:**
-    1. Download the app [zip](https://github.com/iyarashii/Miru/releases/download/v1.0/Miru.zip).
+    1. Download the newest `Miru.zip` from the [releases](https://github.com/iyarashii/Miru/releases).
     2. Extract the archive and run `setup.exe`.
     3. After installation is complete wait for the app window to show.
 # Usage
