@@ -28,7 +28,7 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>9</ApplicationRevision>
+    <ApplicationRevision>10</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -197,9 +197,11 @@
     </Compile>
     <Compile Include="Data\Migrations\Configuration.cs" />
     <Compile Include="Data\MiruDbContext.cs" />
+    <Compile Include="Data\MiruDbService.cs" />
     <Compile Include="Enums.cs" />
+    <Compile Include="Models\CurrentSeasonModel.cs" />
+    <Compile Include="Models\CurrentUserAnimeListModel.cs" />
     <Compile Include="Models\MiruAiringAnimeModel.cs" />
-    <Compile Include="Models\ShellModel.cs" />
     <Compile Include="ViewModels\InternetConnectionViewModel.cs" />
     <Compile Include="ViewModels\SortedAnimeListEntries.cs" />
     <Compile Include="Models\SyncedMyAnimeListUser.cs" />

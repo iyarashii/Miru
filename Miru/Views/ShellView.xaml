@@ -162,7 +162,7 @@
                       IsEnabled="{Binding CanChangeDisplayedAnimeList}"
                       ui:ControlHelper.Header="Time zone"
                       SelectedItem="{Binding SelectedTimeZone}"
-                      ItemsSource="{Binding ShellModel.TimeZones}"
+                      ItemsSource="{Binding TimeZones}"
                       DisplayMemberPath="DisplayName">
                 </ComboBox>
             </WrapPanel>

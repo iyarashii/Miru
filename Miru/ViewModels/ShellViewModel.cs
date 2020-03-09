@@ -1,7 +1,9 @@
 ﻿using Caliburn.Micro;
 using Miru.Models;
+using Miru.Data;
 using ModernWpf;
 using System;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows.Media;
@@ -27,7 +29,7 @@ namespace Miru.ViewModels
         public ShellViewModel()
         {
             // create new instance of shellmodel
-            ShellModel = new ShellModel(this);
+            DbService = new MiruDbService(this);
 
             // set system's local time zone as initially selected time zone
             SelectedTimeZone = TimeZoneInfo.Local;
@@ -39,15 +41,18 @@ namespace Miru.ViewModels
             ThemeManager.Current.ApplicationTheme = CurrentApplicationTheme;
 
             // load synced data from the db
-            ShellModel.LoadLastSyncedData();
+            DbService.LoadLastSyncedData();
 
             // set default app status
             AppStatus = MiruAppStatus.Idle;
         }
 
         #region properties
-        // stores shellmodel's instance that contains most of the business logic
-        public ShellModel ShellModel { get; set; }
+        // stores MiruDbService's instance that contains most of the business logic
+        public MiruDbService DbService { get; set; }
+
+        // stores collection of the time zones used by the system
+        public ReadOnlyCollection<TimeZoneInfo> TimeZones { get; } = TimeZoneInfo.GetSystemTimeZones();
 
         // stores last sync date
         public DateTime SyncDate { get; set; }
@@ -64,7 +69,7 @@ namespace Miru.ViewModels
                 _selectedDisplayedAnimeList = value;
 
                 // update displayed animes
-                ShellModel.ChangeDisplayedAnimeList(value, SelectedTimeZone);
+                DbService.ChangeDisplayedAnimeList(value, SelectedTimeZone);
                 NotifyOfPropertyChange(() => SelectedDisplayedAnimeList);
             }
         }
@@ -78,7 +83,7 @@ namespace Miru.ViewModels
                 _selectedTimeZone = value;
                 
                 // update displayed animes
-                ShellModel.ChangeDisplayedAnimeList(SelectedDisplayedAnimeList, value);
+                DbService.ChangeDisplayedAnimeList(SelectedDisplayedAnimeList, value);
                 NotifyOfPropertyChange(() => SelectedTimeZone);
             }
         }
@@ -250,7 +255,7 @@ namespace Miru.ViewModels
         /// </summary>
         /// <param name="typedInUsername"></param>
         /// <returns></returns>
-        public async Task SyncUserAnimeList(string typedInUsername, MiruAppStatus appStatus, bool syncSeasonList)
+        public async Task SyncUserAnimeList(string typedInUsername, MiruAppStatus appStatus, bool seasonSyncOn)
         {
             // stop method execution if there is a problem with internet connection
             if (!await InternetConnectionViewModel.CheckAppInternetConnectionStatus(this))
@@ -259,21 +264,30 @@ namespace Miru.ViewModels
             }
 
             // get user's watching status anime list
-            if (!await ShellModel.GetCurrentUserAnimeList())
+            AppStatusText = "Getting current user anime list...";
+            if (!await DbService.CurrentUserAnimeList.GetCurrentUserAnimeList(TypedInUsername, 2000))
             {
                 AppStatus = MiruAppStatus.InternetConnectionProblems;
                 return;
             }
 
             // get current season
-            if (syncSeasonList && !await ShellModel.GetCurrentSeasonList())
+            if (seasonSyncOn)
             {
-                AppStatus = MiruAppStatus.InternetConnectionProblems;
-                return;
+                AppStatusText = "Getting current season anime list...";
+                if (!await DbService.CurrentSeason.GetCurrentSeasonList(2000))
+                {
+                    AppStatus = MiruAppStatus.InternetConnectionProblems;
+                    return;
+                }
             }
 
+            // save user data to the db
+            AppStatusText = "Saving user data to the db...";
+            await DbService.SaveSyncedUserData();
+
             // save api data to the database
-            if (!await ShellModel.SaveSyncData(syncSeasonList))
+            if (!await DbService.SaveDetailedAnimeListData(seasonSyncOn))
             {
                 AppStatus = MiruAppStatus.InternetConnectionProblems;
                 return;

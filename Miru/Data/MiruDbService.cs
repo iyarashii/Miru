@@ -1,97 +1,32 @@
 ﻿using JikanDotNet;
-using Miru.Data;
+using Miru.Models;
 using Miru.ViewModels;
+using MyInternetConnectionLibrary;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
-using MyInternetConnectionLibrary;
 
-namespace Miru.Models
+namespace Miru.Data
 {
-    // contains most of the business logic used by the ShellView
-    public class ShellModel
+    // contains the business logic that uses the local db
+    public class MiruDbService
     {
-
         // constructor
-        public ShellModel(ShellViewModel viewModelContext)
+        public MiruDbService(ShellViewModel viewModelContext)
         {
             ViewModelContext = viewModelContext;
         }
 
-        // stores anime list of the currently synced user
-        public UserAnimeList CurrentUserAnimeList { get; set; }
+        // stores view model's context
+        public ShellViewModel ViewModelContext { get; set; }
 
         // stores data model of the current anime season
-        public Season CurrentSeason { get; set; }
+        public CurrentSeasonModel CurrentSeason { get; set; } = new CurrentSeasonModel();
 
-        // stores view model's context
-        private readonly ShellViewModel ViewModelContext;
-
-        // stores collection of the time zones used by the system
-        public ReadOnlyCollection<TimeZoneInfo> TimeZones { get; } = TimeZoneInfo.GetSystemTimeZones();
-
-        // get user's watching status anime list
-        public async Task<bool> GetCurrentUserAnimeList()
-        {
-            try
-            {
-                // get user's watching status anime list
-                CurrentUserAnimeList = await Constants.jikan.GetUserAnimeList(ViewModelContext.TypedInUsername, UserAnimeListExtension.Watching);
-            }
-            catch (System.Net.Http.HttpRequestException)
-            {
-                return false;
-            }
-
-            // if there is no response from API wait 1 second and retry
-            while (CurrentUserAnimeList == null)
-            {
-                await Task.Delay(1000);
-                if (!await InternetConnectionViewModel.CheckAppInternetConnectionStatus(ViewModelContext)) return false;
-                try
-                {
-                    // get user's watching status anime list
-                    CurrentUserAnimeList = await Constants.jikan.GetUserAnimeList(ViewModelContext.TypedInUsername, UserAnimeListExtension.Watching);
-                }
-                catch (System.Net.Http.HttpRequestException)
-                {
-                    return false;
-                }
-            }
-            return true;
-        }
-
-        // get current anime season data
-        public async Task<bool> GetCurrentSeasonList()
-        {
-            // get current season
-            try
-            {
-                CurrentSeason = await Constants.jikan.GetSeason();
-            }
-            catch (System.Net.Http.HttpRequestException)
-            {
-                return false;
-            }
-
-            // if there is no response from API wait 2 seconds and retry
-            while (CurrentSeason == null)
-            {
-                await Task.Delay(2000);
-                if (!await InternetConnectionViewModel.CheckAppInternetConnectionStatus(ViewModelContext)) return false;
-                try
-                {
-                    CurrentSeason = await Constants.jikan.GetSeason();
-                }
-                catch (System.Net.Http.HttpRequestException)
-                {
-                    return false;
-                }
-            }
-            return true;
-        }
+        // stores data model of the currently synced user's anime list
+        public CurrentUserAnimeListModel CurrentUserAnimeList { get; set; } = new CurrentUserAnimeListModel();
 
         // load data from the last sync
         public void LoadLastSyncedData()
@@ -145,8 +80,8 @@ namespace Miru.Models
             }
         }
 
-        // saves data received from the jikan API to the local database
-        public async Task<bool> SaveSyncData(bool syncSeasonList)
+        // saves user data to the local database
+        public async Task SaveSyncedUserData()
         {
             // open temporary connection to the database
             using (var db = new MiruDbContext())
@@ -158,65 +93,99 @@ namespace Miru.Models
                 }
 
                 // store the current user's username and sync date to the SyncedMyAnimeListUsers table
-                db.SyncedMyAnimeListUsers.Add(new SyncedMyAnimeListUser 
-                { 
-                    Username = ViewModelContext.TypedInUsername, 
-                    SyncTime = ViewModelContext.SyncDate = DateTime.Now 
+                db.SyncedMyAnimeListUsers.Add(new SyncedMyAnimeListUser
+                {
+                    Username = ViewModelContext.TypedInUsername,
+                    SyncTime = ViewModelContext.SyncDate = DateTime.Now
                 });
 
                 // save changes to the database
                 await db.SaveChangesAsync();
-
-                // get the anime broadcast times, convert them to the GMT+1 timezone and save them to the database
-                if (!await GetAiringAnimeBroadcastTimes(db, CurrentUserAnimeList.Anime, syncSeasonList)) return false;
             }
+        }
 
-            // clear data from the properties
-            CurrentSeason = null;
-            CurrentUserAnimeList = null;
+        // saves data received from the jikan API to the local database
+        public async Task<bool> SaveDetailedAnimeListData(bool seasonSyncOn)
+        {
+            List<MiruAiringAnimeModel> detailedAnimeList;
 
+            // open temporary connection to the database
+            using (var db = new MiruDbContext())
+            {
+                ViewModelContext.AppStatusText = "Getting detailed user anime list data...";
+                // get user anime list with the detailed info
+                detailedAnimeList = await GetDetailedUserAnimeList(db, CurrentUserAnimeList.UserAnimeListData.Anime);
+
+                // if the user anime list is empty there were internet connection problems return false
+                if (detailedAnimeList == null)
+                {
+                    return false;
+                }
+
+                // if 'get current season list' button was used to sync data
+                if (seasonSyncOn)
+                {
+                    ViewModelContext.AppStatusText = "Getting detailed current season anime data...";
+                    // update user anime list with season anime detailed data if it fails return false
+                    if (!await GetDetailedSeasonAnimeListInfo(detailedAnimeList))
+                    {
+                        return false;
+                    }
+                }
+                ViewModelContext.AppStatusText = "Parse day and time from the broadcast string...";
+                // parse day and time from the broadcast string
+                detailedAnimeList = ParseTimeFromBroadcast(detailedAnimeList);
+
+                // clear MiruAiringAnimeModels table from any data
+                db.Database.ExecuteSqlCommand("TRUNCATE TABLE [MiruAiringAnimeModels]");
+
+                // add miruAnimeModelsList to the MiruAiringAnimeModels table
+                db.MiruAiringAnimeModels.AddRange(detailedAnimeList);
+
+                // update database
+                await db.SaveChangesAsync();
+            }
             return true;
         }
 
         /// <summary>
         /// Gets detailed anime info for each AnimeListEntry in the collection and saves it as
-        /// MiruAiringAnimeModels that contain the local broadcast time and the number of watched episodes by the user.
+        /// MiruAiringAnimeModels list that contains the local broadcast time and the number of watched episodes by the user.
         /// </summary>
         /// <param name="db">Context of the database that is going to be updated.</param>
-        /// <param name="animeListEntries">Collection of AnimeListEntries that are going to receive broadcast time data.</param>
-        /// <param name="syncSeasonList">Indicates whether to get season sync data in addition to the user's data.</param>
+        /// <param name="currentUserAnimeListEntries">Collection of AnimeListEntries that are going to receive broadcast time data.</param>
         /// <returns></returns>
-        public async Task<bool> GetAiringAnimeBroadcastTimes(MiruDbContext db, ICollection<AnimeListEntry> animeListEntries, bool syncSeasonList)
+        public async Task<List<MiruAiringAnimeModel>> GetDetailedUserAnimeList(MiruDbContext db, ICollection<AnimeListEntry> currentUserAnimeListEntries)
         {
             // get anime data from the db
-            var miruAnimeModelsList = db.MiruAiringAnimeModels.ToList();
+            var detailedUserAnimeList = db.MiruAiringAnimeModels.ToList();
 
             // set IsOnWatchingList flag to false for all anime models in the db
-            miruAnimeModelsList.ForEach(x => { x.IsOnWatchingList = false; x.WatchedEpisodes = 0; });
+            detailedUserAnimeList.ForEach(x => { x.IsOnWatchingList = false; x.WatchedEpisodes = 0; });
 
             // get mal ids of the anime models that were in the db
-            var malIdsFromDb = new HashSet<long>(miruAnimeModelsList.Select(x => x.MalId));
+            var malIdsFromDb = new HashSet<long>(detailedUserAnimeList.Select(x => x.MalId));
 
             // local variable that temporarily stores detailed anime info from the jikan API
             Anime animeInfo;
 
             // for each airing anime from the animeListEntries collection
-            foreach (var animeListEntry in animeListEntries.Where(a => a.AiringStatus == AiringStatus.Airing))
+            foreach (var animeListEntry in currentUserAnimeListEntries.Where(a => a.AiringStatus == AiringStatus.Airing))
             {
                 // try to get detailed anime info from the jikan API
                 try
                 {
-                    animeInfo = await TryToGetAnimeInfo(animeListEntry.MalId, 1100);
+                    animeInfo = await TryToGetAnimeInfo(animeListEntry.MalId, 2000);
                 }
                 catch (NoInternetConnectionException)
                 {
-                    return false;
+                    return null;
                 }
 
                 // if the anime is already in the db just set IsOnWatchingList flag instead of adding it again
                 if (malIdsFromDb.Contains(animeInfo.MalId))
                 {
-                    var modelToBeUpdated = miruAnimeModelsList.FirstOrDefault(x => x.MalId == animeInfo.MalId);
+                    var modelToBeUpdated = detailedUserAnimeList.FirstOrDefault(x => x.MalId == animeInfo.MalId);
                     modelToBeUpdated.IsOnWatchingList = true;
                     modelToBeUpdated.WatchedEpisodes = animeListEntry.WatchedEpisodes;
                     modelToBeUpdated.TotalEpisodes = animeListEntry.TotalEpisodes;
@@ -224,7 +193,7 @@ namespace Miru.Models
                 else
                 {
                     // add airing anime created from the animeInfo data to the airingAnimes list
-                    miruAnimeModelsList.Add(new MiruAiringAnimeModel
+                    detailedUserAnimeList.Add(new MiruAiringAnimeModel
                     {
                         MalId = animeInfo.MalId,
                         Broadcast = animeInfo.Broadcast,
@@ -237,72 +206,69 @@ namespace Miru.Models
                     });
                 }
             }
+            return detailedUserAnimeList;
+        }
 
-            // if 'get current season list' button was used to sync data
-            if (syncSeasonList)
+        /// <summary>
+        /// Updates detailedUserAnimeList by adding detailed current season anime data to the list
+        /// </summary>
+        /// <param name="detailedUserAnimeList">List of detailed user anime data that is going to be updated with seasonal anime data.</param>
+        /// <returns></returns>
+        public async Task<bool> GetDetailedSeasonAnimeListInfo(List<MiruAiringAnimeModel> detailedUserAnimeList)
+        {
+            // set of all anime ids from the db
+            HashSet<long> airingAnimesMalIDs = new HashSet<long>(detailedUserAnimeList.Select(x => x.MalId));
+
+            // list of anime entries in the current season
+            var currentSeasonList = CurrentSeason.SeasonData.SeasonEntries.ToList();
+
+            // remove anime entries with types other than 'TV' from the list
+            currentSeasonList.RemoveAll(x => x.Type != "TV");
+
+            // remove anime entries marked as 'for kids' from the list
+            currentSeasonList.RemoveAll(x => x.Kids == true);
+
+            // remove anime entries that are already in the local db from the list
+            currentSeasonList.RemoveAll(x => airingAnimesMalIDs.Contains(x.MalId));
+
+            // add season animes that are not a part of miruAnimeModelsList
+            foreach (var seasonEntry in currentSeasonList)
             {
-                // set of all anime ids from the db
-                HashSet<long> airingAnimesMalIDs = new HashSet<long>(miruAnimeModelsList.Select(x => x.MalId));
+                // local variable that temporarily stores detailed anime info from the jikan API
+                Anime animeInfo;
 
-                // list of anime entries in the current season
-                var currentSeasonList = CurrentSeason.SeasonEntries.ToList();
-
-                // remove anime entries with types other than 'TV' from the list
-                currentSeasonList.RemoveAll(x => x.Type != "TV");
-
-                // remove anime entries marked as 'for kids' from the list
-                currentSeasonList.RemoveAll(x => x.Kids == true);
-
-                // remove anime entries that are already in the local db from the list
-                currentSeasonList.RemoveAll(x => airingAnimesMalIDs.Contains(x.MalId));
-
-                // add season animes that are not a part of miruAnimeModelsList
-                foreach (var seasonEntry in currentSeasonList)
+                // get detailed anime info from the jikan API
+                try
                 {
-                    // get detailed anime info from the jikan API
-                    try
-                    {
-                        animeInfo = await TryToGetAnimeInfo(seasonEntry.MalId, 3000);
-                    }
-                    catch (NoInternetConnectionException)
-                    {
-                        return false;
-                    }
-                    // add airing anime created from the animeInfo data to the miruAnimeModelsList
-                    miruAnimeModelsList.Add(new MiruAiringAnimeModel
-                    {
-                        MalId = animeInfo.MalId,
-                        Broadcast = animeInfo.Broadcast,
-                        Title = animeInfo.Title,
-                        ImageURL = animeInfo.ImageURL,
-                        //TotalEpisodes = eps,
-                        URL = seasonEntry.URL,
-                        IsOnWatchingList = false
-                    });
+                    animeInfo = await TryToGetAnimeInfo(seasonEntry.MalId, 3000);
                 }
+                catch (NoInternetConnectionException)
+                {
+                    return false;
+                }
+                // add airing anime created from the animeInfo data to the miruAnimeModelsList
+                detailedUserAnimeList.Add(new MiruAiringAnimeModel
+                {
+                    MalId = animeInfo.MalId,
+                    Broadcast = animeInfo.Broadcast,
+                    Title = animeInfo.Title,
+                    ImageURL = animeInfo.ImageURL,
+                    //TotalEpisodes = eps,
+                    URL = seasonEntry.URL,
+                    IsOnWatchingList = false
+                });
             }
 
-            // parse day and time from the broadcast string
-            miruAnimeModelsList = ParseTimeFromBroadcast(miruAnimeModelsList);
-
-            // clear MiruAiringAnimeModels table from any data
-            db.Database.ExecuteSqlCommand("TRUNCATE TABLE [MiruAiringAnimeModels]");
-
-            // add miruAnimeModelsList to the MiruAiringAnimeModels table
-            db.MiruAiringAnimeModels.AddRange(miruAnimeModelsList);
-
-            // update database
-            await db.SaveChangesAsync();
-
+            // detailed anime list updated successfully
             return true;
         }
 
         /// <summary>
         /// Parses day and time from the broadcast string, converts it to the local time zone and saves to the LocalBroadcastTime property of the MiruAiringAnimeModel.
         /// </summary>
-        /// <param name="airingAnimes">List of airing animes without parsed day and time data.</param>
+        /// <param name="detailedAnimeList">List of airing animes with broadcast strings but without parsed day and time data.</param>
         /// <returns>List of airing animes with parsed data saved in LocalBroadcastTime properties.</returns>
-        public List<MiruAiringAnimeModel> ParseTimeFromBroadcast(List<MiruAiringAnimeModel> airingAnimes)
+        public List<MiruAiringAnimeModel> ParseTimeFromBroadcast(List<MiruAiringAnimeModel> detailedAnimeList)
         {
             // local variables
             string dayOfTheWeek;
@@ -312,11 +278,11 @@ namespace Miru.Models
             DateTime localBroadcastTime;
 
             // remove airing animes without specified broadcast time (like OVAs)
-            airingAnimes.RemoveAll(x => string.IsNullOrWhiteSpace(x.Broadcast));
-            airingAnimes.RemoveAll(x => x.Broadcast.Contains("Unknown") || x.Broadcast.Contains("Not scheduled"));
+            detailedAnimeList.RemoveAll(x => string.IsNullOrWhiteSpace(x.Broadcast));
+            detailedAnimeList.RemoveAll(x => x.Broadcast.Contains("Unknown") || x.Broadcast.Contains("Not scheduled"));
 
             // for each airingAnime parse time and day of the week from the broadcast string
-            foreach (var airingAnime in airingAnimes)
+            foreach (var airingAnime in detailedAnimeList)
             {
                 // split the broadcast string into words
                 broadcastWords = airingAnime.Broadcast.Split(' ');
@@ -380,7 +346,7 @@ namespace Miru.Models
             }
 
             // return list of airing animes with parsed data saved in LocalBroadcastTime properties
-            return airingAnimes;
+            return detailedAnimeList;
         }
 
         // tries to get the detailed anime information about anime with the given mal id, retries after given delay until the internet connection is working
@@ -400,11 +366,11 @@ namespace Miru.Models
             // if there is no response from API wait fo the given time and retry
             while (output == null)
             {
-                await Task.Delay(millisecondsDelay);
-                if (!await InternetConnectionViewModel.CheckAppInternetConnectionStatus(ViewModelContext)) 
-                {
-                    throw new NoInternetConnectionException("No internet connection");
-                }
+                //await Task.Delay(millisecondsDelay);
+                //if (!await InternetConnectionViewModel.CheckAppInternetConnectionStatus(ViewModelContext))
+                //{
+                //    throw new NoInternetConnectionException("No internet connection");
+                //}
                 try
                 {
                     // get detailed anime info from the jikan API
