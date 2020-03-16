@@ -1,5 +1,6 @@
 ﻿using JikanDotNet;
 using System;
+using System.IO;
 using ToastNotifications;
 using ToastNotifications.Core;
 using ToastNotifications.Lifetime;
@@ -28,5 +29,10 @@ namespace Miru
         });
 
         public readonly static MessageOptions messageOptions = new MessageOptions { FreezeOnMouseEnter = false };
+        //public static string SenpaiFilePath { get { return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "senpai.json"); } }
+        public readonly static string SenpaiFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "senpai.json");
+
+        //public readonly static string senpai = MyInternetConnectionLibrary.InternetConnection.client.GetStringAsync(@"http://www.senpai.moe/export.php?type=json&src=raw").Result;
+        //public readonly static string senpai = File.ReadAllText(@"H:\senpai.json");
     }
 }

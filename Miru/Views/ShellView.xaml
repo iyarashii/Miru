@@ -18,7 +18,14 @@
     <!-- view-wide styles -->
     <Window.Resources>
         <ResourceDictionary>
-
+            
+            <!-- Hide scroll viewers on data grids -->
+            <Style TargetType="ScrollViewer">
+                <Style.Resources>
+                    <Style TargetType="ScrollViewer"/>
+                </Style.Resources>
+            </Style>
+            
             <!-- ################# Datagrid template ################# -->
             <ControlTemplate x:Key="AiringAnimeDatagridTemplate" TargetType="ContentControl">
                 <!-- Disabled ScrollViewer virtualization by setting CanContentScroll to false -->
@@ -107,12 +114,12 @@
             <WrapPanel x:Name="FirstRowPanel">
 
                 <TextBox x:Name="TypedInUsername"
-                    FontSize="16"
+                    FontSize="14"
                     ui:ControlHelper.Header="MAL Username"
                     Margin="0,0,0,10"
                     ui:ControlHelper.PlaceholderText="Enter MAL username to get that user's anime list data" />
 
-                <Button Margin="10,0,10,10" IsDefault="True" MinWidth="100"
+                <Button Margin="10,13,10,0" IsDefault="True" MinWidth="100"
                  Content="Sync">
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="Click">
@@ -127,7 +134,7 @@
 
                 <TextBlock x:Name="SyncStatusText" VerticalAlignment="Center" TextAlignment="Center" />
 
-                <Button Margin="10,0,10,10" MinWidth="100"
+                <Button Margin="10,13,10,0" MinWidth="100"
                  Content="Get current season list">
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="Click">
@@ -165,6 +172,26 @@
                       ItemsSource="{Binding TimeZones}"
                       DisplayMemberPath="DisplayName">
                 </ComboBox>
+
+                <ComboBox x:Name="DisplayedAnimeType"
+                      Margin="10,0,0,10"
+                      IsEnabled="{Binding CanChangeDisplayedAnimeList}"
+                      ui:ControlHelper.Header="Displayed anime type"
+                      SelectedItem="{Binding SelectedDisplayedAnimeType}"
+                      ItemsSource="{Binding Source={local:EnumBindingSource {x:Type enums:AnimeType}}}">
+                </ComboBox>
+                
+                <Button x:Name="ClearDatabase" 
+                        Margin="10,13,0,0"
+                        IsEnabled="{Binding CanChangeDisplayedAnimeList}"
+                        Content="Clear db">
+                </Button>
+                
+                <Button x:Name="UpdateSenpaiData" 
+                        IsEnabled="{Binding CanChangeDisplayedAnimeList}"
+                        Margin="10,13,0,0"
+                        Content="Update data from senpai">
+                </Button>
             </WrapPanel>
         </StackPanel>
 

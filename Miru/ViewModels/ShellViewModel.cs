@@ -8,6 +8,8 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows.Media;
 using ToastNotifications.Messages;
+using System.Windows;
+using System.Windows.Input;
 
 namespace Miru.ViewModels
 {
@@ -24,11 +26,12 @@ namespace Miru.ViewModels
         private AnimeListType _selectedDisplayedAnimeList;
         private TimeZoneInfo _selectedTimeZone;
         private bool _canChangeDisplayedAnimeList;
+        private AnimeType _selectedDisplayedAnimeType;
 
         // constructor
         public ShellViewModel()
         {
-            // create new instance of shellmodel
+            // create new instance of db service
             DbService = new MiruDbService(this);
 
             // set system's local time zone as initially selected time zone
@@ -69,8 +72,21 @@ namespace Miru.ViewModels
                 _selectedDisplayedAnimeList = value;
 
                 // update displayed animes
-                DbService.ChangeDisplayedAnimeList(value, SelectedTimeZone);
+                DbService.ChangeDisplayedAnimeList(value, SelectedTimeZone, SelectedDisplayedAnimeType);
                 NotifyOfPropertyChange(() => SelectedDisplayedAnimeList);
+            }
+        }
+
+        // stores currently selected anime type "TV", "ONA" etc.
+        public AnimeType SelectedDisplayedAnimeType
+        {
+            get { return _selectedDisplayedAnimeType; }
+            set
+            { 
+                _selectedDisplayedAnimeType = value;
+
+                DbService.ChangeDisplayedAnimeList(SelectedDisplayedAnimeList, SelectedTimeZone, value);
+                NotifyOfPropertyChange(() => SelectedDisplayedAnimeType);
             }
         }
 
@@ -83,7 +99,7 @@ namespace Miru.ViewModels
                 _selectedTimeZone = value;
                 
                 // update displayed animes
-                DbService.ChangeDisplayedAnimeList(SelectedDisplayedAnimeList, value);
+                DbService.ChangeDisplayedAnimeList(SelectedDisplayedAnimeList, value, SelectedDisplayedAnimeType);
                 NotifyOfPropertyChange(() => SelectedTimeZone);
             }
         }
@@ -166,6 +182,10 @@ namespace Miru.ViewModels
 
                     case MiruAppStatus.Loading:
                         AppStatusText = "Loading data from the last synchronization...";
+                        CanChangeDisplayedAnimeList = false;
+                        break;
+                    case MiruAppStatus.ClearingDatabase:
+                        AppStatusText = "Clearing the database...";
                         CanChangeDisplayedAnimeList = false;
                         break;
                 }
@@ -297,11 +317,57 @@ namespace Miru.ViewModels
             SyncStatusText = TypedInUsername;
 
             // display sorted animes from user's watching anime list
-            SelectedDisplayedAnimeList = AnimeListType.Watching;
+            SelectedDisplayedAnimeList = AnimeListType.AiringAndWatching;
             SelectedTimeZone = TimeZoneInfo.Local;
 
             // update app status
             AppStatus = MiruAppStatus.Idle;
+        }
+
+        // event handler for the Clear db button
+        public async Task ClearDatabase()
+        {
+            ModernWpf.Controls.ContentDialog clearDatabaseDialog = new ModernWpf.Controls.ContentDialog
+            {
+                Title = "Clear the database?",
+                PrimaryButtonText = "Yes",
+                CloseButtonText = "No",
+                DefaultButton = ModernWpf.Controls.ContentDialogButton.Primary,
+            };
+            var result = await clearDatabaseDialog.ShowAsync();
+            //if(MessageBox.Show("Clear the database?", "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
+            //{
+            if(result == ModernWpf.Controls.ContentDialogResult.Primary)
+            {
+                AppStatus = MiruAppStatus.ClearingDatabase;
+                DbService.ClearDb();
+                _syncStatusText = "Not synced";
+                NotifyOfPropertyChange(() => SyncStatusText);
+                TypedInUsername = string.Empty;
+                DbService.ChangeDisplayedAnimeList(SelectedDisplayedAnimeList, SelectedTimeZone, SelectedDisplayedAnimeType);
+                AppStatus = MiruAppStatus.Idle;
+            }              
+            //}
+        }
+
+        // event handler for "Update data from senpai" button
+        public async Task UpdateSenpaiData()
+        {
+            ModernWpf.Controls.ContentDialog updateSenpaiDialog = new ModernWpf.Controls.ContentDialog
+            {
+                Title = "Update data from senpai.com?",
+                PrimaryButtonText = "Yes",
+                CloseButtonText = "No",
+                DefaultButton = ModernWpf.Controls.ContentDialogButton.Primary,
+            };
+
+            var result = await updateSenpaiDialog.ShowAsync();
+            if(result == ModernWpf.Controls.ContentDialogResult.Primary)
+            {
+                AppStatus = MiruAppStatus.Syncing;
+                DbService.UpdateSenpaiData();
+                AppStatus = MiruAppStatus.Idle;
+            }
         }
 
         // opens MAL anime page

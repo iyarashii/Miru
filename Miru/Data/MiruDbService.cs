@@ -7,6 +7,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
+using System.IO;
 
 namespace Miru.Data
 {
@@ -16,7 +18,11 @@ namespace Miru.Data
         // constructor
         public MiruDbService(ShellViewModel viewModelContext)
         {
+            // set view model context
             ViewModelContext = viewModelContext;
+
+            // if there is no local senpai data file get the JSON from senpai.com
+            GetSenpaiData();
         }
 
         // stores view model's context
@@ -47,18 +53,76 @@ namespace Miru.Data
                     var airingAnimeList = db.MiruAiringAnimeModels.ToList();
 
                     // set airing anime list entries for each day of the week
-                    ViewModelContext.SortedAnimeListEntries.SortAiringAnime(airingAnimeList);
+                    ViewModelContext.SortedAnimeListEntries.SortAiringAnime(airingAnimeList, AnimeListType.AiringAndWatching);
                 }
             }
         }
 
+        // clears anime models and synced users tables
+        public void ClearDb()
+        {
+            using (var db = new MiruDbContext())
+            {
+                db.Database.ExecuteSqlCommand("TRUNCATE TABLE [MiruAiringAnimeModels]");
+                db.Database.ExecuteSqlCommand("TRUNCATE TABLE [SyncedMyAnimeListUsers]");
+            }
+        }
+
+        // updates senpai.json data file which is used as a backup for anime airing time
+        public void UpdateSenpaiData()
+        {
+            if (File.Exists(Constants.SenpaiFilePath))
+            {
+                File.Delete(Constants.SenpaiFilePath);
+                GetSenpaiData();
+            }
+            else
+            {
+                GetSenpaiData();
+            }
+        }
+
+        // gets the data from senpai.com in a JSON form
+        public void GetSenpaiData()
+        {
+            if (File.Exists(Constants.SenpaiFilePath))
+            {
+                return;
+            }
+
+            // serialize JSON directly to a file
+            using (StreamWriter file = File.CreateText(Constants.SenpaiFilePath))
+            {
+                //file.Write(InternetConnection.client.GetStringAsync(@"http://www.senpai.moe/export.php?type=json&src=raw").Result);
+
+                // get only MALID and airing_date json properties
+                var deserializedSenpaiData = JsonConvert.DeserializeObject<SenpaiEntryModel>(InternetConnection.client.GetStringAsync(@"http://www.senpai.moe/export.php?type=json&src=raw").Result);
+                file.Write(JsonConvert.SerializeObject(deserializedSenpaiData, Formatting.Indented));
+            }
+        }
+
         // changes data for the displayed anime list to match time zone and anime list type passed as parameters
-        public void ChangeDisplayedAnimeList(AnimeListType animeListType, TimeZoneInfo selectedTimeZone)
+        public void ChangeDisplayedAnimeList(AnimeListType animeListType, TimeZoneInfo selectedTimeZone, AnimeType selectedAnimeType)
         {
             using (var db = new MiruDbContext())
             {
                 // get the user's list of the airing animes from the db
                 var airingAnimeList = db.MiruAiringAnimeModels.ToList();
+
+                // filter list of the airing animes depending on type
+                switch (selectedAnimeType)
+                {
+                    case AnimeType.Both:
+                        airingAnimeList.RemoveAll(x => x.Type != "TV" && x.Type != "ONA");
+                        break;
+                    case AnimeType.TV:
+                        airingAnimeList.RemoveAll(x => x.Type != "TV");
+                        break;
+                    case AnimeType.ONA:
+                        airingAnimeList.RemoveAll(x => x.Type != "ONA");
+                        break;
+                }
+
                 DateTime utc;
                 foreach (var airingAnime in airingAnimeList)
                 {
@@ -68,15 +132,8 @@ namespace Miru.Data
                     airingAnime.LocalBroadcastTime = utc.AddHours(selectedTimeZone.BaseUtcOffset.Hours);
                 }
 
-                if (animeListType == AnimeListType.Watching)
-                {
-                    // set airing anime list entries for each day of the week
-                    ViewModelContext.SortedAnimeListEntries.SortAiringAnime(airingAnimeList);
-                }
-                else if (animeListType == AnimeListType.Season)
-                {
-                    ViewModelContext.SortedAnimeListEntries.SortCurrentSeasonAiringAnime(airingAnimeList);
-                }
+                // set airing anime list entries for each day of the week
+                ViewModelContext.SortedAnimeListEntries.SortAiringAnime(airingAnimeList, animeListType);
             }
         }
 
@@ -170,7 +227,7 @@ namespace Miru.Data
             Anime animeInfo;
 
             // for each airing anime from the animeListEntries collection
-            foreach (var animeListEntry in currentUserAnimeListEntries.Where(a => a.AiringStatus == AiringStatus.Airing))
+            foreach (var animeListEntry in currentUserAnimeListEntries)
             {
                 // try to get detailed anime info from the jikan API
                 try
@@ -183,12 +240,13 @@ namespace Miru.Data
                 }
 
                 // if the anime is already in the db just set IsOnWatchingList flag instead of adding it again
-                if (malIdsFromDb.Contains(animeInfo.MalId))
+                if (malIdsFromDb.Contains(animeListEntry.MalId))
                 {
-                    var modelToBeUpdated = detailedUserAnimeList.FirstOrDefault(x => x.MalId == animeInfo.MalId);
+                    var modelToBeUpdated = detailedUserAnimeList.FirstOrDefault(x => x.MalId == animeListEntry.MalId);
                     modelToBeUpdated.IsOnWatchingList = true;
                     modelToBeUpdated.WatchedEpisodes = animeListEntry.WatchedEpisodes;
                     modelToBeUpdated.TotalEpisodes = animeListEntry.TotalEpisodes;
+                    modelToBeUpdated.CurrentlyAiring = (animeListEntry.AiringStatus == AiringStatus.Airing);
                 }
                 else
                 {
@@ -196,13 +254,15 @@ namespace Miru.Data
                     detailedUserAnimeList.Add(new MiruAiringAnimeModel
                     {
                         MalId = animeInfo.MalId,
-                        Broadcast = animeInfo.Broadcast,
+                        Broadcast = animeInfo.Broadcast ?? animeInfo.Aired.From.ToString(),
                         Title = animeInfo.Title,
                         ImageURL = animeInfo.ImageURL,
                         TotalEpisodes = animeListEntry.TotalEpisodes,
                         URL = animeListEntry.URL,
                         WatchedEpisodes = animeListEntry.WatchedEpisodes,
-                        IsOnWatchingList = true
+                        IsOnWatchingList = true,
+                        CurrentlyAiring = animeListEntry.AiringStatus == AiringStatus.Airing,
+                        Type = animeInfo.Type
                     });
                 }
             }
@@ -223,20 +283,16 @@ namespace Miru.Data
             var currentSeasonList = CurrentSeason.SeasonData.SeasonEntries.ToList();
 
             // remove anime entries with types other than 'TV' from the list
-            currentSeasonList.RemoveAll(x => x.Type != "TV");
+            currentSeasonList.RemoveAll(x => x.Type != "TV" && x.Type !="ONA");
 
             // remove anime entries marked as 'for kids' from the list
             currentSeasonList.RemoveAll(x => x.Kids == true);
-
-            // remove anime entries that are already in the local db from the list
-            currentSeasonList.RemoveAll(x => airingAnimesMalIDs.Contains(x.MalId));
 
             // add season animes that are not a part of miruAnimeModelsList
             foreach (var seasonEntry in currentSeasonList)
             {
                 // local variable that temporarily stores detailed anime info from the jikan API
                 Anime animeInfo;
-
                 // get detailed anime info from the jikan API
                 try
                 {
@@ -246,17 +302,27 @@ namespace Miru.Data
                 {
                     return false;
                 }
-                // add airing anime created from the animeInfo data to the miruAnimeModelsList
-                detailedUserAnimeList.Add(new MiruAiringAnimeModel
+                if (airingAnimesMalIDs.Contains(seasonEntry.MalId))
                 {
-                    MalId = animeInfo.MalId,
-                    Broadcast = animeInfo.Broadcast,
-                    Title = animeInfo.Title,
-                    ImageURL = animeInfo.ImageURL,
-                    //TotalEpisodes = eps,
-                    URL = seasonEntry.URL,
-                    IsOnWatchingList = false
-                });
+                    var modelToBeUpdated = detailedUserAnimeList.FirstOrDefault(x => x.MalId == seasonEntry.MalId);
+                    modelToBeUpdated.CurrentlyAiring = true;
+                }
+                else
+                {
+                    // add airing anime created from the animeInfo data to the miruAnimeModelsList
+                    detailedUserAnimeList.Add(new MiruAiringAnimeModel
+                    {
+                        MalId = animeInfo.MalId,
+                        Broadcast = animeInfo.Broadcast ?? animeInfo.Aired.From.ToString(),
+                        Title = animeInfo.Title,
+                        ImageURL = animeInfo.ImageURL,
+                        //TotalEpisodes = eps,
+                        URL = seasonEntry.URL,
+                        IsOnWatchingList = false,
+                        CurrentlyAiring = true,
+                        Type = animeInfo.Type
+                    }); 
+                }
             }
 
             // detailed anime list updated successfully
@@ -277,56 +343,82 @@ namespace Miru.Data
             DateTime time;
             DateTime localBroadcastTime;
 
+            // deserialize data from senpai as a backup source of anime broadcast time
+            var senpaiEntries = JsonConvert.DeserializeObject<SenpaiEntryModel>(File.ReadAllText(Constants.SenpaiFilePath));
+            var senpaiIDs = senpaiEntries.Items.Select(x => x.MALID);
+
             // remove airing animes without specified broadcast time (like OVAs)
-            detailedAnimeList.RemoveAll(x => string.IsNullOrWhiteSpace(x.Broadcast));
-            detailedAnimeList.RemoveAll(x => x.Broadcast.Contains("Unknown") || x.Broadcast.Contains("Not scheduled"));
+            detailedAnimeList.RemoveAll(x => !string.IsNullOrWhiteSpace(x.Broadcast) && (x.Broadcast.Contains("Unknown") || x.Broadcast.Contains("Not scheduled")));
 
             // for each airingAnime parse time and day of the week from the broadcast string
             foreach (var airingAnime in detailedAnimeList)
             {
-                // split the broadcast string into words
-                broadcastWords = airingAnime.Broadcast.Split(' ');
-
-                // set the first word of the broadcast string as a day of the week
-                dayOfTheWeek = broadcastWords[0];
-
-                // parse time from the 2nd broadcast string word
-                time = DateTime.Parse(broadcastWords[2]);
-
-                // depending on the 1st word set the correct day
-                switch (dayOfTheWeek)
+                if(/*string.IsNullOrWhiteSpace(airingAnime.Broadcast)*/ DateTime.TryParse(airingAnime.Broadcast, out DateTime parsedBroadcast))
                 {
-                    case "Mondays":
-                        broadcastTime = new DateTime(2020, 01, 20, time.Hour, time.Minute, 0);
-                        break;
+                    if(senpaiIDs.Contains(airingAnime.MalId))
+                    {
+                        airingAnime.Broadcast = senpaiEntries.Items.First(x => x.MALID == airingAnime.MalId).airdate;
+                        //if (airingAnime.Broadcast == null)
+                        //{
+                        //    toBeRemovedAnimes.Add(airingAnime);
+                        //    continue;
+                        //}
+                        broadcastTime = DateTime.Parse(airingAnime.Broadcast);
+                    }
+                    else
+                    {
+                        broadcastTime = parsedBroadcast;
+                    }
+                    //dynamic senpaiEntries = JsonConvert.DeserializeObject(Constants.senpai);
+                    //airingAnime.Broadcast = senpaiEntries.Where(x => x.MALID == airingAnime.MalId).FirstOrDefault().airdate;
+                    //airingAnime.JSTBroadcastTime
+                }
+                else
+                {
+                    // split the broadcast string into words
+                    broadcastWords = airingAnime.Broadcast.Split(' ');
 
-                    case "Tuesdays":
-                        broadcastTime = new DateTime(2020, 01, 21, time.Hour, time.Minute, 0);
-                        break;
+                    // set the first word of the broadcast string as a day of the week
+                    dayOfTheWeek = broadcastWords[0];
 
-                    case "Wednesdays":
-                        broadcastTime = new DateTime(2020, 01, 22, time.Hour, time.Minute, 0);
-                        break;
+                    // parse time from the 2nd broadcast string word
+                    time = DateTime.Parse(broadcastWords[2]);
 
-                    case "Thursdays":
-                        broadcastTime = new DateTime(2020, 01, 23, time.Hour, time.Minute, 0);
-                        break;
+                    // depending on the 1st word set the correct day
+                    switch (dayOfTheWeek)
+                    {
+                        case "Mondays":
+                            broadcastTime = new DateTime(2020, 01, 20, time.Hour, time.Minute, 0);
+                            break;
 
-                    case "Fridays":
-                        broadcastTime = new DateTime(2020, 01, 24, time.Hour, time.Minute, 0);
-                        break;
+                        case "Tuesdays":
+                            broadcastTime = new DateTime(2020, 01, 21, time.Hour, time.Minute, 0);
+                            break;
 
-                    case "Saturdays":
-                        broadcastTime = new DateTime(2020, 01, 25, time.Hour, time.Minute, 0);
-                        break;
+                        case "Wednesdays":
+                            broadcastTime = new DateTime(2020, 01, 22, time.Hour, time.Minute, 0);
+                            break;
 
-                    case "Sundays":
-                        broadcastTime = new DateTime(2020, 01, 26, time.Hour, time.Minute, 0);
-                        break;
+                        case "Thursdays":
+                            broadcastTime = new DateTime(2020, 01, 23, time.Hour, time.Minute, 0);
+                            break;
 
-                    default:
-                        broadcastTime = new DateTime();
-                        break;
+                        case "Fridays":
+                            broadcastTime = new DateTime(2020, 01, 24, time.Hour, time.Minute, 0);
+                            break;
+
+                        case "Saturdays":
+                            broadcastTime = new DateTime(2020, 01, 25, time.Hour, time.Minute, 0);
+                            break;
+
+                        case "Sundays":
+                            broadcastTime = new DateTime(2020, 01, 26, time.Hour, time.Minute, 0);
+                            break;
+
+                        default:
+                            broadcastTime = new DateTime();
+                            break;
+                    }  
                 }
 
                 // save JST broadcast time parsed from the Broadcast string
@@ -344,6 +436,7 @@ namespace Miru.Data
                 // save parsed date and time to the model's property
                 airingAnime.LocalBroadcastTime = localBroadcastTime;
             }
+            //detailedAnimeList = detailedAnimeList.Except(toBeRemovedAnimes).ToList();
 
             // return list of airing animes with parsed data saved in LocalBroadcastTime properties
             return detailedAnimeList;

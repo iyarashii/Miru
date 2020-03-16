@@ -18,7 +18,13 @@ namespace Miru.Models
         public DateTime? LocalBroadcastTime { get; set; }
         public DateTime? JSTBroadcastTime { get; set; }
         public bool IsOnWatchingList { get; set; }
+
+        // is the anime currently airing status flag
+        public bool CurrentlyAiring { get; set; }
         public int? WatchedEpisodes { get; set; }
+
+        // "Movie", "TV" etc.
+        public string Type { get; set; }
 
         private int? _totalEpisodes;
 

@@ -72,20 +72,20 @@ namespace Miru.ViewModels
         }
 
         // orders the airing anime list entries by the days
-        public void SortAiringAnime(List<MiruAiringAnimeModel> airingAnimeModels)
+        public void SortAiringAnime(List<MiruAiringAnimeModel> airingAnimeModels, AnimeListType animeListType)
         {
-            MondayAiringAnimeList = airingAnimeModels.Where(a => a.LocalBroadcastTime.Value.DayOfWeek == DayOfWeek.Monday && a.IsOnWatchingList).OrderBy(s => s.LocalBroadcastTime.Value.TimeOfDay).ToList();
-            TuesdayAiringAnimeList = airingAnimeModels.Where(a => a.LocalBroadcastTime.Value.DayOfWeek == DayOfWeek.Tuesday && a.IsOnWatchingList).OrderBy(s => s.LocalBroadcastTime.Value.TimeOfDay).ToList();
-            WednesdayAiringAnimeList = airingAnimeModels.Where(a => a.LocalBroadcastTime.Value.DayOfWeek == DayOfWeek.Wednesday && a.IsOnWatchingList).OrderBy(s => s.LocalBroadcastTime.Value.TimeOfDay).ToList();
-            ThursdayAiringAnimeList = airingAnimeModels.Where(a => a.LocalBroadcastTime.Value.DayOfWeek == DayOfWeek.Thursday && a.IsOnWatchingList).OrderBy(s => s.LocalBroadcastTime.Value.TimeOfDay).ToList();
-            FridayAiringAnimeList = airingAnimeModels.Where(a => a.LocalBroadcastTime.Value.DayOfWeek == DayOfWeek.Friday && a.IsOnWatchingList).OrderBy(s => s.LocalBroadcastTime.Value.TimeOfDay).ToList();
-            SaturdayAiringAnimeList = airingAnimeModels.Where(a => a.LocalBroadcastTime.Value.DayOfWeek == DayOfWeek.Saturday && a.IsOnWatchingList).OrderBy(s => s.LocalBroadcastTime.Value.TimeOfDay).ToList();
-            SundayAiringAnimeList = airingAnimeModels.Where(a => a.LocalBroadcastTime.Value.DayOfWeek == DayOfWeek.Sunday && a.IsOnWatchingList).OrderBy(s => s.LocalBroadcastTime.Value.TimeOfDay).ToList();
-        }
-
-        // orders the airing animes from the current season by the days
-        public void SortCurrentSeasonAiringAnime(List<MiruAiringAnimeModel> airingAnimeModels)
-        {
+            switch (animeListType)
+            {
+                case AnimeListType.AiringAndWatching:
+                    airingAnimeModels = airingAnimeModels.Where(a => a.IsOnWatchingList && a.CurrentlyAiring).ToList();
+                    break;
+                case AnimeListType.Watching:
+                    airingAnimeModels = airingAnimeModels.Where(a => a.IsOnWatchingList).ToList();
+                    break;
+                case AnimeListType.Season:
+                    airingAnimeModels = airingAnimeModels.Where(a => a.CurrentlyAiring).ToList();
+                    break;
+            }
             MondayAiringAnimeList = airingAnimeModels.Where(a => a.LocalBroadcastTime.Value.DayOfWeek == DayOfWeek.Monday).OrderBy(s => s.LocalBroadcastTime.Value.TimeOfDay).ToList();
             TuesdayAiringAnimeList = airingAnimeModels.Where(a => a.LocalBroadcastTime.Value.DayOfWeek == DayOfWeek.Tuesday).OrderBy(s => s.LocalBroadcastTime.Value.TimeOfDay).ToList();
             WednesdayAiringAnimeList = airingAnimeModels.Where(a => a.LocalBroadcastTime.Value.DayOfWeek == DayOfWeek.Wednesday).OrderBy(s => s.LocalBroadcastTime.Value.TimeOfDay).ToList();
@@ -94,5 +94,17 @@ namespace Miru.ViewModels
             SaturdayAiringAnimeList = airingAnimeModels.Where(a => a.LocalBroadcastTime.Value.DayOfWeek == DayOfWeek.Saturday).OrderBy(s => s.LocalBroadcastTime.Value.TimeOfDay).ToList();
             SundayAiringAnimeList = airingAnimeModels.Where(a => a.LocalBroadcastTime.Value.DayOfWeek == DayOfWeek.Sunday).OrderBy(s => s.LocalBroadcastTime.Value.TimeOfDay).ToList();
         }
+
+        //// orders the airing animes from the current season by the days
+        //public void SortCurrentSeasonAiringAnime(List<MiruAiringAnimeModel> airingAnimeModels)
+        //{
+        //    MondayAiringAnimeList = airingAnimeModels.Where(a => a.LocalBroadcastTime.Value.DayOfWeek == DayOfWeek.Monday && a.CurrentlyAiring).OrderBy(s => s.LocalBroadcastTime.Value.TimeOfDay).ToList();
+        //    TuesdayAiringAnimeList = airingAnimeModels.Where(a => a.LocalBroadcastTime.Value.DayOfWeek == DayOfWeek.Tuesday && a.CurrentlyAiring).OrderBy(s => s.LocalBroadcastTime.Value.TimeOfDay).ToList();
+        //    WednesdayAiringAnimeList = airingAnimeModels.Where(a => a.LocalBroadcastTime.Value.DayOfWeek == DayOfWeek.Wednesday && a.CurrentlyAiring).OrderBy(s => s.LocalBroadcastTime.Value.TimeOfDay).ToList();
+        //    ThursdayAiringAnimeList = airingAnimeModels.Where(a => a.LocalBroadcastTime.Value.DayOfWeek == DayOfWeek.Thursday && a.CurrentlyAiring).OrderBy(s => s.LocalBroadcastTime.Value.TimeOfDay).ToList();
+        //    FridayAiringAnimeList = airingAnimeModels.Where(a => a.LocalBroadcastTime.Value.DayOfWeek == DayOfWeek.Friday && a.CurrentlyAiring).OrderBy(s => s.LocalBroadcastTime.Value.TimeOfDay).ToList();
+        //    SaturdayAiringAnimeList = airingAnimeModels.Where(a => a.LocalBroadcastTime.Value.DayOfWeek == DayOfWeek.Saturday && a.CurrentlyAiring).OrderBy(s => s.LocalBroadcastTime.Value.TimeOfDay).ToList();
+        //    SundayAiringAnimeList = airingAnimeModels.Where(a => a.LocalBroadcastTime.Value.DayOfWeek == DayOfWeek.Sunday && a.CurrentlyAiring).OrderBy(s => s.LocalBroadcastTime.Value.TimeOfDay).ToList();
+        //}
     }
 }
