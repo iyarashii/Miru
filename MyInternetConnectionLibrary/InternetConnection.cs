@@ -11,6 +11,8 @@ namespace MyInternetConnectionLibrary
         // initializing a read-only instance of HttpClient to give the app access to HTTP GET requests
         public static readonly HttpClient client = new HttpClient();
 
+        public static string GoogleURL { get; } = @"http://www.google.com/";
+
         // stores the result of the internet connection test
         public static bool Connection { get; set; } = false;
 
@@ -20,7 +22,7 @@ namespace MyInternetConnectionLibrary
             try
             {
                 using (var webClient = new WebClient())
-                using (await webClient.OpenReadTaskAsync(new Uri("http://www.google.com/")))
+                using (await webClient.OpenReadTaskAsync(new Uri(GoogleURL)))
                 {
                     return true;
                 }

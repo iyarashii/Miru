@@ -25,7 +25,7 @@ namespace Miru.Views
             if (d is Run)
             {
                 var run = (d as Run);
-                if ((bool)e.NewValue == true)
+                if ((bool)e.NewValue)
                 {
                     if (run.Tag != null)
                     {

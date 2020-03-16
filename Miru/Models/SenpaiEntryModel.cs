@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace Miru.Models
 {
@@ -10,6 +6,7 @@ namespace Miru.Models
     public class SenpaiEntryModel
     {
         public List<Item> Items { get; set; }
+
         public class Item
         {
             public long MALID { get; set; }

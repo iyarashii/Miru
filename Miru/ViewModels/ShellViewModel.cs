@@ -1,5 +1,4 @@
 ﻿using Caliburn.Micro;
-using Miru.Models;
 using Miru.Data;
 using ModernWpf;
 using System;
@@ -8,8 +7,6 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows.Media;
 using ToastNotifications.Messages;
-using System.Windows;
-using System.Windows.Input;
 
 namespace Miru.ViewModels
 {
@@ -17,6 +14,7 @@ namespace Miru.ViewModels
     {
         // private fields that are used with properties in this class
         private string _typedInUsername;
+
         private string _syncStatusText = "Not synced.";
         private string _appStatusText;
         private SortedAnimeListEntries _sortedAnimeListEntries = new SortedAnimeListEntries();
@@ -51,6 +49,7 @@ namespace Miru.ViewModels
         }
 
         #region properties
+
         // stores MiruDbService's instance that contains most of the business logic
         public MiruDbService DbService { get; set; }
 
@@ -82,7 +81,7 @@ namespace Miru.ViewModels
         {
             get { return _selectedDisplayedAnimeType; }
             set
-            { 
+            {
                 _selectedDisplayedAnimeType = value;
 
                 DbService.ChangeDisplayedAnimeList(SelectedDisplayedAnimeList, SelectedTimeZone, value);
@@ -97,7 +96,7 @@ namespace Miru.ViewModels
             set
             {
                 _selectedTimeZone = value;
-                
+
                 // update displayed animes
                 DbService.ChangeDisplayedAnimeList(SelectedDisplayedAnimeList, value, SelectedDisplayedAnimeType);
                 NotifyOfPropertyChange(() => SelectedTimeZone);
@@ -184,6 +183,7 @@ namespace Miru.ViewModels
                         AppStatusText = "Loading data from the last synchronization...";
                         CanChangeDisplayedAnimeList = false;
                         break;
+
                     case MiruAppStatus.ClearingDatabase:
                         AppStatusText = "Clearing the database...";
                         CanChangeDisplayedAnimeList = false;
@@ -260,9 +260,9 @@ namespace Miru.ViewModels
         // checks whether sync button should be enabled (wired up by caliburn micro)
         public bool CanSyncUserAnimeList(string typedInUsername, MiruAppStatus appStatus, bool syncSeasonList)
         {
-            if (string.IsNullOrWhiteSpace(typedInUsername) || 
-                typedInUsername.Length < 2 || 
-                typedInUsername.Length > 16 || 
+            if (string.IsNullOrWhiteSpace(typedInUsername) ||
+                typedInUsername.Length < 2 ||
+                typedInUsername.Length > 16 ||
                 (appStatus != MiruAppStatus.Idle && appStatus != MiruAppStatus.InternetConnectionProblems))
             {
                 return false;
@@ -334,10 +334,11 @@ namespace Miru.ViewModels
                 CloseButtonText = "No",
                 DefaultButton = ModernWpf.Controls.ContentDialogButton.Primary,
             };
+
+            // display confirmation pop-up window
             var result = await clearDatabaseDialog.ShowAsync();
-            //if(MessageBox.Show("Clear the database?", "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
-            //{
-            if(result == ModernWpf.Controls.ContentDialogResult.Primary)
+            
+            if (result == ModernWpf.Controls.ContentDialogResult.Primary)
             {
                 AppStatus = MiruAppStatus.ClearingDatabase;
                 DbService.ClearDb();
@@ -346,8 +347,7 @@ namespace Miru.ViewModels
                 TypedInUsername = string.Empty;
                 DbService.ChangeDisplayedAnimeList(SelectedDisplayedAnimeList, SelectedTimeZone, SelectedDisplayedAnimeType);
                 AppStatus = MiruAppStatus.Idle;
-            }              
-            //}
+            }
         }
 
         // event handler for "Update data from senpai" button
@@ -361,8 +361,10 @@ namespace Miru.ViewModels
                 DefaultButton = ModernWpf.Controls.ContentDialogButton.Primary,
             };
 
+            // display confirmation pop-up window
             var result = await updateSenpaiDialog.ShowAsync();
-            if(result == ModernWpf.Controls.ContentDialogResult.Primary)
+            
+            if (result == ModernWpf.Controls.ContentDialogResult.Primary)
             {
                 AppStatus = MiruAppStatus.Syncing;
                 DbService.UpdateSenpaiData();

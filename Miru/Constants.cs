@@ -29,10 +29,7 @@ namespace Miru
         });
 
         public readonly static MessageOptions messageOptions = new MessageOptions { FreezeOnMouseEnter = false };
-        //public static string SenpaiFilePath { get { return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "senpai.json"); } }
-        public readonly static string SenpaiFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "senpai.json");
-
-        //public readonly static string senpai = MyInternetConnectionLibrary.InternetConnection.client.GetStringAsync(@"http://www.senpai.moe/export.php?type=json&src=raw").Result;
-        //public readonly static string senpai = File.ReadAllText(@"H:\senpai.json");
+        public static string SenpaiFilePath { get; } = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "senpai.json");
+        public static string SenpaiDataSourceURL { get; } = @"http://www.senpai.moe/export.php?type=json&src=raw";
     }
 }
