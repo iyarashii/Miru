@@ -135,11 +135,8 @@
                         </i:EventTrigger>
                     </i:Interaction.Triggers>
                 </Button>
-                <!--x:Name="SyncStatusText"-->
-                <!--<ui:HyperlinkButton
-                                            Foreground="{Binding ElementName=TypedInUsername, Path=Foreground}"
-                                            NavigateUri="{Binding UserAnimeListURL}">-->
-                <!--Foreground="{Binding ElementName=TypedInUsername, Path=Foreground}"-->
+                
+                <!--text block with currently synced user's name and sync date-->
                 <TextBlock  VerticalAlignment="Center" TextAlignment="Center">
                     <TextBlock.Inlines>
                         <Run local:RunVisibility.Visible="{Binding IsSynced, Converter={StaticResource InverseBoolean}}" Text="Not synced." />
@@ -155,10 +152,8 @@
                         </Hyperlink>
                         <LineBreak />
                         <Run local:RunVisibility.Visible="{Binding IsSynced}" Text="{Binding SyncDate, StringFormat=anime list on {0:dd/MM/yyyy HH:mm:ss}}" />
-                        <!--<Run Text="{Binding SyncStatusText}" />-->
                     </TextBlock.Inlines>
                 </TextBlock>
-                <!--</ui:HyperlinkButton>-->
 
                 <Button Margin="10,13,10,0" MinWidth="100"
                  Content="Get current season list">
