@@ -18,14 +18,17 @@
     <!-- view-wide styles -->
     <Window.Resources>
         <ResourceDictionary>
-            
+
+            <!-- converter used for inversing boolean value of a binding-->
+            <local:InverseBooleanConverter x:Key="InverseBoolean" />
+
             <!-- Hide scroll viewers on data grids -->
             <Style TargetType="ScrollViewer">
                 <Style.Resources>
-                    <Style TargetType="ScrollViewer"/>
+                    <Style TargetType="ScrollViewer" />
                 </Style.Resources>
             </Style>
-            
+
             <!-- ################# Datagrid template ################# -->
             <ControlTemplate x:Key="AiringAnimeDatagridTemplate" TargetType="ContentControl">
                 <!-- Disabled ScrollViewer virtualization by setting CanContentScroll to false -->
@@ -114,6 +117,7 @@
             <WrapPanel x:Name="FirstRowPanel">
 
                 <TextBox x:Name="TypedInUsername"
+                    IsEnabled="{Binding CanChangeDisplayedAnimeList}"
                     FontSize="14"
                     ui:ControlHelper.Header="MAL Username"
                     Margin="0,0,0,10"
@@ -131,8 +135,30 @@
                         </i:EventTrigger>
                     </i:Interaction.Triggers>
                 </Button>
-
-                <TextBlock x:Name="SyncStatusText" VerticalAlignment="Center" TextAlignment="Center" />
+                <!--x:Name="SyncStatusText"-->
+                <!--<ui:HyperlinkButton
+                                            Foreground="{Binding ElementName=TypedInUsername, Path=Foreground}"
+                                            NavigateUri="{Binding UserAnimeListURL}">-->
+                <!--Foreground="{Binding ElementName=TypedInUsername, Path=Foreground}"-->
+                <TextBlock  VerticalAlignment="Center" TextAlignment="Center">
+                    <TextBlock.Inlines>
+                        <Run local:RunVisibility.Visible="{Binding IsSynced, Converter={StaticResource InverseBoolean}}" Text="Not synced." />
+                        <Run local:RunVisibility.Visible="{Binding IsSynced}" Text="Synced to the"></Run>
+                        <Hyperlink NavigateUri="{Binding UserAnimeListURL}" local:HyperlinkExtensions.IsExternal="True">
+                            <Run local:RunVisibility.Visible="{Binding IsSynced}">
+                                <Run.Text>
+                                    <MultiBinding StringFormat="{}{0}'s">
+                                        <Binding Path="MalUserName" />
+                                    </MultiBinding>
+                                </Run.Text>
+                            </Run>
+                        </Hyperlink>
+                        <LineBreak />
+                        <Run local:RunVisibility.Visible="{Binding IsSynced}" Text="{Binding SyncDate, StringFormat=anime list on {0:dd/MM/yyyy HH:mm:ss}}" />
+                        <!--<Run Text="{Binding SyncStatusText}" />-->
+                    </TextBlock.Inlines>
+                </TextBlock>
+                <!--</ui:HyperlinkButton>-->
 
                 <Button Margin="10,13,10,0" MinWidth="100"
                  Content="Get current season list">
@@ -180,14 +206,14 @@
                       SelectedItem="{Binding SelectedDisplayedAnimeType}"
                       ItemsSource="{Binding Source={local:EnumBindingSource {x:Type enums:AnimeType}}}">
                 </ComboBox>
-                
-                <Button x:Name="ClearDatabase" 
+
+                <Button x:Name="ClearDatabase"
                         Margin="10,13,0,0"
                         IsEnabled="{Binding CanChangeDisplayedAnimeList}"
                         Content="Clear db">
                 </Button>
-                
-                <Button x:Name="UpdateSenpaiData" 
+
+                <Button x:Name="UpdateSenpaiData"
                         IsEnabled="{Binding CanChangeDisplayedAnimeList}"
                         Margin="10,13,0,0"
                         Content="Update data from senpai">

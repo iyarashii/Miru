@@ -14,8 +14,6 @@ namespace Miru.ViewModels
     {
         // private fields that are used with properties in this class
         private string _typedInUsername;
-
-        private string _syncStatusText = "Not synced.";
         private string _appStatusText;
         private SortedAnimeListEntries _sortedAnimeListEntries = new SortedAnimeListEntries();
         private MiruAppStatus _appStatus;
@@ -25,6 +23,8 @@ namespace Miru.ViewModels
         private TimeZoneInfo _selectedTimeZone;
         private bool _canChangeDisplayedAnimeList;
         private AnimeType _selectedDisplayedAnimeType;
+        private string _malUserName;
+        private string _userAnimeListURL;
 
         // constructor
         public ShellViewModel()
@@ -206,18 +206,42 @@ namespace Miru.ViewModels
             }
         }
 
-        // stores text that says the username of the last synced user and time of the sync
-        public string SyncStatusText
+        // stores text that says the username of the last synced user
+        public string MalUserName
         {
-            get { return _syncStatusText; }
-            set
+            get { return _malUserName; }
+            set 
             {
-                _syncStatusText = $"Synced to the { value }'s\n anime list on { SyncDate }";
-                NotifyOfPropertyChange(() => SyncStatusText);
+                _malUserName = value;
+                NotifyOfPropertyChange(() => MalUserName);
+                NotifyOfPropertyChange(() => SyncDate);
+                NotifyOfPropertyChange(() => IsSynced);
+                UserAnimeListURL = value;
             }
         }
 
-        // guard property for DisplayedAnimeList combobox
+        // tells whether there is synced user data
+        public bool IsSynced 
+        {
+            get
+            {
+                return !string.IsNullOrEmpty(MalUserName);
+            }
+        }
+
+
+        // stores current user anime list URL
+        public string UserAnimeListURL
+        {
+            get { return _userAnimeListURL; }
+            set 
+            { 
+                _userAnimeListURL = $@"https://myanimelist.net/animelist/{ value }";
+                NotifyOfPropertyChange(() => UserAnimeListURL);
+            }
+        }
+
+        // guard property for the buttons, comboboxes and the text field
         public bool CanChangeDisplayedAnimeList
         {
             get { return _canChangeDisplayedAnimeList; }
@@ -314,7 +338,7 @@ namespace Miru.ViewModels
             }
 
             // update displayed username and sync date
-            SyncStatusText = TypedInUsername;
+            MalUserName = TypedInUsername;
 
             // display sorted animes from user's watching anime list
             SelectedDisplayedAnimeList = AnimeListType.AiringAndWatching;
@@ -342,8 +366,7 @@ namespace Miru.ViewModels
             {
                 AppStatus = MiruAppStatus.ClearingDatabase;
                 DbService.ClearDb();
-                _syncStatusText = "Not synced";
-                NotifyOfPropertyChange(() => SyncStatusText);
+                MalUserName = string.Empty;
                 TypedInUsername = string.Empty;
                 DbService.ChangeDisplayedAnimeList(SelectedDisplayedAnimeList, SelectedTimeZone, SelectedDisplayedAnimeType);
                 AppStatus = MiruAppStatus.Idle;

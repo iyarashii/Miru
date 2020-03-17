@@ -46,7 +46,7 @@ namespace Miru.Data
                     ViewModelContext.SyncDate = db.SyncedMyAnimeListUsers.FirstOrDefault().SyncTime;
 
                     // set SyncStatusText and TypedInUsername props to the username of the last synchronized user
-                    ViewModelContext.SyncStatusText = ViewModelContext.TypedInUsername = db.SyncedMyAnimeListUsers.FirstOrDefault().Username;
+                    ViewModelContext.MalUserName = ViewModelContext.TypedInUsername = db.SyncedMyAnimeListUsers.FirstOrDefault().Username;
 
                     // get the user's list of the airing animes from the db
                     var airingAnimeList = db.MiruAiringAnimeModels.ToList();
@@ -449,6 +449,7 @@ namespace Miru.Data
             // if there is no response from API wait fo the given time and retry
             while (output == null)
             {
+                await Task.Delay(millisecondsDelay);
                 try
                 {
                     // get detailed anime info from the jikan API
