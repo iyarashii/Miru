@@ -20,7 +20,7 @@ namespace Miru.Data
             // set view model context
             ViewModelContext = viewModelContext;
 
-            // if there is no local senpai data file get the JSON from senpai.com
+            // if there is no local senpai data file get the JSON from senpai.moe
             GetSenpaiData();
         }
 
@@ -81,7 +81,7 @@ namespace Miru.Data
             }
         }
 
-        // gets the data from senpai.com in a JSON form
+        // gets the data from senpai.moe in a JSON form
         public void GetSenpaiData()
         {
             if (File.Exists(Constants.SenpaiFilePath))

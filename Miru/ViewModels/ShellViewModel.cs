@@ -378,7 +378,7 @@ namespace Miru.ViewModels
         {
             ModernWpf.Controls.ContentDialog updateSenpaiDialog = new ModernWpf.Controls.ContentDialog
             {
-                Title = "Update data from senpai.com?",
+                Title = "Update data from senpai.moe?",
                 PrimaryButtonText = "Yes",
                 CloseButtonText = "No",
                 DefaultButton = ModernWpf.Controls.ContentDialogButton.Primary,
