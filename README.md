@@ -33,16 +33,16 @@ Build the solution with Visual Studio 2019 or newer.
 # Usage
 After starting the application (or after app installation), you should see an app window that looks like image below.
 Theme and time zone should be the same as your system's by the default.
-![Image of the app window after 1st run](https://i.imgur.com/LZOdrA9.png)
+![Image of the app window after 1st run](https://i.imgur.com/U4mGtym.png)
 Enter your username in the textbox and click `Sync` button or hit `Enter` key.
 Wait for synchronization, after it you should see something like this:
-![Image of synchronized app window](https://i.imgur.com/ygC68P6.png)
+![Image of synchronized app window](https://i.imgur.com/LzlEwHo.png)
 You can click on the anime image to go to the MAL site associated with that anime and you can click on the
 anime name next to the image to copy it to your clipboard.  
 If anime list does not fit on the screen, you can scroll it up and down using a mouse scroll on each day anime list.   
 You can use the `Time zone` drop-down to change the time zone in which the anime list is displayed.
 
 
-`Displayed anime list` drop-down is used to change displayed list between the current season list and the user's watching anime list.  
-You can get a list of all TV animes in the current season by clicking `Get current season list` button:
-![Image of the current season](https://i.imgur.com/bxROuao.png)
+`Displayed anime list` drop-down is used to change displayed list between the current season list, user's watching anime list and the user's watching airing anime list.  
+You can get a list of all TV & ONA animes in the current season by clicking `Get current season list` button:
+![Image of the current season](https://i.imgur.com/IiwY3Ju.png)
