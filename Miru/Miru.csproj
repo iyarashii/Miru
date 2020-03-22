@@ -191,7 +191,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Constants.cs" />
-    <Compile Include="Data\IMiruDbService.cs" />
+    <Compile Include="Data\Interfaces\IMiruDbService.cs" />
     <Compile Include="Data\Migrations\202001251554307_AddSyncedUsersTable.cs" />
     <Compile Include="Data\Migrations\202001251554307_AddSyncedUsersTable.designer.cs">
       <DependentUpon>202001251554307_AddSyncedUsersTable.cs</DependentUpon>
