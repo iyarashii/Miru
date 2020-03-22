@@ -12,26 +12,28 @@ using System.Threading.Tasks;
 namespace Miru.Data
 {
     // contains the business logic that uses the local db
-    public class MiruDbService
+    public class MiruDbService : IMiruDbService
     {
         // constructor
-        public MiruDbService(ShellViewModel viewModelContext)
+        public MiruDbService(ICurrentSeasonModel currentSeasonModel, ICurrentUserAnimeListModel currentUserAnimeListModel)
         {
-            // set view model context
-            ViewModelContext = viewModelContext;
+            // TODO: check if you can somehow set view model context in the constructor
+            // dependency injection
+            CurrentSeason = currentSeasonModel;
+            CurrentUserAnimeList = currentUserAnimeListModel;
 
             // if there is no local senpai data file get the JSON from senpai.moe
             GetSenpaiData();
         }
 
         // stores view model's context
-        public ShellViewModel ViewModelContext { get; set; }
+        public IShellViewModel ViewModelContext { get; set; }
 
         // stores data model of the current anime season
-        public CurrentSeasonModel CurrentSeason { get; set; } = new CurrentSeasonModel();
+        public ICurrentSeasonModel CurrentSeason { get; set; }
 
         // stores data model of the currently synced user's anime list
-        public CurrentUserAnimeListModel CurrentUserAnimeList { get; set; } = new CurrentUserAnimeListModel();
+        public ICurrentUserAnimeListModel CurrentUserAnimeList { get; set; }
 
         // load data from the last sync
         public void LoadLastSyncedData()

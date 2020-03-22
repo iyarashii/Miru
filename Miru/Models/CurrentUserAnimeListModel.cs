@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace Miru.Models
 {
-    public class CurrentUserAnimeListModel
+    public class CurrentUserAnimeListModel : ICurrentUserAnimeListModel
     {
         // stores anime list of the currently synced user
         public UserAnimeList UserAnimeListData { get; private set; }

@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace Miru.Models
 {
-    public class CurrentSeasonModel
+    public class CurrentSeasonModel : ICurrentSeasonModel
     {
         // stores data model of the current anime season
         public Season SeasonData { get; private set; }

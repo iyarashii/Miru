@@ -10,12 +10,12 @@ using ToastNotifications.Messages;
 
 namespace Miru.ViewModels
 {
-    public class ShellViewModel : Screen
+    public class ShellViewModel : Screen, IShellViewModel
     {
         // private fields that are used with properties in this class
         private string _typedInUsername;
         private string _appStatusText;
-        private SortedAnimeListEntries _sortedAnimeListEntries = new SortedAnimeListEntries();
+        private ISortedAnimeListEntries _sortedAnimeListEntries;
         private MiruAppStatus _appStatus;
         private ApplicationTheme _currentApplicationTheme;
         private SolidColorBrush _daysOfTheWeekBrush;
@@ -27,10 +27,18 @@ namespace Miru.ViewModels
         private string _userAnimeListURL;
 
         // constructor
-        public ShellViewModel()
+        public ShellViewModel(ISortedAnimeListEntries sortedAnimeListEntries, IMiruDbService miruDbService, IContentDialogWrapper contentDialog)
         {
-            // create new instance of db service
-            DbService = new MiruDbService(this);
+            // dependency injection
+            _sortedAnimeListEntries = sortedAnimeListEntries;
+
+            // assign db service to the injected instance
+            DbService = miruDbService;
+
+            ContentDialog = contentDialog;
+
+            // set db service viewmodel context to this view model
+            DbService.ViewModelContext = this;
 
             // set system's local time zone as initially selected time zone
             SelectedTimeZone = TimeZoneInfo.Local;
@@ -50,8 +58,10 @@ namespace Miru.ViewModels
 
         #region properties
 
+        public IContentDialogWrapper ContentDialog { get; set; }
+
         // stores MiruDbService's instance that contains most of the business logic
-        public MiruDbService DbService { get; set; }
+        public IMiruDbService DbService { get; set; }
 
         // stores collection of the time zones used by the system
         public ReadOnlyCollection<TimeZoneInfo> TimeZones { get; } = TimeZoneInfo.GetSystemTimeZones();
@@ -128,7 +138,7 @@ namespace Miru.ViewModels
         }
 
         // stores anime models sorted for each day of the week
-        public SortedAnimeListEntries SortedAnimeListEntries
+        public ISortedAnimeListEntries SortedAnimeListEntries
         {
             get { return _sortedAnimeListEntries; }
             set
@@ -210,7 +220,7 @@ namespace Miru.ViewModels
         public string MalUserName
         {
             get { return _malUserName; }
-            set 
+            set
             {
                 _malUserName = value;
                 NotifyOfPropertyChange(() => MalUserName);
@@ -221,7 +231,7 @@ namespace Miru.ViewModels
         }
 
         // tells whether there is synced user data
-        public bool IsSynced 
+        public bool IsSynced
         {
             get
             {
@@ -234,8 +244,8 @@ namespace Miru.ViewModels
         public string UserAnimeListURL
         {
             get { return _userAnimeListURL; }
-            set 
-            { 
+            set
+            {
                 _userAnimeListURL = $@"https://myanimelist.net/animelist/{ value }";
                 NotifyOfPropertyChange(() => UserAnimeListURL);
             }
@@ -351,48 +361,46 @@ namespace Miru.ViewModels
         // event handler for the Clear db button
         public async Task ClearDatabase()
         {
-            ModernWpf.Controls.ContentDialog clearDatabaseDialog = new ModernWpf.Controls.ContentDialog
-            {
-                Title = "Clear the database?",
-                PrimaryButtonText = "Yes",
-                CloseButtonText = "No",
-                DefaultButton = ModernWpf.Controls.ContentDialogButton.Primary,
-            };
+            ContentDialog.Title = "Clear the database?";
+            // TODO: maybe add method for content dialog config
+            ContentDialog.PrimaryButtonText = "Yes";
+            ContentDialog.CloseButtonText = "No";
+            ContentDialog.DefaultButton = ModernWpf.Controls.ContentDialogButton.Primary;
+
+            //CanChangeDisplayedAnimeList = false;
+            AppStatus = MiruAppStatus.ClearingDatabase;
 
             // display confirmation pop-up window
-            var result = await clearDatabaseDialog.ShowAsync();
-            
+            var result = await ContentDialog.ShowAsync();
+
             if (result == ModernWpf.Controls.ContentDialogResult.Primary)
             {
-                AppStatus = MiruAppStatus.ClearingDatabase;
                 DbService.ClearDb();
                 MalUserName = string.Empty;
                 TypedInUsername = string.Empty;
                 DbService.ChangeDisplayedAnimeList(SelectedDisplayedAnimeList, SelectedTimeZone, SelectedDisplayedAnimeType);
-                AppStatus = MiruAppStatus.Idle;
             }
+            AppStatus = MiruAppStatus.Idle;
         }
 
         // event handler for "Update data from senpai" button
         public async Task UpdateSenpaiData()
         {
-            ModernWpf.Controls.ContentDialog updateSenpaiDialog = new ModernWpf.Controls.ContentDialog
-            {
-                Title = "Update data from senpai.moe?",
-                PrimaryButtonText = "Yes",
-                CloseButtonText = "No",
-                DefaultButton = ModernWpf.Controls.ContentDialogButton.Primary,
-            };
+            ContentDialog.Title = "Update data from senpai.moe?";
+            ContentDialog.PrimaryButtonText = "Yes";
+            ContentDialog.CloseButtonText = "No";
+            ContentDialog.DefaultButton = ModernWpf.Controls.ContentDialogButton.Primary;
+
+            AppStatus = MiruAppStatus.Syncing;
 
             // display confirmation pop-up window
-            var result = await updateSenpaiDialog.ShowAsync();
-            
+            var result = await ContentDialog.ShowAsync();
+
             if (result == ModernWpf.Controls.ContentDialogResult.Primary)
             {
-                AppStatus = MiruAppStatus.Syncing;
                 DbService.UpdateSenpaiData();
-                AppStatus = MiruAppStatus.Idle;
             }
+            AppStatus = MiruAppStatus.Idle;
         }
 
         // opens MAL anime page

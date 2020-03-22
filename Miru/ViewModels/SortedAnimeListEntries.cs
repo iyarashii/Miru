@@ -8,7 +8,7 @@ using System.Linq;
 namespace Miru.ViewModels
 {
     // wires up sorted anime list data to the correct properties that are used by the view
-    public class SortedAnimeListEntries : PropertyChangedBase
+    public class SortedAnimeListEntries : PropertyChangedBase, ISortedAnimeListEntries
     {
         private ICollection<MiruAiringAnimeModel> _mondayAiringAnimeList;
         private ICollection<MiruAiringAnimeModel> _tuesdayAiringAnimeList;
@@ -17,7 +17,6 @@ namespace Miru.ViewModels
         private ICollection<MiruAiringAnimeModel> _fridayAiringAnimeList;
         private ICollection<MiruAiringAnimeModel> _saturdayAiringAnimeList;
         private ICollection<MiruAiringAnimeModel> _sundayAiringAnimeList;
-        private ICollection<AnimeListEntry> _airedAnimeList;
 
         public ICollection<MiruAiringAnimeModel> MondayAiringAnimeList
         {
@@ -65,11 +64,6 @@ namespace Miru.ViewModels
             set { _sundayAiringAnimeList = value; NotifyOfPropertyChange(() => SundayAiringAnimeList); }
         }
 
-        public ICollection<AnimeListEntry> AiredAnimeList
-        {
-            get { return _airedAnimeList; }
-            set { _airedAnimeList = value; NotifyOfPropertyChange(() => AiredAnimeList); }
-        }
 
         // orders the airing anime list entries by the days
         public void SortAiringAnime(List<MiruAiringAnimeModel> airingAnimeModels, AnimeListType animeListType)

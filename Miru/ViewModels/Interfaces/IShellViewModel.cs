@@ -1,0 +1,47 @@
+﻿using Miru.Data;
+using ModernWpf;
+using System;
+using System.Collections.ObjectModel;
+using System.Threading.Tasks;
+using System.Windows.Media;
+
+namespace Miru.ViewModels
+{
+    public interface IShellViewModel
+    {
+        MiruAppStatus AppStatus { get; set; }
+        string AppStatusText { get; set; }
+        bool CanChangeDisplayedAnimeList { get; set; }
+        IContentDialogWrapper ContentDialog { get; set; }
+        ApplicationTheme CurrentApplicationTheme { get; set; }
+        SolidColorBrush DaysOfTheWeekBrush { get; set; }
+        IMiruDbService DbService { get; set; }
+        bool IsDarkModeOn { get; set; }
+        bool IsSynced { get; }
+        string MalUserName { get; set; }
+        AnimeListType SelectedDisplayedAnimeList { get; set; }
+        AnimeType SelectedDisplayedAnimeType { get; set; }
+        TimeZoneInfo SelectedTimeZone { get; set; }
+        ISortedAnimeListEntries SortedAnimeListEntries { get; set; }
+        DateTime SyncDate { get; set; }
+        ReadOnlyCollection<TimeZoneInfo> TimeZones { get; }
+        string TypedInUsername { get; set; }
+        string UserAnimeListURL { get; set; }
+
+        bool CanSyncUserAnimeList(string typedInUsername, MiruAppStatus appStatus, bool syncSeasonList);
+
+        void ChangeTheme();
+
+        Task ClearDatabase();
+
+        void CopyAnimeTitleToClipboard(string animeTitle);
+
+        void OnThemeChange();
+
+        void OpenAnimeURL(string URL);
+
+        Task SyncUserAnimeList(string typedInUsername, MiruAppStatus appStatus, bool seasonSyncOn);
+
+        Task UpdateSenpaiData();
+    }
+}
