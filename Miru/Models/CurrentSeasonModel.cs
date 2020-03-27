@@ -5,6 +5,13 @@ namespace Miru.Models
 {
     public class CurrentSeasonModel : ICurrentSeasonModel
     {
+        public CurrentSeasonModel(IJikan jikanWrapper)
+        {
+            JikanWrapper = jikanWrapper;
+        }
+
+        private IJikan JikanWrapper { get; }
+
         // stores data model of the current anime season
         public Season SeasonData { get; private set; }
 
@@ -14,7 +21,7 @@ namespace Miru.Models
             // get current season
             try
             {
-                SeasonData = await Constants.jikan.GetSeason();
+                SeasonData = await JikanWrapper.GetSeason();
             }
             catch (System.Net.Http.HttpRequestException)
             {
@@ -27,7 +34,7 @@ namespace Miru.Models
                 await Task.Delay(requestRetryDelayInMs);
                 try
                 {
-                    SeasonData = await Constants.jikan.GetSeason();
+                    SeasonData = await JikanWrapper.GetSeason();
                 }
                 catch (System.Net.Http.HttpRequestException)
                 {

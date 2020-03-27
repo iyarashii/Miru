@@ -58,10 +58,10 @@ namespace Miru.ViewModels
 
         #region properties
 
-        public IContentDialogWrapper ContentDialog { get; set; }
+        public IContentDialogWrapper ContentDialog { get; }
 
         // stores MiruDbService's instance that contains most of the business logic
-        public IMiruDbService DbService { get; set; }
+        public IMiruDbService DbService { get; }
 
         // stores collection of the time zones used by the system
         public ReadOnlyCollection<TimeZoneInfo> TimeZones { get; } = TimeZoneInfo.GetSystemTimeZones();
@@ -414,7 +414,7 @@ namespace Miru.ViewModels
         {
             string copyNotification = $"'{ animeTitle }' copied to the clipboard!";
             System.Windows.Clipboard.SetText(animeTitle);
-            Constants.notifier.ShowInformation(copyNotification, Constants.messageOptions);
+            Constants.ToastNotifier.ShowInformation(copyNotification, Constants.MessageOptions);
         }
 
         #endregion event handlers and guard methods

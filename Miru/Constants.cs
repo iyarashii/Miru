@@ -10,14 +10,7 @@ namespace Miru
 {
     public static class Constants
     {
-        //static Constants()
-        //{
-
-        //}
-        // Initialize JikanWrapper
-        public readonly static IJikan jikan = new Jikan();
-
-        public readonly static Notifier notifier = new Notifier(config =>
+        public static Notifier ToastNotifier { get; } = new Notifier(config =>
         {
             config.PositionProvider = new WindowPositionProvider(
                 parentWindow: App.Current.MainWindow,
@@ -32,7 +25,7 @@ namespace Miru
             config.Dispatcher = App.Current.Dispatcher;
         });
 
-        public readonly static MessageOptions messageOptions = new MessageOptions { FreezeOnMouseEnter = false };
+        public static MessageOptions MessageOptions { get; } = new MessageOptions { FreezeOnMouseEnter = false };
         public static string SenpaiFilePath { get; } = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "senpai.json");
         public static string SenpaiDataSourceURL { get; } = @"http://www.senpai.moe/export.php?type=json&src=raw";
     }

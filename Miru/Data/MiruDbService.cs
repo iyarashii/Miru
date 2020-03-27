@@ -15,25 +15,28 @@ namespace Miru.Data
     public class MiruDbService : IMiruDbService
     {
         // constructor
-        public MiruDbService(ICurrentSeasonModel currentSeasonModel, ICurrentUserAnimeListModel currentUserAnimeListModel)
+        public MiruDbService(ICurrentSeasonModel currentSeasonModel, ICurrentUserAnimeListModel currentUserAnimeListModel, IJikan jikanWrapper)
         {
             // TODO: check if you can somehow set view model context in the constructor
             // dependency injection
             CurrentSeason = currentSeasonModel;
             CurrentUserAnimeList = currentUserAnimeListModel;
+            JikanWrapper = jikanWrapper;
 
             // if there is no local senpai data file get the JSON from senpai.moe
             GetSenpaiData();
         }
 
+        private IJikan JikanWrapper { get; }
+
         // stores view model's context
         public IShellViewModel ViewModelContext { get; set; }
 
         // stores data model of the current anime season
-        public ICurrentSeasonModel CurrentSeason { get; set; }
+        public ICurrentSeasonModel CurrentSeason { get; }
 
         // stores data model of the currently synced user's anime list
-        public ICurrentUserAnimeListModel CurrentUserAnimeList { get; set; }
+        public ICurrentUserAnimeListModel CurrentUserAnimeList { get; }
 
         // load data from the last sync
         public void LoadLastSyncedData()
@@ -441,7 +444,7 @@ namespace Miru.Data
             try
             {
                 // get detailed anime info from the jikan API
-                output = await Constants.jikan.GetAnime(malId);
+                output = await JikanWrapper.GetAnime(malId);
             }
             catch (System.Net.Http.HttpRequestException)
             {
@@ -455,7 +458,7 @@ namespace Miru.Data
                 try
                 {
                     // get detailed anime info from the jikan API
-                    output = await Constants.jikan.GetAnime(malId);
+                    output = await JikanWrapper.GetAnime(malId);
                 }
                 catch (System.Net.Http.HttpRequestException)
                 {

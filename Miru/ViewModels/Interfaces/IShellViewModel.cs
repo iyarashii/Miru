@@ -12,10 +12,10 @@ namespace Miru.ViewModels
         MiruAppStatus AppStatus { get; set; }
         string AppStatusText { get; set; }
         bool CanChangeDisplayedAnimeList { get; set; }
-        IContentDialogWrapper ContentDialog { get; set; }
+        IContentDialogWrapper ContentDialog { get; }
         ApplicationTheme CurrentApplicationTheme { get; set; }
         SolidColorBrush DaysOfTheWeekBrush { get; set; }
-        IMiruDbService DbService { get; set; }
+        IMiruDbService DbService { get; }
         bool IsDarkModeOn { get; set; }
         bool IsSynced { get; }
         string MalUserName { get; set; }

@@ -4,6 +4,7 @@ using Miru.Data;
 using Miru.Models;
 using Miru.ViewModels;
 using System.Windows;
+using JikanDotNet;
 
 namespace Miru
 {
@@ -22,6 +23,7 @@ namespace Miru
             builder.RegisterType<ContentDialogWrapper>().As<IContentDialogWrapper>();
             builder.RegisterType<CurrentSeasonModel>().As<ICurrentSeasonModel>();
             builder.RegisterType<CurrentUserAnimeListModel>().As<ICurrentUserAnimeListModel>();
+            builder.RegisterType<Jikan>().As<IJikan>().SingleInstance();
         }
 
         protected override void ConfigureBootstrapper()

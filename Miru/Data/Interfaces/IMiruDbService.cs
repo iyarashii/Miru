@@ -9,8 +9,8 @@ namespace Miru.Data
 {
     public interface IMiruDbService
     {
-        ICurrentSeasonModel CurrentSeason { get; set; }
-        ICurrentUserAnimeListModel CurrentUserAnimeList { get; set; }
+        ICurrentSeasonModel CurrentSeason { get; }
+        ICurrentUserAnimeListModel CurrentUserAnimeList { get; }
         IShellViewModel ViewModelContext { get; set; }
 
         void ChangeDisplayedAnimeList(AnimeListType animeListType, TimeZoneInfo selectedTimeZone, AnimeType selectedAnimeType);
