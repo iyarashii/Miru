@@ -341,3 +341,4 @@ healthchecksdb
 /miru_icon.png
 /miru_icon.ico
 /.sonarqube
+/XUnitResults.xml
