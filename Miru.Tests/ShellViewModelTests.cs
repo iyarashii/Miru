@@ -8,6 +8,9 @@ using Miru.ViewModels;
 using Xunit;
 using Miru.Data;
 using Autofac.Extras.Moq;
+using ModernWpf;
+using System.Windows.Media;
+using Moq;
 
 namespace Miru.Tests
 {
@@ -36,6 +39,7 @@ namespace Miru.Tests
         [Theory]
         [InlineData("ab", MiruAppStatus.Syncing)]
         [InlineData("", MiruAppStatus.Idle)]
+        [InlineData("      ", MiruAppStatus.Idle)]
         [InlineData("", MiruAppStatus.Syncing)]
         [InlineData("ab", MiruAppStatus.Loading)]
         [InlineData("aaaaaaaaaaaa", MiruAppStatus.ClearingDatabase)]
@@ -54,5 +58,52 @@ namespace Miru.Tests
                 Assert.False(actual);
             }
         }
+
+        public static IEnumerable<object[]> GetBrushColors()
+        {
+            yield return new object[] { ApplicationTheme.Dark, Brushes.SeaGreen };
+            yield return new object[] { ApplicationTheme.Light, Brushes.Lime };
+            yield return new object[] { int.MaxValue, Brushes.Red };
+        }
+
+        [Theory]
+        [MemberData(nameof(GetBrushColors))]
+        public void UpdateBrushColors_ShouldSetDifferentColorsForDifferentThemes(ApplicationTheme applicationTheme, SolidColorBrush expected)
+        {
+
+            using (var mock = AutoMock.GetLoose())
+            {
+                // Arrange
+                var cls = mock.Create<ShellViewModel>();
+                ThemeManager.Current.ApplicationTheme = applicationTheme;
+
+                // Act
+                cls.UpdateBrushColors();
+
+                // Assert
+                 Assert.Equal(expected, cls.DaysOfTheWeekBrush);
+            }
+        }
+
+        [Theory]
+        [InlineData(ApplicationTheme.Dark, ApplicationTheme.Light)]
+        [InlineData(ApplicationTheme.Light, ApplicationTheme.Dark)]
+        public void ChangeTheme_ShouldChangeThemeToDifferentOneThanTheCurrent(ApplicationTheme currentTheme, ApplicationTheme expected)
+        {
+            using (var mock = AutoMock.GetLoose())
+            {
+                // Arrange
+                var cls = mock.Create<ShellViewModel>();
+                cls.CurrentApplicationTheme = currentTheme;
+
+                // Act
+                cls.ChangeTheme();
+
+                // Assert
+                Assert.Equal(expected, cls.CurrentApplicationTheme);
+            }
+        }
+
+
     }
 }
