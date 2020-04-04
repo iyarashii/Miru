@@ -173,7 +173,8 @@ namespace Miru.Data
             // open temporary connection to the database
             using (var db = new MiruDbContext())
             {
-                ViewModelContext.AppStatusText = "Getting detailed user anime list data...";
+                ViewModelContext.UpdateAppStatus(MiruAppStatus.Busy, "Getting detailed user anime list data...");
+
                 // get user anime list with the detailed info
                 detailedAnimeList = await GetDetailedUserAnimeList(db, CurrentUserAnimeList.UserAnimeListData.Anime);
 
@@ -186,14 +187,16 @@ namespace Miru.Data
                 // if 'get current season list' button was used to sync data
                 if (seasonSyncOn)
                 {
-                    ViewModelContext.AppStatusText = "Getting detailed current season anime data...";
+                    ViewModelContext.UpdateAppStatus(MiruAppStatus.Busy, "Getting detailed current season anime data...");
+
                     // update user anime list with season anime detailed data if it fails return false
                     if (!await GetDetailedSeasonAnimeListInfo(detailedAnimeList))
                     {
                         return false;
                     }
                 }
-                ViewModelContext.AppStatusText = "Parse day and time from the broadcast string...";
+                ViewModelContext.UpdateAppStatus(MiruAppStatus.Busy, "Parse day and time from the broadcast string...");
+
                 // parse day and time from the broadcast string
                 detailedAnimeList = ParseTimeFromBroadcast(detailedAnimeList);
 

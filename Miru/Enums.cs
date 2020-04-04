@@ -6,12 +6,9 @@ namespace Miru
 {
     public enum MiruAppStatus
     {
-        Loading,
+        Busy,
         Idle,
-        CheckingInternetConnection,
-        Syncing,
-        InternetConnectionProblems,
-        ClearingDatabase
+        InternetConnectionProblems
     }
 
     [TypeConverter(typeof(EnumDescriptionTypeConverter))]

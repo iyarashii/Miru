@@ -54,7 +54,7 @@ namespace Miru.ViewModels
             DbService.LoadLastSyncedData();
 
             // set default app status
-            AppStatus = MiruAppStatus.Idle;
+            UpdateAppStatus(MiruAppStatus.Idle);
         }
 
         #region properties
@@ -153,7 +153,7 @@ namespace Miru.ViewModels
         public string AppStatusText
         {
             get { return _appStatusText; }
-            set
+            private set
             {
                 _appStatusText = $"Miru -- { value }";
                 NotifyOfPropertyChange(() => AppStatus);
@@ -165,7 +165,7 @@ namespace Miru.ViewModels
         public MiruAppStatus AppStatus
         {
             get { return _appStatus; }
-            set
+            private set
             {
                 _appStatus = value;
                 switch (value)
@@ -175,29 +175,14 @@ namespace Miru.ViewModels
                         CanChangeDisplayedAnimeList = true;
                         break;
 
-                    case MiruAppStatus.CheckingInternetConnection:
-                        AppStatusText = "Checking internet connection...";
-                        CanChangeDisplayedAnimeList = false;
-                        break;
-
-                    case MiruAppStatus.Syncing:
-                        AppStatusText = "Syncing...";
+                    case MiruAppStatus.Busy:
+                        AppStatusText = "Busy...";
                         CanChangeDisplayedAnimeList = false;
                         break;
 
                     case MiruAppStatus.InternetConnectionProblems:
                         AppStatusText = "Problems with internet connection!";
                         CanChangeDisplayedAnimeList = true;
-                        break;
-
-                    case MiruAppStatus.Loading:
-                        AppStatusText = "Loading data from the last synchronization...";
-                        CanChangeDisplayedAnimeList = false;
-                        break;
-
-                    case MiruAppStatus.ClearingDatabase:
-                        AppStatusText = "Clearing the database...";
-                        CanChangeDisplayedAnimeList = false;
                         break;
                 }
             }
@@ -239,7 +224,6 @@ namespace Miru.ViewModels
                 return !string.IsNullOrEmpty(MalUserName);
             }
         }
-
 
         // stores current user anime list URL
         public string UserAnimeListURL
@@ -312,37 +296,37 @@ namespace Miru.ViewModels
         /// <returns></returns>
         public async Task SyncUserAnimeList(string typedInUsername, MiruAppStatus appStatus, bool seasonSyncOn)
         {
-            AppStatus = MiruAppStatus.Syncing;
-
             // get user's watching status anime list
-            AppStatusText = "Getting current user anime list...";
+            UpdateAppStatus(MiruAppStatus.Busy, "Getting current user anime list...");
+
             var getCurrentUserAnimeListResult = await DbService.CurrentUserAnimeList.GetCurrentUserAnimeList(TypedInUsername);
+
             if (!getCurrentUserAnimeListResult.Success)
             {
-                AppStatus = MiruAppStatus.InternetConnectionProblems;
-                AppStatusText = getCurrentUserAnimeListResult.ErrorMessage;
+                UpdateAppStatus(MiruAppStatus.Idle, getCurrentUserAnimeListResult.ErrorMessage);
                 return;
             }
 
             // get current season
             if (seasonSyncOn)
             {
-                AppStatusText = "Getting current season anime list...";
+                UpdateAppStatus(MiruAppStatus.Busy, "Getting current season anime list...");
+
                 if (!await DbService.CurrentSeason.GetCurrentSeasonList(2000))
                 {
-                    AppStatus = MiruAppStatus.InternetConnectionProblems;
+                    UpdateAppStatus(MiruAppStatus.InternetConnectionProblems);
                     return;
                 }
             }
 
             // save user data to the db
-            AppStatusText = "Saving user data to the db...";
+            UpdateAppStatus(MiruAppStatus.Busy, "Saving user data to the db...");
             await DbService.SaveSyncedUserData();
 
             // save api data to the database
             if (!await DbService.SaveDetailedAnimeListData(seasonSyncOn))
             {
-                AppStatus = MiruAppStatus.InternetConnectionProblems;
+                UpdateAppStatus(MiruAppStatus.InternetConnectionProblems);
                 return;
             }
 
@@ -354,55 +338,48 @@ namespace Miru.ViewModels
             SelectedTimeZone = TimeZoneInfo.Local;
 
             // update app status
-            AppStatus = MiruAppStatus.Idle;
+            UpdateAppStatus(MiruAppStatus.Idle);
         }
 
         // event handler for the Clear db button
         public async Task ClearDatabase()
         {
-            ContentDialog.Title = "Clear the database?";
-            // TODO: maybe add method for content dialog config
-            ContentDialog.PrimaryButtonText = "Yes";
-            ContentDialog.CloseButtonText = "No";
-            ContentDialog.DefaultButton = ModernWpf.Controls.ContentDialogButton.Primary;
+            ContentDialog.Config("Clear the database?");
 
-            // TODO: do something about appstatus and appstatustext
-            AppStatus = MiruAppStatus.ClearingDatabase;
-            AppStatusText = "Waiting...";
+            UpdateAppStatus(MiruAppStatus.Busy, "Waiting for user action...");
 
             // display confirmation pop-up window
             var result = await ContentDialog.ShowAsync();
 
             if (result == ModernWpf.Controls.ContentDialogResult.Primary)
             {
+                UpdateAppStatus(MiruAppStatus.Busy, "Clearing database...");
                 DbService.ClearDb();
                 MalUserName = string.Empty;
                 TypedInUsername = string.Empty;
                 DbService.ChangeDisplayedAnimeList(SelectedDisplayedAnimeList, SelectedTimeZone, SelectedDisplayedAnimeType);
             }
-            AppStatus = MiruAppStatus.Idle;
+
+            UpdateAppStatus(MiruAppStatus.Idle);
         }
 
         // event handler for "Update data from senpai" button
         public async Task UpdateSenpaiData()
         {
-            ContentDialog.Title = "Update data from senpai.moe?";
-            ContentDialog.PrimaryButtonText = "Yes";
-            ContentDialog.CloseButtonText = "No";
-            ContentDialog.DefaultButton = ModernWpf.Controls.ContentDialogButton.Primary;
+            ContentDialog.Config("Update data from senpai.moe?");
 
-            // TODO: do something about appstatus and appstatustext
-            AppStatus = MiruAppStatus.Syncing;
-            AppStatusText = "Waiting for user action...";
+            UpdateAppStatus(MiruAppStatus.Busy, "Waiting for user action...");
 
             // display confirmation pop-up window
             var result = await ContentDialog.ShowAsync();
 
             if (result == ModernWpf.Controls.ContentDialogResult.Primary)
             {
+                UpdateAppStatus(MiruAppStatus.Busy, "Updating data from senpai...");
                 DbService.UpdateSenpaiData();
             }
-            AppStatus = MiruAppStatus.Idle;
+
+            UpdateAppStatus(MiruAppStatus.Idle);
         }
 
         // opens MAL anime page
@@ -417,6 +394,18 @@ namespace Miru.ViewModels
             string copyNotification = $"'{ animeTitle }' copied to the clipboard!";
             System.Windows.Clipboard.SetText(animeTitle);
             Constants.ToastNotifier.ShowInformation(copyNotification, Constants.MessageOptions);
+        }
+
+        public void UpdateAppStatus(MiruAppStatus newAppStatus, string detailedAppStatusDescription = null)
+        {
+            if (AppStatus != newAppStatus)
+            {
+                AppStatus = newAppStatus;
+            }
+            if (detailedAppStatusDescription != null)
+            {
+                AppStatusText = detailedAppStatusDescription;
+            }
         }
 
         #endregion event handlers and guard methods

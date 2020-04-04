@@ -9,8 +9,8 @@ namespace Miru.ViewModels
 {
     public interface IShellViewModel
     {
-        MiruAppStatus AppStatus { get; set; }
-        string AppStatusText { get; set; }
+        MiruAppStatus AppStatus { get; }
+        string AppStatusText { get; }
         bool CanChangeDisplayedAnimeList { get; set; }
         IContentDialogWrapper ContentDialog { get; }
         ApplicationTheme CurrentApplicationTheme { get; set; }
@@ -43,5 +43,6 @@ namespace Miru.ViewModels
         Task SyncUserAnimeList(string typedInUsername, MiruAppStatus appStatus, bool seasonSyncOn);
 
         Task UpdateSenpaiData();
+        void UpdateAppStatus(MiruAppStatus newAppStatus, string detailedAppStatusDescription = null);
     }
 }
