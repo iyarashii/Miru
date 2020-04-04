@@ -23,7 +23,14 @@ namespace Miru
             builder.RegisterType<ContentDialogWrapper>().As<IContentDialogWrapper>();
             builder.RegisterType<CurrentSeasonModel>().As<ICurrentSeasonModel>();
             builder.RegisterType<CurrentUserAnimeListModel>().As<ICurrentUserAnimeListModel>();
-            builder.RegisterType<Jikan>().As<IJikan>().SingleInstance();
+            builder.RegisterType<Jikan>().As<IJikan>()
+                .WithParameters(
+                new[] 
+                { 
+                    new NamedParameter("surpressException", false), 
+                    new NamedParameter("useHttps", true) 
+                })
+                .SingleInstance();
         }
 
         protected override void ConfigureBootstrapper()

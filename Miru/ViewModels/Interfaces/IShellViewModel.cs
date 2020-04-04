@@ -36,7 +36,7 @@ namespace Miru.ViewModels
 
         void CopyAnimeTitleToClipboard(string animeTitle);
 
-        void OnThemeChange();
+        void UpdateBrushColors();
 
         void OpenAnimeURL(string URL);
 

@@ -7,6 +7,6 @@ namespace Miru.Models
     {
         UserAnimeList UserAnimeListData { get; }
 
-        Task<bool> GetCurrentUserAnimeList(string malUsername, int requestRetryDelayInMs);
+        Task<(bool Success, string ErrorMessage)> GetCurrentUserAnimeList(string malUsername);
     }
 }

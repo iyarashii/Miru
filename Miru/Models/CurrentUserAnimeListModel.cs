@@ -1,4 +1,6 @@
 ﻿using JikanDotNet;
+using System;
+using System.Runtime.ExceptionServices;
 using System.Threading.Tasks;
 
 namespace Miru.Models
@@ -16,7 +18,7 @@ namespace Miru.Models
         public UserAnimeList UserAnimeListData { get; private set; }
 
         // get user's watching status anime list
-        public async Task<bool> GetCurrentUserAnimeList(string malUsername, int requestRetryDelayInMs)
+        public async Task<(bool Success, string ErrorMessage)> GetCurrentUserAnimeList(string malUsername)
         {
             try
             {
@@ -25,24 +27,14 @@ namespace Miru.Models
             }
             catch (System.Net.Http.HttpRequestException)
             {
-                return false;
+                return (false, "Problems with internet connection!");
+            }
+            catch (JikanDotNet.Exceptions.JikanRequestException)
+            {
+                return (false, $"Could not find the user \"{ malUsername }\". Please make sure you typed their name in correctly.");
             }
 
-            // if there is no response from API wait for a specified time and retry
-            while (UserAnimeListData == null)
-            {
-                await Task.Delay(requestRetryDelayInMs);
-                try
-                {
-                    // get user's watching status anime list
-                    UserAnimeListData = await JikanWrapper.GetUserAnimeList(malUsername, UserAnimeListExtension.Watching);
-                }
-                catch (System.Net.Http.HttpRequestException)
-                {
-                    return false;
-                }
-            }
-            return true;
+            return (true, string.Empty);
         }
     }
 }

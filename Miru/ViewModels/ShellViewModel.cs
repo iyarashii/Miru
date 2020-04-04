@@ -4,6 +4,7 @@ using ModernWpf;
 using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Media;
 using ToastNotifications.Messages;
@@ -44,7 +45,7 @@ namespace Miru.ViewModels
             SelectedTimeZone = TimeZoneInfo.Local;
 
             // apply correct colors to the days of the week depending on windows theme during runtime
-            OnThemeChange();
+            UpdateBrushColors();
 
             // set app theme to prevent the app to react to windows theme change while the app is running
             ThemeManager.Current.ApplicationTheme = CurrentApplicationTheme;
@@ -270,11 +271,11 @@ namespace Miru.ViewModels
         public void ChangeTheme()
         {
             ThemeManager.Current.ApplicationTheme = CurrentApplicationTheme == ApplicationTheme.Dark ? ApplicationTheme.Light : ApplicationTheme.Dark;
-            OnThemeChange();
+            UpdateBrushColors();
         }
 
         // fired on theme change
-        public void OnThemeChange()
+        public void UpdateBrushColors()
         {
             CurrentApplicationTheme = ThemeManager.Current.ActualApplicationTheme;
             if (CurrentApplicationTheme == ApplicationTheme.Dark)
@@ -295,7 +296,7 @@ namespace Miru.ViewModels
         public bool CanSyncUserAnimeList(string typedInUsername, MiruAppStatus appStatus, bool syncSeasonList)
         {
             if (string.IsNullOrWhiteSpace(typedInUsername) ||
-                typedInUsername.Length < 2 ||
+                typedInUsername.Length < 2 || typedInUsername.Any(char.IsWhiteSpace) ||
                 typedInUsername.Length > 16 ||
                 (appStatus != MiruAppStatus.Idle && appStatus != MiruAppStatus.InternetConnectionProblems))
             {
@@ -311,17 +312,15 @@ namespace Miru.ViewModels
         /// <returns></returns>
         public async Task SyncUserAnimeList(string typedInUsername, MiruAppStatus appStatus, bool seasonSyncOn)
         {
-            // stop method execution if there is a problem with internet connection
-            if (!await InternetConnectionViewModel.CheckAppInternetConnectionStatus(this))
-            {
-                return;
-            }
+            AppStatus = MiruAppStatus.Syncing;
 
             // get user's watching status anime list
             AppStatusText = "Getting current user anime list...";
-            if (!await DbService.CurrentUserAnimeList.GetCurrentUserAnimeList(TypedInUsername, 2000))
+            var getCurrentUserAnimeListResult = await DbService.CurrentUserAnimeList.GetCurrentUserAnimeList(TypedInUsername);
+            if (!getCurrentUserAnimeListResult.Success)
             {
                 AppStatus = MiruAppStatus.InternetConnectionProblems;
+                AppStatusText = getCurrentUserAnimeListResult.ErrorMessage;
                 return;
             }
 
@@ -367,8 +366,9 @@ namespace Miru.ViewModels
             ContentDialog.CloseButtonText = "No";
             ContentDialog.DefaultButton = ModernWpf.Controls.ContentDialogButton.Primary;
 
-            //CanChangeDisplayedAnimeList = false;
+            // TODO: do something about appstatus and appstatustext
             AppStatus = MiruAppStatus.ClearingDatabase;
+            AppStatusText = "Waiting...";
 
             // display confirmation pop-up window
             var result = await ContentDialog.ShowAsync();
@@ -391,7 +391,9 @@ namespace Miru.ViewModels
             ContentDialog.CloseButtonText = "No";
             ContentDialog.DefaultButton = ModernWpf.Controls.ContentDialogButton.Primary;
 
+            // TODO: do something about appstatus and appstatustext
             AppStatus = MiruAppStatus.Syncing;
+            AppStatusText = "Waiting for user action...";
 
             // display confirmation pop-up window
             var result = await ContentDialog.ShowAsync();

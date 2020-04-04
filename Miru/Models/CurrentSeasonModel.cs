@@ -18,20 +18,12 @@ namespace Miru.Models
         // get current anime season data
         public async Task<bool> GetCurrentSeasonList(int requestRetryDelayInMs)
         {
-            // get current season
-            try
-            {
-                SeasonData = await JikanWrapper.GetSeason();
-            }
-            catch (System.Net.Http.HttpRequestException)
-            {
-                return false;
-            }
+            SeasonData = null;
 
+            // get current season
             // if there is no response from API wait for a specified time and retry
             while (SeasonData == null)
             {
-                await Task.Delay(requestRetryDelayInMs);
                 try
                 {
                     SeasonData = await JikanWrapper.GetSeason();
@@ -39,6 +31,14 @@ namespace Miru.Models
                 catch (System.Net.Http.HttpRequestException)
                 {
                     return false;
+                }
+                catch (JikanDotNet.Exceptions.JikanRequestException)
+                {
+                    await Task.Delay(requestRetryDelayInMs);
+                }
+                finally
+                {
+                    await Task.Delay(requestRetryDelayInMs);
                 }
             }
             return true;

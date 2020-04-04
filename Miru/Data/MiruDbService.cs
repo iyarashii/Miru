@@ -236,7 +236,7 @@ namespace Miru.Data
                 // try to get detailed anime info from the jikan API
                 try
                 {
-                    animeInfo = await TryToGetAnimeInfo(animeListEntry.MalId, 2000);
+                    animeInfo = await TryToGetAnimeInfo(animeListEntry.MalId, 500);
                 }
                 catch (NoInternetConnectionException)
                 {
@@ -300,7 +300,7 @@ namespace Miru.Data
                 // get detailed anime info from the jikan API
                 try
                 {
-                    animeInfo = await TryToGetAnimeInfo(seasonEntry.MalId, 3000);
+                    animeInfo = await TryToGetAnimeInfo(seasonEntry.MalId, 500);
                 }
                 catch (NoInternetConnectionException)
                 {
@@ -440,21 +440,11 @@ namespace Miru.Data
         // tries to get the detailed anime information about anime with the given mal id, retries after given delay until the internet connection is working
         public async Task<Anime> TryToGetAnimeInfo(long malId, int millisecondsDelay)
         {
-            Anime output;
-            try
-            {
-                // get detailed anime info from the jikan API
-                output = await JikanWrapper.GetAnime(malId);
-            }
-            catch (System.Net.Http.HttpRequestException)
-            {
-                throw new NoInternetConnectionException("No internet connection");
-            }
+            Anime output = null;
 
-            // if there is no response from API wait fo the given time and retry
+            // if there is no response from API wait for the given time and retry
             while (output == null)
             {
-                await Task.Delay(millisecondsDelay);
                 try
                 {
                     // get detailed anime info from the jikan API
@@ -463,6 +453,14 @@ namespace Miru.Data
                 catch (System.Net.Http.HttpRequestException)
                 {
                     throw new NoInternetConnectionException("No internet connection");
+                }
+                catch (JikanDotNet.Exceptions.JikanRequestException)
+                {
+                    await Task.Delay(millisecondsDelay);
+                }
+                finally
+                {
+                    await Task.Delay(millisecondsDelay);
                 }
             }
             return output;
