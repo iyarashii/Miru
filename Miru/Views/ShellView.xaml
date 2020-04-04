@@ -119,6 +119,7 @@
                 <TextBox x:Name="TypedInUsername"
                     IsEnabled="{Binding CanChangeDisplayedAnimeList}"
                     FontSize="14"
+                    MaxLength="16"
                     ui:ControlHelper.Header="MAL Username"
                     Margin="0,0,0,10"
                     ui:ControlHelper.PlaceholderText="Enter MAL username to get that user's anime list data" />
