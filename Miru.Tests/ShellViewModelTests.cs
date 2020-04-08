@@ -37,13 +37,13 @@ namespace Miru.Tests
         }
 
         [Theory]
-        [InlineData("ab", MiruAppStatus.Syncing)]
+        [InlineData("ab", MiruAppStatus.Busy)]
         [InlineData("", MiruAppStatus.Idle)]
         [InlineData("      ", MiruAppStatus.Idle)]
-        [InlineData("", MiruAppStatus.Syncing)]
-        [InlineData("ab", MiruAppStatus.Loading)]
-        [InlineData("aaaaaaaaaaaa", MiruAppStatus.ClearingDatabase)]
-        [InlineData("aaa", MiruAppStatus.CheckingInternetConnection)]
+        [InlineData("", MiruAppStatus.Busy)]
+        [InlineData("ab", MiruAppStatus.Idle)]
+        [InlineData("aaaaaaaaaaaa", MiruAppStatus.Busy)]
+        [InlineData("aaa", MiruAppStatus.Busy)]
         public void CanSyncUserAnimeList_IncorrectUsernameLengthOrAppStatusShouldReturnFalse(string typedInUsername, MiruAppStatus appStatus)
         {
             using (var mock = AutoMock.GetLoose())

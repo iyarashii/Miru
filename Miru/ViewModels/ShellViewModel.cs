@@ -26,6 +26,7 @@ namespace Miru.ViewModels
         private AnimeType _selectedDisplayedAnimeType;
         private string _malUserName;
         private string _userAnimeListURL;
+        private string _currentAnimeNameFilter;
 
         // constructor
         public ShellViewModel(ISortedAnimeListEntries sortedAnimeListEntries, IMiruDbService miruDbService, IContentDialogWrapper contentDialog)
@@ -82,7 +83,7 @@ namespace Miru.ViewModels
                 _selectedDisplayedAnimeList = value;
 
                 // update displayed animes
-                DbService.ChangeDisplayedAnimeList(value, SelectedTimeZone, SelectedDisplayedAnimeType);
+                DbService.ChangeDisplayedAnimeList(value, SelectedTimeZone, SelectedDisplayedAnimeType, CurrentAnimeNameFilter);
                 NotifyOfPropertyChange(() => SelectedDisplayedAnimeList);
             }
         }
@@ -95,7 +96,7 @@ namespace Miru.ViewModels
             {
                 _selectedDisplayedAnimeType = value;
 
-                DbService.ChangeDisplayedAnimeList(SelectedDisplayedAnimeList, SelectedTimeZone, value);
+                DbService.ChangeDisplayedAnimeList(SelectedDisplayedAnimeList, SelectedTimeZone, value, CurrentAnimeNameFilter);
                 NotifyOfPropertyChange(() => SelectedDisplayedAnimeType);
             }
         }
@@ -109,8 +110,19 @@ namespace Miru.ViewModels
                 _selectedTimeZone = value;
 
                 // update displayed animes
-                DbService.ChangeDisplayedAnimeList(SelectedDisplayedAnimeList, value, SelectedDisplayedAnimeType);
+                DbService.ChangeDisplayedAnimeList(SelectedDisplayedAnimeList, value, SelectedDisplayedAnimeType, CurrentAnimeNameFilter);
                 NotifyOfPropertyChange(() => SelectedTimeZone);
+            }
+        }
+
+        public string CurrentAnimeNameFilter
+        {
+            get { return _currentAnimeNameFilter; }
+            set
+            {
+                _currentAnimeNameFilter = value;
+                DbService.ChangeDisplayedAnimeList(SelectedDisplayedAnimeList, SelectedTimeZone, SelectedDisplayedAnimeType, value);
+                NotifyOfPropertyChange(() => CurrentAnimeNameFilter);
             }
         }
 
@@ -346,7 +358,7 @@ namespace Miru.ViewModels
         {
             ContentDialog.Config("Clear the database?");
 
-            UpdateAppStatus(MiruAppStatus.Busy, "Waiting for user action...");
+            UpdateAppStatus(MiruAppStatus.Busy);
 
             // display confirmation pop-up window
             var result = await ContentDialog.ShowAsync();
@@ -357,7 +369,7 @@ namespace Miru.ViewModels
                 DbService.ClearDb();
                 MalUserName = string.Empty;
                 TypedInUsername = string.Empty;
-                DbService.ChangeDisplayedAnimeList(SelectedDisplayedAnimeList, SelectedTimeZone, SelectedDisplayedAnimeType);
+                DbService.ChangeDisplayedAnimeList(SelectedDisplayedAnimeList, SelectedTimeZone, SelectedDisplayedAnimeType, CurrentAnimeNameFilter);
             }
 
             UpdateAppStatus(MiruAppStatus.Idle);
@@ -368,7 +380,7 @@ namespace Miru.ViewModels
         {
             ContentDialog.Config("Update data from senpai.moe?");
 
-            UpdateAppStatus(MiruAppStatus.Busy, "Waiting for user action...");
+            UpdateAppStatus(MiruAppStatus.Busy);
 
             // display confirmation pop-up window
             var result = await ContentDialog.ShowAsync();

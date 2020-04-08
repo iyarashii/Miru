@@ -74,7 +74,11 @@
                         <DataGridTemplateColumn Width="*">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <Image Source="{Binding ImageURL}" Stretch="Fill">
+                                    <Grid>
+                                        <Grid.Background>
+                                            <!--use mal icon as a placeholder for anime images-->
+                                            <ImageBrush ImageSource="/MAL-icon-256.png"/>
+                                        </Grid.Background>
                                         <i:Interaction.Triggers>
                                             <i:EventTrigger EventName="MouseDown">
                                                 <cal:ActionMessage MethodName="OpenAnimeURL">
@@ -82,7 +86,10 @@
                                                 </cal:ActionMessage>
                                             </i:EventTrigger>
                                         </i:Interaction.Triggers>
-                                    </Image>
+                                        
+                                        <!--<Image Source="/MAL-icon-256.png" />-->
+                                        <Image x:Name="animeMALImage" Source="{Binding ImageURL}" Stretch="Fill"/>
+                                    </Grid>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
@@ -91,7 +98,9 @@
             </ControlTemplate>
         </ResourceDictionary>
     </Window.Resources>
-
+    <!--<Window.InputBindings>
+        <KeyBinding Gesture="CTRL+F" Command=""/>
+    </Window.InputBindings>-->
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="20" />
@@ -105,17 +114,32 @@
             <ColumnDefinition Width="20" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="20" />
+            <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="20" />
         </Grid.RowDefinitions>
 
+        
+        <!-- Row 0 -->
+        <StackPanel Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="8" Orientation="Horizontal">
+            
+            <!--anime name filtering textbox-->
+            <TextBox x:Name="CurrentAnimeNameFilter"
+                     IsEnabled="{Binding CanChangeDisplayedAnimeList}"
+                     local:TextBoxHelper.FocusGesture="CTRL+F"
+                     MaxLength="100"
+                     ui:ControlHelper.Header="Filter by anime name"
+                     />
+            
+        </StackPanel>
+        
         <!-- Row 1 -->
-        <StackPanel Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="7" Orientation="Horizontal">
+        <StackPanel Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="8" Orientation="Horizontal">
             <WrapPanel x:Name="FirstRowPanel">
 
+                <!--MAL username input box -->
                 <TextBox x:Name="TypedInUsername"
                     IsEnabled="{Binding CanChangeDisplayedAnimeList}"
                     FontSize="14"
@@ -124,6 +148,7 @@
                     Margin="0,0,0,10"
                     ui:ControlHelper.PlaceholderText="Enter MAL username to get that user's anime list data" />
 
+                <!-- sync button -->
                 <Button Margin="10,13,10,0" IsDefault="True" MinWidth="100"
                  Content="Sync">
                     <i:Interaction.Triggers>
@@ -156,6 +181,7 @@
                     </TextBlock.Inlines>
                 </TextBlock>
 
+                <!--season sync button-->
                 <Button Margin="10,13,10,0" MinWidth="100"
                  Content="Get current season list">
                     <i:Interaction.Triggers>
@@ -169,6 +195,7 @@
                     </i:Interaction.Triggers>
                 </Button>
 
+                <!--anime list type "watching" etc.-->
                 <ComboBox x:Name="DisplayedAnimeList"
                       Margin="0,0,0,10"
                       IsEnabled="{Binding CanChangeDisplayedAnimeList}"
@@ -176,8 +203,43 @@
                       SelectedItem="{Binding SelectedDisplayedAnimeList}"
                       ItemsSource="{Binding Source={local:EnumBindingSource {x:Type enums:AnimeListType}}}">
                 </ComboBox>
+                
+                <!--anime type: OVA, TV etc.-->
+                <ComboBox x:Name="DisplayedAnimeType"
+                      Margin="10,0,0,10"
+                      IsEnabled="{Binding CanChangeDisplayedAnimeList}"
+                      ui:ControlHelper.Header="Displayed anime type"
+                      SelectedItem="{Binding SelectedDisplayedAnimeType}"
+                      ItemsSource="{Binding Source={local:EnumBindingSource {x:Type enums:AnimeType}}}">
+                </ComboBox>
+                
 
-                <ui:ToggleSwitch Width="100" Margin="30,0,0,10" Header="Dark mode" OffContent="Off" OnContent="On" IsOn="{Binding IsDarkModeOn}">
+                <!--time zone selection-->
+                <ComboBox x:Name="TimeZone"
+                      Margin="10,0,0,10"
+                      IsEnabled="{Binding CanChangeDisplayedAnimeList}"
+                      ui:ControlHelper.Header="Time zone"
+                      SelectedItem="{Binding SelectedTimeZone}"
+                      ItemsSource="{Binding TimeZones}"
+                      DisplayMemberPath="DisplayName">
+                </ComboBox>
+
+                <!--clear db button-->
+                <Button x:Name="ClearDatabase"
+                        Margin="10,13,0,0"
+                        IsEnabled="{Binding CanChangeDisplayedAnimeList}"
+                        Content="Clear db">
+                </Button>
+
+                <!--update senpai button-->
+                <Button x:Name="UpdateSenpaiData"
+                        IsEnabled="{Binding CanChangeDisplayedAnimeList}"
+                        Margin="10,13,0,0"
+                        Content="Update data from senpai">
+                </Button>
+
+                <!--dark mode switch-->
+                <ui:ToggleSwitch Width="100" Margin="10,0,0,10" Header="Dark mode" OffContent="Off" OnContent="On" IsOn="{Binding IsDarkModeOn}">
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="Toggled">
                             <cal:ActionMessage MethodName="ChangeTheme">
@@ -186,34 +248,6 @@
                     </i:Interaction.Triggers>
                 </ui:ToggleSwitch>
 
-                <ComboBox x:Name="TimeZone"
-                      Margin="0,0,0,10"
-                      IsEnabled="{Binding CanChangeDisplayedAnimeList}"
-                      ui:ControlHelper.Header="Time zone"
-                      SelectedItem="{Binding SelectedTimeZone}"
-                      ItemsSource="{Binding TimeZones}"
-                      DisplayMemberPath="DisplayName">
-                </ComboBox>
-
-                <ComboBox x:Name="DisplayedAnimeType"
-                      Margin="10,0,0,10"
-                      IsEnabled="{Binding CanChangeDisplayedAnimeList}"
-                      ui:ControlHelper.Header="Displayed anime type"
-                      SelectedItem="{Binding SelectedDisplayedAnimeType}"
-                      ItemsSource="{Binding Source={local:EnumBindingSource {x:Type enums:AnimeType}}}">
-                </ComboBox>
-
-                <Button x:Name="ClearDatabase"
-                        Margin="10,13,0,0"
-                        IsEnabled="{Binding CanChangeDisplayedAnimeList}"
-                        Content="Clear db">
-                </Button>
-
-                <Button x:Name="UpdateSenpaiData"
-                        IsEnabled="{Binding CanChangeDisplayedAnimeList}"
-                        Margin="10,13,0,0"
-                        Content="Update data from senpai">
-                </Button>
             </WrapPanel>
         </StackPanel>
 

@@ -104,7 +104,7 @@ namespace Miru.Data
         }
 
         // changes data for the displayed anime list to match time zone and anime list type passed as parameters
-        public void ChangeDisplayedAnimeList(AnimeListType animeListType, TimeZoneInfo selectedTimeZone, AnimeType selectedAnimeType)
+        public void ChangeDisplayedAnimeList(AnimeListType animeListType, TimeZoneInfo selectedTimeZone, AnimeType selectedAnimeType, string animeNameFilter)
         {
             using (var db = new MiruDbContext())
             {
@@ -126,6 +126,12 @@ namespace Miru.Data
                         airingAnimeList.RemoveAll(x => x.Type != "ONA");
                         break;
                 }
+
+                if (!string.IsNullOrWhiteSpace(animeNameFilter))
+                {
+                    airingAnimeList.RemoveAll(x => !(x.Title.IndexOf(animeNameFilter, StringComparison.OrdinalIgnoreCase) >= 0));
+                }
+
 
                 DateTime utc;
                 foreach (var airingAnime in airingAnimeList)
