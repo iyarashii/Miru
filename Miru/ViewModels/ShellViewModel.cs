@@ -359,8 +359,6 @@ namespace Miru.ViewModels
             ContentDialog.Config("Clear the database?");
 
             UpdateAppStatus(MiruAppStatus.Busy);
-            //TODO: remove this 2nd method of local image cache clearing
-            //SortedAnimeListEntries.HideAnimes();
 
             // display confirmation pop-up window
             var result = await ContentDialog.ShowAsync();
@@ -374,30 +372,9 @@ namespace Miru.ViewModels
                 DbService.ClearLocalImageCache();
                 DbService.ChangeDisplayedAnimeList(SelectedDisplayedAnimeList, SelectedTimeZone, SelectedDisplayedAnimeType, CurrentAnimeNameFilter);
             }
-            //TODO: remove this 2nd method of local image cache clearing
-            //GC.WaitForPendingFinalizers();
-            //GC.Collect();
 
             UpdateAppStatus(MiruAppStatus.Idle);
         }
-
-        //TODO: remove this 2nd method of local image cache clearing
-        //public void ClearCache(MiruAppStatus appStatus, SortedAnimeListEntries sortedAnimeListEntries)
-        //{
-        //    UpdateAppStatus(MiruAppStatus.Busy, "Clearing cache...");
-        //    DbService.ClearLocalImageCache();
-        //    UpdateAppStatus(MiruAppStatus.Idle, "Local image cache cleared!");
-        //}
-
-        //public bool CanClearCache(MiruAppStatus appStatus, SortedAnimeListEntries sortedAnimeListEntries)
-        //{
-        //    if(sortedAnimeListEntries.NoAnimesDisplayed && appStatus != MiruAppStatus.Busy)
-        //    {
-        //        return true;
-        //    }
-
-        //    return false;
-        //}
 
         // event handler for "Update data from senpai" button
         public async Task UpdateSenpaiData()
