@@ -13,7 +13,9 @@ namespace Miru.ViewModels
         ICollection<MiruAiringAnimeModel> ThursdayAiringAnimeList { get; set; }
         ICollection<MiruAiringAnimeModel> TuesdayAiringAnimeList { get; set; }
         ICollection<MiruAiringAnimeModel> WednesdayAiringAnimeList { get; set; }
-
+        //TODO: remove this 2nd method of local image cache clearing
+        //bool NoAnimesDisplayed { get; set; }
+        //void HideAnimes();
         void SortAiringAnime(List<MiruAiringAnimeModel> airingAnimeModels, AnimeListType animeListType);
     }
 }

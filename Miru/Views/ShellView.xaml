@@ -88,7 +88,7 @@
                                         </i:Interaction.Triggers>
                                         
                                         <!--<Image Source="/MAL-icon-256.png" />-->
-                                        <Image x:Name="animeMALImage" Source="{Binding ImageURL}" Stretch="Fill"/>
+                                        <Image x:Name="animeMALImage" Source="{Binding LocalImageSource}" Stretch="Fill"/>
                                     </Grid>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
@@ -132,7 +132,18 @@
                      MaxLength="100"
                      ui:ControlHelper.Header="Filter by anime name"
                      />
-            
+            <!-- TODO: remove this 2nd method of local image cache clearing -->
+            <!--<Button Margin="10,13,10,0" MinWidth="100"
+                 Content="Clear image cache">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="Click">
+                        <cal:ActionMessage MethodName="ClearCache">
+                            <cal:Parameter Value="{Binding AppStatus}" />
+                            <cal:Parameter Value="{Binding SortedAnimeListEntries}" />
+                        </cal:ActionMessage>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </Button>-->
         </StackPanel>
         
         <!-- Row 1 -->

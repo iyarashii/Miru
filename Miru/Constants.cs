@@ -27,6 +27,7 @@ namespace Miru
 
         public static MessageOptions MessageOptions { get; } = new MessageOptions { FreezeOnMouseEnter = false };
         public static string SenpaiFilePath { get; } = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "senpai.json");
+        public static string ImageCacheFolderPath { get; } = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), "MiruCache"); 
         public static string SenpaiDataSourceURL { get; } = @"http://www.senpai.moe/export.php?type=json&src=raw";
     }
 }

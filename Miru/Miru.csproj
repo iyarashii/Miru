@@ -150,6 +150,10 @@
     <Compile Include="Data\Migrations\202003151920351_AddAnimeType.designer.cs">
       <DependentUpon>202003151920351_AddAnimeType.cs</DependentUpon>
     </Compile>
+    <Compile Include="Data\Migrations\202004091158179_AddLocalImagePathToMiruAnimeModel.cs" />
+    <Compile Include="Data\Migrations\202004091158179_AddLocalImagePathToMiruAnimeModel.designer.cs">
+      <DependentUpon>202004091158179_AddLocalImagePathToMiruAnimeModel.cs</DependentUpon>
+    </Compile>
     <Compile Include="Data\Migrations\Configuration.cs" />
     <Compile Include="Data\MiruDbContext.cs" />
     <Compile Include="Data\MiruDbService.cs" />
@@ -213,6 +217,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Data\Migrations\202003151920351_AddAnimeType.resx">
       <DependentUpon>202003151920351_AddAnimeType.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Data\Migrations\202004091158179_AddLocalImagePathToMiruAnimeModel.resx">
+      <DependentUpon>202004091158179_AddLocalImagePathToMiruAnimeModel.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

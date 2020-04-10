@@ -63,11 +63,28 @@ namespace Miru.ViewModels
             get { return _sundayAiringAnimeList; }
             set { _sundayAiringAnimeList = value; NotifyOfPropertyChange(() => SundayAiringAnimeList); }
         }
+        //TODO: remove this 2nd method of local image cache clearing
+        //private bool _noAnimesDisplayed;
+        //public bool NoAnimesDisplayed
+        //{
+        //    get { return _noAnimesDisplayed; }
+        //    set 
+        //    { 
+        //        _noAnimesDisplayed = value;  
+        //        NotifyOfPropertyChange(() => NoAnimesDisplayed); 
+        //    }
+        //}
 
 
         // orders the airing anime list entries by the days
         public void SortAiringAnime(List<MiruAiringAnimeModel> airingAnimeModels, AnimeListType animeListType)
         {
+            //TODO: remove this 2nd method of local image cache clearing
+            //if(airingAnimeModels.Count != 0)
+            //{
+            //    NoAnimesDisplayed = false;
+            //}
+
             switch (animeListType)
             {
                 case AnimeListType.AiringAndWatching:
@@ -90,5 +107,17 @@ namespace Miru.ViewModels
             SaturdayAiringAnimeList = airingAnimeModels.Where(a => a.LocalBroadcastTime.Value.DayOfWeek == DayOfWeek.Saturday).OrderBy(s => s.LocalBroadcastTime.Value.TimeOfDay).ToList();
             SundayAiringAnimeList = airingAnimeModels.Where(a => a.LocalBroadcastTime.Value.DayOfWeek == DayOfWeek.Sunday).OrderBy(s => s.LocalBroadcastTime.Value.TimeOfDay).ToList();
         }
+        //TODO: remove this 2nd method of local image cache clearing
+        //public void HideAnimes()
+        //{
+        //    MondayAiringAnimeList = null;
+        //    TuesdayAiringAnimeList = null;
+        //    WednesdayAiringAnimeList = null;
+        //    ThursdayAiringAnimeList = null;
+        //    FridayAiringAnimeList = null;
+        //    SaturdayAiringAnimeList = null;
+        //    SundayAiringAnimeList = null;
+        //    NoAnimesDisplayed = true;
+        //}
     }
 }

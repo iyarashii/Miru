@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace Miru.Data
@@ -69,6 +70,15 @@ namespace Miru.Data
             {
                 db.Database.ExecuteSqlCommand("TRUNCATE TABLE [MiruAiringAnimeModels]");
                 db.Database.ExecuteSqlCommand("TRUNCATE TABLE [SyncedMyAnimeListUsers]");
+            }
+        }
+
+        public void ClearLocalImageCache()
+        {
+            DirectoryInfo di = new DirectoryInfo(Constants.ImageCacheFolderPath);
+            foreach (FileInfo file in di.EnumerateFiles())
+            {
+                file.Delete();
             }
         }
 
@@ -227,6 +237,12 @@ namespace Miru.Data
         /// <returns></returns>
         public async Task<List<MiruAiringAnimeModel>> GetDetailedUserAnimeList(MiruDbContext db, ICollection<AnimeListEntry> currentUserAnimeListEntries)
         {
+            DirectoryInfo di = new DirectoryInfo(Constants.ImageCacheFolderPath);
+            if (!di.Exists)
+            {
+                di.Create();
+            }
+
             // get anime data from the db
             var detailedUserAnimeList = db.MiruAiringAnimeModels.ToList();
 
@@ -239,45 +255,52 @@ namespace Miru.Data
             // local variable that temporarily stores detailed anime info from the jikan API
             Anime animeInfo;
 
-            // for each airing anime from the animeListEntries collection
-            foreach (var animeListEntry in currentUserAnimeListEntries)
+            using (WebClient client = new WebClient())
             {
-                // try to get detailed anime info from the jikan API
-                try
+                // for each airing anime from the animeListEntries collection
+                foreach (var animeListEntry in currentUserAnimeListEntries)
                 {
-                    animeInfo = await TryToGetAnimeInfo(animeListEntry.MalId, 500);
-                }
-                catch (NoInternetConnectionException)
-                {
-                    return null;
-                }
-
-                // if the anime is already in the db just set IsOnWatchingList flag instead of adding it again
-                if (malIdsFromDb.Contains(animeListEntry.MalId))
-                {
-                    var modelToBeUpdated = detailedUserAnimeList.FirstOrDefault(x => x.MalId == animeListEntry.MalId);
-                    modelToBeUpdated.IsOnWatchingList = true;
-                    modelToBeUpdated.WatchedEpisodes = animeListEntry.WatchedEpisodes;
-                    modelToBeUpdated.TotalEpisodes = animeListEntry.TotalEpisodes;
-                    modelToBeUpdated.CurrentlyAiring = (animeListEntry.AiringStatus == AiringStatus.Airing);
-                }
-                else
-                {
-                    // add airing anime created from the animeInfo data to the airingAnimes list
-                    detailedUserAnimeList.Add(new MiruAiringAnimeModel
+                    // try to get detailed anime info from the jikan API
+                    try
                     {
-                        MalId = animeInfo.MalId,
-                        Broadcast = animeInfo.Broadcast ?? animeInfo.Aired.From.ToString(),
-                        Title = animeInfo.Title,
-                        ImageURL = animeInfo.ImageURL,
-                        TotalEpisodes = animeListEntry.TotalEpisodes,
-                        URL = animeListEntry.URL,
-                        WatchedEpisodes = animeListEntry.WatchedEpisodes,
-                        IsOnWatchingList = true,
-                        CurrentlyAiring = animeListEntry.AiringStatus == AiringStatus.Airing,
-                        Type = animeInfo.Type
-                    });
-                }
+                        animeInfo = await TryToGetAnimeInfo(animeListEntry.MalId, 500);
+                    }
+                    catch (NoInternetConnectionException)
+                    {
+                        return null;
+                    }
+
+                    // if the anime is already in the db just set IsOnWatchingList flag instead of adding it again
+                    if (malIdsFromDb.Contains(animeListEntry.MalId))
+                    {
+                        var modelToBeUpdated = detailedUserAnimeList.FirstOrDefault(x => x.MalId == animeListEntry.MalId);
+                        modelToBeUpdated.IsOnWatchingList = true;
+                        modelToBeUpdated.WatchedEpisodes = animeListEntry.WatchedEpisodes;
+                        modelToBeUpdated.TotalEpisodes = animeListEntry.TotalEpisodes;
+                        modelToBeUpdated.CurrentlyAiring = (animeListEntry.AiringStatus == AiringStatus.Airing);
+                    }
+                    else
+                    {
+                        string localImagePath = Path.Combine(Constants.ImageCacheFolderPath, $"{ animeInfo.MalId }.jpg");
+                        // add airing anime created from the animeInfo data to the airingAnimes list
+                        detailedUserAnimeList.Add(new MiruAiringAnimeModel
+                        {
+                            MalId = animeInfo.MalId,
+                            Broadcast = animeInfo.Broadcast ?? animeInfo.Aired.From.ToString(),
+                            Title = animeInfo.Title,
+                            ImageURL = animeInfo.ImageURL,
+                            LocalImagePath = localImagePath,
+                            TotalEpisodes = animeListEntry.TotalEpisodes,
+                            URL = animeListEntry.URL,
+                            WatchedEpisodes = animeListEntry.WatchedEpisodes,
+                            IsOnWatchingList = true,
+                            CurrentlyAiring = animeListEntry.AiringStatus == AiringStatus.Airing,
+                            Type = animeInfo.Type
+                        });
+
+                        client.DownloadFile(animeInfo.ImageURL, localImagePath);
+                    }
+                } 
             }
             return detailedUserAnimeList;
         }
@@ -301,41 +324,48 @@ namespace Miru.Data
             // remove anime entries marked as 'for kids' from the list
             currentSeasonList.RemoveAll(x => x.Kids == true);
 
-            // add season animes that are not a part of miruAnimeModelsList
-            foreach (var seasonEntry in currentSeasonList)
+            using (WebClient client = new WebClient())
             {
-                // local variable that temporarily stores detailed anime info from the jikan API
-                Anime animeInfo;
-                // get detailed anime info from the jikan API
-                try
+                // add season animes that are not a part of miruAnimeModelsList
+                foreach (var seasonEntry in currentSeasonList)
                 {
-                    animeInfo = await TryToGetAnimeInfo(seasonEntry.MalId, 500);
-                }
-                catch (NoInternetConnectionException)
-                {
-                    return false;
-                }
-                if (airingAnimesMalIDs.Contains(seasonEntry.MalId))
-                {
-                    var modelToBeUpdated = detailedUserAnimeList.FirstOrDefault(x => x.MalId == seasonEntry.MalId);
-                    modelToBeUpdated.CurrentlyAiring = true;
-                }
-                else
-                {
-                    // add airing anime created from the animeInfo data to the miruAnimeModelsList
-                    detailedUserAnimeList.Add(new MiruAiringAnimeModel
+                    // local variable that temporarily stores detailed anime info from the jikan API
+                    Anime animeInfo;
+                    // get detailed anime info from the jikan API
+                    try
                     {
-                        MalId = animeInfo.MalId,
-                        Broadcast = animeInfo.Broadcast ?? animeInfo.Aired.From.ToString(),
-                        Title = animeInfo.Title,
-                        ImageURL = animeInfo.ImageURL,
-                        //TotalEpisodes = eps,
-                        URL = seasonEntry.URL,
-                        IsOnWatchingList = false,
-                        CurrentlyAiring = true,
-                        Type = animeInfo.Type
-                    });
-                }
+                        animeInfo = await TryToGetAnimeInfo(seasonEntry.MalId, 500);
+                    }
+                    catch (NoInternetConnectionException)
+                    {
+                        return false;
+                    }
+                    if (airingAnimesMalIDs.Contains(seasonEntry.MalId))
+                    {
+                        var modelToBeUpdated = detailedUserAnimeList.FirstOrDefault(x => x.MalId == seasonEntry.MalId);
+                        modelToBeUpdated.CurrentlyAiring = true;
+                    }
+                    else
+                    {
+                        string localImagePath = Path.Combine(Constants.ImageCacheFolderPath, $"{ animeInfo.MalId }.jpg");
+
+                        // add airing anime created from the animeInfo data to the miruAnimeModelsList
+                        detailedUserAnimeList.Add(new MiruAiringAnimeModel
+                        {
+                            MalId = animeInfo.MalId,
+                            Broadcast = animeInfo.Broadcast ?? animeInfo.Aired.From.ToString(),
+                            Title = animeInfo.Title,
+                            ImageURL = animeInfo.ImageURL,
+                            LocalImagePath = localImagePath,
+                            //TotalEpisodes = eps,
+                            URL = seasonEntry.URL,
+                            IsOnWatchingList = false,
+                            CurrentlyAiring = true,
+                            Type = animeInfo.Type
+                        });
+                        client.DownloadFile(animeInfo.ImageURL, localImagePath);
+                    }
+                } 
             }
 
             // detailed anime list updated successfully
@@ -434,9 +464,14 @@ namespace Miru.Data
 
                 // get local time zone info
                 var localTimeZone = TimeZoneInfo.Local;
+                // TODO: fix time zones to adjust to daylight saving time
+                //var utcOffset = new DateTimeOffset(DateTime.UtcNow, TimeSpan.Zero);
+
 
                 // convert JST to your computer's local time
+                //localBroadcastTime = utc.AddHours(localTimeZone.GetUtcOffset(utcOffset).Hours);
                 localBroadcastTime = utc.AddHours(localTimeZone.BaseUtcOffset.Hours);
+                //localBroadcastTime = TimeZoneInfo.ConvertTimeFromUtc(utc, localTimeZone);
 
                 // save parsed date and time to the model's property
                 airingAnime.LocalBroadcastTime = localBroadcastTime;

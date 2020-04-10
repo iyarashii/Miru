@@ -1,6 +1,8 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.IO;
+using System.Windows.Media.Imaging;
 
 namespace Miru.Models
 {
@@ -15,6 +17,23 @@ namespace Miru.Models
         public string Title { get; set; }
         public string URL { get; set; }
         public string ImageURL { get; set; }
+
+        public string LocalImagePath { get; set; }
+
+        // returns cached image to the view
+        public BitmapImage LocalImageSource
+        {
+            get
+            {
+                var source = new BitmapImage();
+                source.BeginInit();
+                source.UriSource = new Uri(LocalImagePath, UriKind.RelativeOrAbsolute);
+                source.CacheOption = BitmapCacheOption.OnLoad;
+                source.EndInit(); 
+                // not sure if GC still needs this source.Freeze();
+                return source;
+            }
+        }
         public DateTime? LocalBroadcastTime { get; set; }
         public DateTime? JSTBroadcastTime { get; set; }
         public bool IsOnWatchingList { get; set; }
