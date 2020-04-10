@@ -142,14 +142,10 @@ namespace Miru.Data
                     airingAnimeList.RemoveAll(x => !(x.Title.IndexOf(animeNameFilter, StringComparison.OrdinalIgnoreCase) >= 0));
                 }
 
-
-                DateTime utc;
                 foreach (var airingAnime in airingAnimeList)
                 {
-                    // covert JST to utc
-                    utc = airingAnime.JSTBroadcastTime.Value.AddHours(-9);
-                    // set selected timezone as local broadcast time
-                    airingAnime.LocalBroadcastTime = utc.AddHours(selectedTimeZone.BaseUtcOffset.Hours);
+                    // save JST broadcast time converted to the selected timezone as local broadcast time
+                    airingAnime.LocalBroadcastTime = ConvertJstBroadcastTimeToSelectedTimeZone(airingAnime.JSTBroadcastTime.Value, selectedTimeZone);
                 }
 
                 // set airing anime list entries for each day of the week
@@ -252,14 +248,14 @@ namespace Miru.Data
             // get mal ids of the anime models that were in the db
             var malIdsFromDb = new HashSet<long>(detailedUserAnimeList.Select(x => x.MalId));
 
-            // local variable that temporarily stores detailed anime info from the jikan API
-            Anime animeInfo;
-
             using (WebClient client = new WebClient())
             {
                 // for each airing anime from the animeListEntries collection
                 foreach (var animeListEntry in currentUserAnimeListEntries)
                 {
+                    // local variable that temporarily stores detailed anime info from the jikan API
+                    Anime animeInfo;
+
                     // try to get detailed anime info from the jikan API
                     try
                     {
@@ -384,7 +380,6 @@ namespace Miru.Data
             string[] broadcastWords;
             DateTime broadcastTime;
             DateTime time;
-            DateTime localBroadcastTime;
 
             // deserialize data from senpai as a backup source of anime broadcast time
             var senpaiEntries = JsonConvert.DeserializeObject<SenpaiEntryModel>(File.ReadAllText(Constants.SenpaiFilePath));
@@ -459,26 +454,24 @@ namespace Miru.Data
                 // save JST broadcast time parsed from the Broadcast string
                 airingAnime.JSTBroadcastTime = broadcastTime;
 
-                // covert JST to UTC
-                var utc = broadcastTime.AddHours(-9);
-
-                // get local time zone info
-                var localTimeZone = TimeZoneInfo.Local;
-                // TODO: fix time zones to adjust to daylight saving time
-                //var utcOffset = new DateTimeOffset(DateTime.UtcNow, TimeSpan.Zero);
-
-
-                // convert JST to your computer's local time
-                //localBroadcastTime = utc.AddHours(localTimeZone.GetUtcOffset(utcOffset).Hours);
-                localBroadcastTime = utc.AddHours(localTimeZone.BaseUtcOffset.Hours);
-                //localBroadcastTime = TimeZoneInfo.ConvertTimeFromUtc(utc, localTimeZone);
-
-                // save parsed date and time to the model's property
-                airingAnime.LocalBroadcastTime = localBroadcastTime;
+                // save JST broadcast time converted to your computer's local time to the model's property
+                airingAnime.LocalBroadcastTime = ConvertJstBroadcastTimeToSelectedTimeZone(broadcastTime, TimeZoneInfo.Local);
             }
 
             // return list of airing animes with parsed data saved in LocalBroadcastTime properties
             return detailedAnimeList;
+        }
+
+        private DateTime ConvertJstBroadcastTimeToSelectedTimeZone(DateTime broadcastTime, TimeZoneInfo selectedTimeZone)
+        {
+            // covert JST to UTC
+            var broadcastTimeInSelectedTimeZone = TimeZoneInfo.ConvertTimeToUtc(broadcastTime, TimeZoneInfo.FindSystemTimeZoneById("Tokyo Standard Time"));
+
+            // get the UTC offset for the selected time zone
+            var utcOffset = selectedTimeZone.GetUtcOffset(DateTime.UtcNow);
+
+            // return Japanese broadcast time converted to selected time zone
+            return broadcastTimeInSelectedTimeZone.Add(utcOffset);
         }
 
         // tries to get the detailed anime information about anime with the given mal id, retries after given delay until the internet connection is working
