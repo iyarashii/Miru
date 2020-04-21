@@ -31,6 +31,7 @@ namespace Miru
                     new NamedParameter("useHttps", true) 
                 })
                 .SingleInstance();
+            builder.RegisterType<ProcessProxy>().As<IProcessProxy>();
         }
 
         protected override void ConfigureBootstrapper()

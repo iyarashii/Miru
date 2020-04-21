@@ -32,7 +32,7 @@ namespace Miru.ViewModels
 
         void ChangeTheme();
 
-        Task ClearDatabase();
+        Task OpenClearDatabaseDialog();
 
         void CopyAnimeTitleToClipboard(string animeTitle);
 
@@ -44,5 +44,6 @@ namespace Miru.ViewModels
 
         Task UpdateSenpaiData();
         void UpdateAppStatus(MiruAppStatus newAppStatus, string detailedAppStatusDescription = null);
+        void ClearAppData();
     }
 }

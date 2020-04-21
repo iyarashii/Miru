@@ -29,7 +29,7 @@ namespace Miru.ViewModels
         private string _currentAnimeNameFilter;
 
         // constructor
-        public ShellViewModel(ISortedAnimeListEntries sortedAnimeListEntries, IMiruDbService miruDbService, IContentDialogWrapper contentDialog)
+        public ShellViewModel(ISortedAnimeListEntries sortedAnimeListEntries, IMiruDbService miruDbService, IContentDialogWrapper contentDialog, IProcessProxy processProxy)
         {
             // dependency injection
             _sortedAnimeListEntries = sortedAnimeListEntries;
@@ -38,6 +38,8 @@ namespace Miru.ViewModels
             DbService = miruDbService;
 
             ContentDialog = contentDialog;
+
+            AnimeURLProcessProxy = processProxy;
 
             // set db service viewmodel context to this view model
             DbService.ViewModelContext = this;
@@ -60,6 +62,10 @@ namespace Miru.ViewModels
 
         #region properties
 
+        // process proxy instance
+        public IProcessProxy AnimeURLProcessProxy { get; }
+
+        // content dialog instance
         public IContentDialogWrapper ContentDialog { get; }
 
         // stores MiruDbService's instance that contains most of the business logic
@@ -304,7 +310,6 @@ namespace Miru.ViewModels
         /// <summary>
         /// Performs synchronization to the typed-in user's anime list on a button click (wired up via caliburn micro).
         /// </summary>
-        /// <param name="typedInUsername"></param>
         /// <returns></returns>
         public async Task SyncUserAnimeList(string typedInUsername, MiruAppStatus appStatus, bool seasonSyncOn)
         {
@@ -354,7 +359,7 @@ namespace Miru.ViewModels
         }
 
         // event handler for the Clear db button
-        public async Task ClearDatabase()
+        public async Task OpenClearDatabaseDialog()
         {
             ContentDialog.Config("Clear the database?");
 
@@ -365,15 +370,20 @@ namespace Miru.ViewModels
 
             if (result == ModernWpf.Controls.ContentDialogResult.Primary)
             {
-                UpdateAppStatus(MiruAppStatus.Busy, "Clearing database...");
-                DbService.ClearDb();
-                MalUserName = string.Empty;
-                TypedInUsername = string.Empty;
-                DbService.ClearLocalImageCache();
-                DbService.ChangeDisplayedAnimeList(SelectedDisplayedAnimeList, SelectedTimeZone, SelectedDisplayedAnimeType, CurrentAnimeNameFilter);
+                ClearAppData();
             }
 
             UpdateAppStatus(MiruAppStatus.Idle);
+        }
+
+        public void ClearAppData()
+        {
+            UpdateAppStatus(MiruAppStatus.Busy, "Clearing data...");
+            DbService.ClearDb();
+            DbService.ClearLocalImageCache();
+            MalUserName = string.Empty;
+            TypedInUsername = string.Empty;
+            CurrentAnimeNameFilter = string.Empty;
         }
 
         // event handler for "Update data from senpai" button
@@ -395,10 +405,12 @@ namespace Miru.ViewModels
             UpdateAppStatus(MiruAppStatus.Idle);
         }
 
+
+
         // opens MAL anime page
         public void OpenAnimeURL(string URL)
         {
-            Process.Start(URL);
+            AnimeURLProcessProxy.Start(URL);
         }
 
         // saves anime title to the clipboard and shows notification describing this action
@@ -406,7 +418,7 @@ namespace Miru.ViewModels
         {
             string copyNotification = $"'{ animeTitle }' copied to the clipboard!";
             System.Windows.Clipboard.SetText(animeTitle);
-            Constants.ToastNotifier.ShowInformation(copyNotification, Constants.MessageOptions);
+            Constants.ToastNotifier.ShowInformation(copyNotification, Constants.DoNotFreezeOnMouseEnter);
         }
 
         public void UpdateAppStatus(MiruAppStatus newAppStatus, string detailedAppStatusDescription = null)
