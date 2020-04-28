@@ -29,7 +29,7 @@ namespace Miru.ViewModels
         private string _currentAnimeNameFilter;
 
         // constructor
-        public ShellViewModel(ISortedAnimeListEntries sortedAnimeListEntries, IMiruDbService miruDbService, IContentDialogWrapper contentDialog, IProcessProxy processProxy)
+        public ShellViewModel(ISortedAnimeListEntries sortedAnimeListEntries, IMiruDbService miruDbService, ISimpleContentDialog contentDialog, IProcessProxy processProxy, IClipboardWrapper clipboardWrapper, IToastNotifierWrapper toastNotifierWrapper)
         {
             // dependency injection
             _sortedAnimeListEntries = sortedAnimeListEntries;
@@ -40,6 +40,10 @@ namespace Miru.ViewModels
             ContentDialog = contentDialog;
 
             AnimeURLProcessProxy = processProxy;
+
+            ClipboardWrapper = clipboardWrapper;
+
+            ToastNotifierWrapper = toastNotifierWrapper;
 
             // set db service viewmodel context to this view model
             DbService.ViewModelContext = this;
@@ -62,11 +66,15 @@ namespace Miru.ViewModels
 
         #region properties
 
+        public IToastNotifierWrapper ToastNotifierWrapper { get; }
+
+        public IClipboardWrapper ClipboardWrapper { get; }
+
         // process proxy instance
         public IProcessProxy AnimeURLProcessProxy { get; }
 
         // content dialog instance
-        public IContentDialogWrapper ContentDialog { get; }
+        public ISimpleContentDialog ContentDialog { get; }
 
         // stores MiruDbService's instance that contains most of the business logic
         public IMiruDbService DbService { get; }
@@ -410,15 +418,17 @@ namespace Miru.ViewModels
         // opens MAL anime page
         public void OpenAnimeURL(string URL)
         {
-            AnimeURLProcessProxy.Start(URL);
+            //AnimeURLProcessProxy.Start(URL);
+            AnimeURLProcessProxy.StartInfo.FileName = URL;
+            AnimeURLProcessProxy.Start();
         }
 
         // saves anime title to the clipboard and shows notification describing this action
         public void CopyAnimeTitleToClipboard(string animeTitle)
         {
             string copyNotification = $"'{ animeTitle }' copied to the clipboard!";
-            System.Windows.Clipboard.SetText(animeTitle);
-            Constants.ToastNotifier.ShowInformation(copyNotification, Constants.DoNotFreezeOnMouseEnter);
+            ClipboardWrapper.SetText(animeTitle);
+            ToastNotifierWrapper.ShowInformation(copyNotification, ToastNotifierWrapper.DoNotFreezeOnMouseEnter);
         }
 
         public void UpdateAppStatus(MiruAppStatus newAppStatus, string detailedAppStatusDescription = null)

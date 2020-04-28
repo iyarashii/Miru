@@ -164,23 +164,27 @@
     <Compile Include="Models\Interfaces\ICurrentUserAnimeListModel.cs" />
     <Compile Include="Models\MiruAiringAnimeModel.cs" />
     <Compile Include="Models\SenpaiEntryModel.cs" />
+    <Compile Include="ViewModels\ClipboardWrapper.cs" />
+    <Compile Include="ViewModels\IClipboardWrapper.cs" />
     <Compile Include="ViewModels\InternetConnectionViewModel.cs" />
     <Compile Include="ViewModels\Interfaces\IShellViewModel.cs" />
     <Compile Include="ViewModels\Interfaces\ISortedAnimeListEntries.cs" />
     <Compile Include="ViewModels\Interfaces\IProcessProxy.cs" />
+    <Compile Include="ViewModels\IToastNotifierWrapper.cs" />
     <Compile Include="ViewModels\ProcessProxy.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="ViewModels\SortedAnimeListEntries.cs" />
     <Compile Include="Models\SyncedMyAnimeListUser.cs" />
     <Compile Include="ViewModels\ShellViewModel.cs" />
-    <Compile Include="ViewModels\ContentDialogWrapper.cs" />
+    <Compile Include="ViewModels\SimpleContentDialog.cs" />
+    <Compile Include="ViewModels\ToastNotifierWrapper.cs" />
     <Compile Include="Views\Extensions\EnumBindingSourceExtension.cs" />
     <Compile Include="Views\Converters\EnumDescriptionTypeConverter.cs" />
     <Compile Include="Views\Extensions\HyperlinkExtensions.cs" />
     <Compile Include="Views\Converters\InverseBooleanConverter.cs" />
     <Compile Include="Views\Extensions\RunVisibility.cs" />
-    <Compile Include="ViewModels\Interfaces\IContentDialogWrapper.cs" />
+    <Compile Include="ViewModels\Interfaces\ISimpleContentDialog.cs" />
     <Compile Include="Views\ShellView.xaml.cs">
       <DependentUpon>ShellView.xaml</DependentUpon>
     </Compile>

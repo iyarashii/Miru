@@ -5,6 +5,8 @@ using Miru.Models;
 using Miru.ViewModels;
 using System.Windows;
 using JikanDotNet;
+using System;
+using ToastNotifications.Core;
 
 namespace Miru
 {
@@ -20,7 +22,7 @@ namespace Miru
             builder.RegisterType<SortedAnimeListEntries>().As<ISortedAnimeListEntries>();
             builder.RegisterType<ShellViewModel>().As<IShellViewModel>();
             builder.RegisterType<MiruDbService>().As<IMiruDbService>();
-            builder.RegisterType<ContentDialogWrapper>().As<IContentDialogWrapper>();
+            builder.RegisterType<SimpleContentDialog>().As<ISimpleContentDialog>();
             builder.RegisterType<CurrentSeasonModel>().As<ICurrentSeasonModel>();
             builder.RegisterType<CurrentUserAnimeListModel>().As<ICurrentUserAnimeListModel>();
             builder.RegisterType<Jikan>().As<IJikan>()
@@ -32,6 +34,8 @@ namespace Miru
                 })
                 .SingleInstance();
             builder.RegisterType<ProcessProxy>().As<IProcessProxy>();
+            builder.RegisterType<ClipboardWrapper>().As<IClipboardWrapper>();
+            builder.RegisterType<ToastNotifierWrapper>().As<IToastNotifierWrapper>();
         }
 
         protected override void ConfigureBootstrapper()

@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace Miru.ViewModels
 {
-    public interface IContentDialogWrapper
+    public interface ISimpleContentDialog
     {
         Task<ContentDialogResult> ShowAsync();
         object Title { get; set; }

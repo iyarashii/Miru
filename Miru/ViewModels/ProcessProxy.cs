@@ -9,10 +9,10 @@ namespace Miru.ViewModels
 {
     public class ProcessProxy : Process, IProcessProxy
     {
-        public new void Start(string URL)
-        {
-            StartInfo.FileName = URL;
-            base.Start();
-        }
+        //public new void Start(string URL)
+        //{
+        //    StartInfo.FileName = URL;
+        //    base.Start();
+        //}
     }
 }

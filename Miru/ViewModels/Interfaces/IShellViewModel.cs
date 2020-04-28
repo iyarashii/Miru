@@ -12,7 +12,7 @@ namespace Miru.ViewModels
         MiruAppStatus AppStatus { get; }
         string AppStatusText { get; }
         bool CanChangeDisplayedAnimeList { get; set; }
-        IContentDialogWrapper ContentDialog { get; }
+        ISimpleContentDialog ContentDialog { get; }
         ApplicationTheme CurrentApplicationTheme { get; set; }
         SolidColorBrush DaysOfTheWeekBrush { get; set; }
         IMiruDbService DbService { get; }
@@ -27,6 +27,10 @@ namespace Miru.ViewModels
         ReadOnlyCollection<TimeZoneInfo> TimeZones { get; }
         string TypedInUsername { get; set; }
         string UserAnimeListURL { get; set; }
+        IToastNotifierWrapper ToastNotifierWrapper { get; }
+        IClipboardWrapper ClipboardWrapper { get; }
+        IProcessProxy AnimeURLProcessProxy { get; }
+        string CurrentAnimeNameFilter { get; set; }
 
         bool CanSyncUserAnimeList(string typedInUsername, MiruAppStatus appStatus, bool syncSeasonList);
 

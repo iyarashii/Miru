@@ -13,11 +13,16 @@ using ModernWpf;
 using ModernWpf.Controls;
 using System.Windows.Media;
 using Moq;
+using ToastNotifications.Core;
+using System.Collections.ObjectModel;
+using Caliburn.Micro;
+using System.Threading;
 
 namespace Miru.Tests
 {
     public class ShellViewModelTests
     {
+        #region methods tests
         [Theory]
         [InlineData("ab", MiruAppStatus.Idle)]
         [InlineData("aaaaaa", MiruAppStatus.Idle)]
@@ -180,11 +185,11 @@ namespace Miru.Tests
             using (var mock = AutoMock.GetLoose())
             {
                 // Arrange
-                mock.Mock<IContentDialogWrapper>()
+                mock.Mock<ISimpleContentDialog>()
                     .Setup(x => x.ShowAsync())
                     .ReturnsAsync(ContentDialogResult.Primary);
 
-                mock.Mock<IContentDialogWrapper>()
+                mock.Mock<ISimpleContentDialog>()
                     .Setup(x => x.Config
                     (
                         "Clear the database?",
@@ -199,7 +204,7 @@ namespace Miru.Tests
                 cls.OpenClearDatabaseDialog().Wait();
 
                 // Assert
-                mock.Mock<IContentDialogWrapper>()
+                mock.Mock<ISimpleContentDialog>()
                     .Verify(x => x.Config
                     (
                         "Clear the database?",
@@ -209,7 +214,7 @@ namespace Miru.Tests
                     ),
                     Times.Once);
 
-                mock.Mock<IContentDialogWrapper>().Verify(x => x.ShowAsync(), Times.Once);
+                mock.Mock<ISimpleContentDialog>().Verify(x => x.ShowAsync(), Times.Once);
             }
         }
 
@@ -221,11 +226,11 @@ namespace Miru.Tests
             using (var mock = AutoMock.GetLoose())
             {
                 // Arrange
-                mock.Mock<IContentDialogWrapper>()
+                mock.Mock<ISimpleContentDialog>()
                     .Setup(x => x.ShowAsync())
                     .ReturnsAsync(clickedButton);
 
-                mock.Mock<IContentDialogWrapper>()
+                mock.Mock<ISimpleContentDialog>()
                     .Setup(x => x.Config
                     (
                         "Update data from senpai.moe?",
@@ -242,7 +247,7 @@ namespace Miru.Tests
                 cls.UpdateSenpaiData().Wait();
 
                 // Assert
-                mock.Mock<IContentDialogWrapper>()
+                mock.Mock<ISimpleContentDialog>()
                     .Verify(x => x.Config
                     (
                         "Update data from senpai.moe?",
@@ -252,7 +257,7 @@ namespace Miru.Tests
                     ),
                     Times.Once);
 
-                mock.Mock<IContentDialogWrapper>().Verify(x => x.ShowAsync(), Times.Once);
+                mock.Mock<ISimpleContentDialog>().Verify(x => x.ShowAsync(), Times.Once);
 
                 mock.Mock<IMiruDbService>().Verify(x => x.UpdateSenpaiData(), Times.Exactly(expected));
             }
@@ -334,7 +339,9 @@ namespace Miru.Tests
             using (var mock = AutoMock.GetLoose())
             {
                 // Arrange
-                mock.Mock<IProcessProxy>().Setup(x => x.Start(It.IsAny<string>()));
+                //mock.Mock<IProcessProxy>().Setup(x => x.Start(It.IsAny<string>()));
+                mock.Mock<IProcessProxy>().Setup(x => x.Start()).Returns(true);
+                mock.Mock<IProcessProxy>().SetupGet(x => x.StartInfo).Returns(new System.Diagnostics.ProcessStartInfo());
 
                 var cls = mock.Create<ShellViewModel>();
 
@@ -342,9 +349,422 @@ namespace Miru.Tests
                 cls.OpenAnimeURL(It.IsAny<string>());
 
                 // Assert
-                mock.Mock<IProcessProxy>().Verify(x => x.Start(It.IsAny<string>()), Times.Once);
+                //mock.Mock<IProcessProxy>().Verify(x => x.Start(It.IsAny<string>()), Times.Once);
+                mock.Mock<IProcessProxy>().Verify(x => x.Start(), Times.Once);
             }
         }
 
+        [Fact]
+        public void CopyAnimeTitleToClipboard_ValidCall()
+        {
+            using (var mock = AutoMock.GetLoose())
+            {
+                // Arrange
+                var cls = mock.Create<ShellViewModel>();
+                mock.Mock<IClipboardWrapper>().Setup(x => x.SetText(It.IsAny<string>()));
+                mock.Mock<IToastNotifierWrapper>().Setup(x => x.ShowInformation(It.IsAny<string>(), It.IsAny<MessageOptions>()));
+
+                // Act
+                cls.CopyAnimeTitleToClipboard(It.IsAny<string>());
+
+                // Assert
+                mock.Mock<IClipboardWrapper>().Verify(x => x.SetText(It.IsAny<string>()), Times.Once);
+                mock.Mock<IToastNotifierWrapper>().Verify(x => x.ShowInformation(It.IsAny<string>(), It.IsAny<MessageOptions>()), Times.Once);
+            }
+        }
+        #endregion methods tests
+
+        #region properties tests
+
+        [Fact]
+        public void ToastNotifierWrapper_ReturnsCorrectValue()
+        {
+            using (var mock = AutoMock.GetLoose())
+            {
+                // Arrange
+                var fakeToastNotifier = new ToastNotifierWrapper();
+                mock.Mock<IShellViewModel>().SetupGet(x => x.ToastNotifierWrapper).Returns(fakeToastNotifier);
+
+                // Act & Assert
+                Assert.Equal(fakeToastNotifier, mock.Mock<IShellViewModel>().Object.ToastNotifierWrapper);
+            }
+        }
+
+        [Fact]
+        public void ClipboardWrapper_ReturnsCorrectValue()
+        {
+            using (var mock = AutoMock.GetLoose())
+            {
+                // Arrange
+                var fakeClipboard = new ClipboardWrapper();
+                mock.Mock<IShellViewModel>().SetupGet(x => x.ClipboardWrapper).Returns(fakeClipboard);
+
+                // Act & Assert
+                Assert.Equal(fakeClipboard, mock.Mock<IShellViewModel>().Object.ClipboardWrapper);
+            }
+        }
+
+        [Fact]
+        public void AnimeURLProcessProxy_ReturnsCorrectValue()
+        {
+            using (var mock = AutoMock.GetLoose())
+            {
+                // Arrange
+                var fakeProcessProxy = new ProcessProxy();
+                mock.Mock<IShellViewModel>().SetupGet(x => x.AnimeURLProcessProxy).Returns(fakeProcessProxy);
+
+                // Act & Assert
+                Assert.Equal(fakeProcessProxy, mock.Mock<IShellViewModel>().Object.AnimeURLProcessProxy);
+            }
+        }
+
+        [Fact]
+        public void ContentDialog_ReturnsCorrectValue()
+        {
+            Thread STAThread = new Thread(() =>
+            {
+                using (var mock = AutoMock.GetLoose())
+                {
+                    // Arrange
+                    //SimpleContentDialog fakeContentDialog = new SimpleContentDialog();
+                    SimpleContentDialog fakeContentDialog = It.IsAny<SimpleContentDialog>();
+                    mock.Mock<IShellViewModel>().SetupGet(x => x.ContentDialog).Returns(fakeContentDialog);
+
+                    // Act & Assert
+                    Assert.Equal(fakeContentDialog, mock.Mock<IShellViewModel>().Object.ContentDialog);
+                }
+            });
+            STAThread.SetApartmentState(ApartmentState.STA);
+            STAThread.Start();
+            STAThread.Join();
+        }
+
+        [Fact]
+        public void DbService_ReturnsCorrectValue()
+        {
+            using (var mock = AutoMock.GetLoose())
+            {
+                // Arrange
+                var fakeDbService = mock.Create<MiruDbService>();
+                mock.Mock<IShellViewModel>().SetupGet(x => x.DbService).Returns(fakeDbService);
+
+                // Act & Assert
+                Assert.Equal(fakeDbService, mock.Mock<IShellViewModel>().Object.DbService);
+            }
+        }
+
+        [Fact]
+        public void TimeZones_ReturnsCorrectValue()
+        {
+            using (var mock = AutoMock.GetLoose())
+            {
+                // Arrange
+                var fakeTimeZones = new ReadOnlyCollection<TimeZoneInfo>(new List<TimeZoneInfo>());
+                mock.Mock<IShellViewModel>().SetupGet(x => x.TimeZones).Returns(fakeTimeZones);
+
+                // Act & Assert
+                Assert.Equal(fakeTimeZones, mock.Mock<IShellViewModel>().Object.TimeZones);
+            }
+        }
+
+        [Fact]
+        public void SyncDate_StoresCorrectly()
+        {
+            using (var mock = AutoMock.GetLoose())
+            {
+                // Arrange
+                var cls = mock.Create<ShellViewModel>();
+                var testDate = It.IsAny<DateTime>();
+
+                // Act
+                cls.SyncDate = testDate;
+
+                // Assert
+                Assert.Equal(testDate, cls.SyncDate);
+            }
+        }
+
+        [Fact]
+        public void IsDarkModeOn_StoresCorrectly()
+        {
+            using (var mock = AutoMock.GetLoose())
+            {
+                // Arrange
+                var cls = mock.Create<ShellViewModel>();
+                var testValue = It.IsAny<bool>();
+
+                // Act
+                cls.IsDarkModeOn = testValue;
+
+                // Assert
+                Assert.Equal(testValue, cls.IsDarkModeOn);
+            }
+        }
+
+        [Fact]
+        public void SelectedDisplayedAnimeList_StoresCorrectly()
+        {
+            using (var mock = AutoMock.GetLoose())
+            {
+                // Arrange
+                var cls = mock.Create<ShellViewModel>();
+                var testValue = AnimeListType.Watching;
+                mock.Mock<IMiruDbService>()
+                    .Setup(x => x.ChangeDisplayedAnimeList(testValue, cls.SelectedTimeZone, cls.SelectedDisplayedAnimeType, cls.CurrentAnimeNameFilter));
+
+                // Act
+                cls.SelectedDisplayedAnimeList = testValue;
+
+                // Assert
+                Assert.Equal(testValue, cls.SelectedDisplayedAnimeList);
+                mock.Mock<IMiruDbService>()
+                    .Verify(x => 
+                    x.ChangeDisplayedAnimeList(testValue, cls.SelectedTimeZone, cls.SelectedDisplayedAnimeType, cls.CurrentAnimeNameFilter), Times.Once);
+            }
+        }
+
+        [Fact]
+        public void SelectedDisplayedAnimeType_StoresCorrectly()
+        {
+            using (var mock = AutoMock.GetLoose())
+            {
+                // Arrange
+                var cls = mock.Create<ShellViewModel>();
+                var testValue = AnimeType.TV;
+                mock.Mock<IMiruDbService>()
+                    .Setup(x => x.ChangeDisplayedAnimeList(cls.SelectedDisplayedAnimeList, cls.SelectedTimeZone, testValue, cls.CurrentAnimeNameFilter));
+
+                // Act
+                cls.SelectedDisplayedAnimeType = testValue;
+
+                // Assert
+                Assert.Equal(testValue, cls.SelectedDisplayedAnimeType);
+                mock.Mock<IMiruDbService>()
+                    .Verify(x =>
+                    x.ChangeDisplayedAnimeList(cls.SelectedDisplayedAnimeList, cls.SelectedTimeZone, testValue, cls.CurrentAnimeNameFilter), Times.Once);
+            }
+        }
+
+        [Fact]
+        public void SelectedTimeZone_StoresCorrectly()
+        {
+            using (var mock = AutoMock.GetLoose())
+            {
+                // Arrange
+                var cls = mock.Create<ShellViewModel>();
+                var testValue = It.IsAny<TimeZoneInfo>();
+                mock.Mock<IMiruDbService>()
+                    .Setup(x => x.ChangeDisplayedAnimeList(cls.SelectedDisplayedAnimeList, testValue, cls.SelectedDisplayedAnimeType, cls.CurrentAnimeNameFilter));
+
+                // Act
+                cls.SelectedTimeZone = testValue;
+
+                // Assert
+                Assert.Equal(testValue, cls.SelectedTimeZone);
+                mock.Mock<IMiruDbService>()
+                    .Verify(x =>
+                    x.ChangeDisplayedAnimeList(cls.SelectedDisplayedAnimeList, testValue, cls.SelectedDisplayedAnimeType, cls.CurrentAnimeNameFilter), Times.Once);
+            }
+        }
+
+        [Fact]
+        public void CurrentAnimeNameFilter_StoresCorrectly()
+        {
+            using (var mock = AutoMock.GetLoose())
+            {
+                // Arrange
+                var cls = mock.Create<ShellViewModel>();
+                var testValue = "TEST STRING";
+                mock.Mock<IMiruDbService>()
+                    .Setup(x => x.ChangeDisplayedAnimeList(cls.SelectedDisplayedAnimeList, cls.SelectedTimeZone, cls.SelectedDisplayedAnimeType, testValue));
+
+                // Act
+                cls.CurrentAnimeNameFilter = testValue;
+
+                // Assert
+                Assert.Equal(testValue, cls.CurrentAnimeNameFilter);
+                mock.Mock<IMiruDbService>()
+                    .Verify(x =>
+                    x.ChangeDisplayedAnimeList(cls.SelectedDisplayedAnimeList, cls.SelectedTimeZone, cls.SelectedDisplayedAnimeType, testValue), Times.Once);
+            }
+        }
+
+        [Fact]
+        public void DaysOfTheWeekBrush_StoresCorrectly()
+        {
+            using (var mock = AutoMock.GetLoose())
+            {
+                // Arrange
+                var cls = mock.Create<ShellViewModel>();
+                var testValue = It.IsAny<SolidColorBrush>();
+
+                // Act
+                cls.DaysOfTheWeekBrush = testValue;
+
+                // Assert
+                Assert.Equal(testValue, cls.DaysOfTheWeekBrush);
+            }
+        }
+
+        [Fact]
+        public void CurrentApplicationTheme_StoresCorrectly()
+        {
+            using (var mock = AutoMock.GetLoose())
+            {
+                // Arrange
+                var cls = mock.Create<ShellViewModel>();
+                var testValue = It.IsAny<ApplicationTheme>();
+
+                // Act
+                cls.CurrentApplicationTheme = testValue;
+
+                // Assert
+                Assert.Equal(testValue, cls.CurrentApplicationTheme);
+                Assert.Equal(testValue == ApplicationTheme.Dark, cls.IsDarkModeOn);
+            }
+        }
+
+        [Fact]
+        public void SortedAnimeListEntries_StoresCorrectly()
+        {
+            using (var mock = AutoMock.GetLoose())
+            {
+                // Arrange
+                var cls = mock.Create<ShellViewModel>();
+                var testValue = It.IsAny<ISortedAnimeListEntries>();
+
+                // Act
+                cls.SortedAnimeListEntries = testValue;
+
+                // Assert
+                Assert.Equal(testValue, cls.SortedAnimeListEntries);
+            }
+        }
+
+        [Fact]
+        public void AppStatusText_StoresCorrectly()
+        {
+            using (var mock = AutoMock.GetLoose())
+            {
+                // Arrange
+                var cls = mock.Create<ShellViewModel>();
+                var testValue = It.IsAny<string>();
+
+                // Act
+                typeof(ShellViewModel).GetProperty("AppStatusText").SetValue(cls, testValue);
+
+                // Assert
+                Assert.Equal($"Miru -- { testValue }", cls.AppStatusText);
+            }
+        }
+
+        [Fact]
+        public void AppStatus_StoresCorrectly()
+        {
+            using (var mock = AutoMock.GetLoose())
+            {
+                // Arrange
+                var cls = mock.Create<ShellViewModel>();
+                var testValue = It.IsAny<MiruAppStatus>();
+                var expectedAppStatusTextValue = "Miru -- ";
+                expectedAppStatusTextValue += testValue == MiruAppStatus.Idle ? "Idle" : testValue == MiruAppStatus.Busy ? "Busy..." : "Problems with internet connection!";
+
+                // Act
+                typeof(ShellViewModel).GetProperty("AppStatus").SetValue(cls, testValue);
+
+                // Assert
+                Assert.Equal(testValue, cls.AppStatus);
+                Assert.Equal(expectedAppStatusTextValue, cls.AppStatusText);
+                Assert.Equal(testValue != MiruAppStatus.Busy, cls.CanChangeDisplayedAnimeList);
+            }
+        }
+
+        [Fact]
+        public void TypedInUsername_StoresCorrectly()
+        {
+            using (var mock = AutoMock.GetLoose())
+            {
+                // Arrange
+                var cls = mock.Create<ShellViewModel>();
+                var testValue = It.IsAny<string>();
+
+                // Act
+                cls.TypedInUsername = testValue;
+
+                // Assert
+                Assert.Equal(testValue, cls.TypedInUsername);
+            }
+        }
+
+        [Fact]
+        public void MalUserName_StoresCorrectly()
+        {
+            using (var mock = AutoMock.GetLoose())
+            {
+                // Arrange
+                var cls = mock.Create<ShellViewModel>();
+                var testValue = It.IsAny<string>();
+
+                // Act
+                cls.MalUserName = testValue;
+
+                // Assert
+                Assert.Equal(testValue, cls.MalUserName);
+            }
+        }
+
+        [Theory]
+        [InlineData(true, "not empty")]
+        [InlineData(false, null)]
+        public void IsSynced_ReturnsCorrectValue(bool expected, string malUserName)
+        {
+            using (var mock = AutoMock.GetLoose())
+            {
+                // Arrange
+                var cls = mock.Create<ShellViewModel>();
+
+                // Act
+                cls.MalUserName = malUserName;
+
+                // Assert
+                Assert.Equal(expected, cls.IsSynced);
+            }
+        }
+
+        [Fact]
+        public void UserAnimeListURL_StoresCorrectly()
+        {
+            using (var mock = AutoMock.GetLoose())
+            {
+                // Arrange
+                var cls = mock.Create<ShellViewModel>();
+                var testValue = It.IsAny<string>();
+
+                // Act
+                cls.UserAnimeListURL = testValue;
+
+                // Assert
+                Assert.Equal($@"https://myanimelist.net/animelist/{ testValue }", cls.UserAnimeListURL);
+            }
+        }
+
+        [Fact]
+        public void CanChangeDisplayedAnimeList_StoresCorrectly()
+        {
+            using (var mock = AutoMock.GetLoose())
+            {
+                // Arrange
+                var cls = mock.Create<ShellViewModel>();
+                var testValue = It.IsAny<bool>();
+
+                // Act
+                cls.CanChangeDisplayedAnimeList = testValue;
+
+                // Assert
+                Assert.Equal(testValue, cls.CanChangeDisplayedAnimeList);
+            }
+        }
+
+        #endregion properties tests
     }
 }
