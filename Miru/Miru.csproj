@@ -165,12 +165,12 @@
     <Compile Include="Models\MiruAiringAnimeModel.cs" />
     <Compile Include="Models\SenpaiEntryModel.cs" />
     <Compile Include="ViewModels\ClipboardWrapper.cs" />
-    <Compile Include="ViewModels\IClipboardWrapper.cs" />
+    <Compile Include="ViewModels\Interfaces\IClipboardWrapper.cs" />
     <Compile Include="ViewModels\InternetConnectionViewModel.cs" />
     <Compile Include="ViewModels\Interfaces\IShellViewModel.cs" />
     <Compile Include="ViewModels\Interfaces\ISortedAnimeListEntries.cs" />
     <Compile Include="ViewModels\Interfaces\IProcessProxy.cs" />
-    <Compile Include="ViewModels\IToastNotifierWrapper.cs" />
+    <Compile Include="ViewModels\Interfaces\IToastNotifierWrapper.cs" />
     <Compile Include="ViewModels\ProcessProxy.cs">
       <SubType>Component</SubType>
     </Compile>
