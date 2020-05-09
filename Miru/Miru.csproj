@@ -171,9 +171,7 @@
     <Compile Include="ViewModels\Interfaces\ISortedAnimeListEntries.cs" />
     <Compile Include="ViewModels\Interfaces\IProcessProxy.cs" />
     <Compile Include="ViewModels\Interfaces\IToastNotifierWrapper.cs" />
-    <Compile Include="ViewModels\ProcessProxy.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="ViewModels\ProcessProxy.cs" />
     <Compile Include="ViewModels\SortedAnimeListEntries.cs" />
     <Compile Include="Models\SyncedMyAnimeListUser.cs" />
     <Compile Include="ViewModels\ShellViewModel.cs" />
