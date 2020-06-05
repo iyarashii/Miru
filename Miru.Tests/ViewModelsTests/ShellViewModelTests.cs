@@ -23,11 +23,19 @@ namespace Miru.Tests
     public class ShellViewModelTests
     {
         #region methods tests
+        private const string MIN_LENGTH_USERNAME = "xx";
+        private const string CORRECT_LENGTH_USERNAME = "xxxxxx";
+        private const string MAX_LENGTH_USERNAME = "xxxxxxxxxxxx";
+        private const string EMPTY_USERNAME = "";
+        private const string WHITESPACE_ONLY_USERNAME = "      ";
+        private const string USERNAME_WITH_WHITESPACE = "spa ce";
+
+
         [Theory]
-        [InlineData("ab", MiruAppStatus.Idle)]
-        [InlineData("aaaaaa", MiruAppStatus.Idle)]
-        [InlineData("aaaaaaaaaaaa", MiruAppStatus.Idle)]
-        [InlineData("bb", MiruAppStatus.InternetConnectionProblems)]
+        [InlineData(MIN_LENGTH_USERNAME, MiruAppStatus.Idle)]
+        [InlineData(CORRECT_LENGTH_USERNAME, MiruAppStatus.Idle)]
+        [InlineData(MAX_LENGTH_USERNAME, MiruAppStatus.Idle)]
+        [InlineData(CORRECT_LENGTH_USERNAME, MiruAppStatus.InternetConnectionProblems)]
         public void CanSyncUserAnimeList_CorrectUsernameLengthAndAppStatusShouldReturnTrue(string typedInUsername, MiruAppStatus appStatus)
         {
             using (var mock = AutoMock.GetLoose())
@@ -44,13 +52,12 @@ namespace Miru.Tests
         }
 
         [Theory]
-        [InlineData("ab", MiruAppStatus.Busy)]
-        [InlineData("", MiruAppStatus.Idle)]
-        [InlineData("      ", MiruAppStatus.Idle)]
-        [InlineData("", MiruAppStatus.Busy)]
-        [InlineData("spa ce", MiruAppStatus.InternetConnectionProblems)]
-        [InlineData("aaaaaaaaaaaa", MiruAppStatus.Busy)]
-        [InlineData("aaa", MiruAppStatus.Busy)]
+        [InlineData(CORRECT_LENGTH_USERNAME, MiruAppStatus.Busy)]
+        [InlineData(MAX_LENGTH_USERNAME, MiruAppStatus.Busy)]
+        [InlineData(EMPTY_USERNAME, MiruAppStatus.Busy)]
+        [InlineData(EMPTY_USERNAME, MiruAppStatus.Idle)]
+        [InlineData(WHITESPACE_ONLY_USERNAME, MiruAppStatus.Idle)]
+        [InlineData(USERNAME_WITH_WHITESPACE, MiruAppStatus.InternetConnectionProblems)]
         public void CanSyncUserAnimeList_IncorrectUsernameLengthOrAppStatusShouldReturnFalse(string typedInUsername, MiruAppStatus appStatus)
         {
             using (var mock = AutoMock.GetLoose())
@@ -112,8 +119,8 @@ namespace Miru.Tests
         }
 
         [Theory]
-        [InlineData("iyarashii777", true)]
-        [InlineData("", false)]
+        [InlineData(CORRECT_LENGTH_USERNAME, true)]
+        [InlineData(EMPTY_USERNAME, false)]
         [InlineData(null, false)]
         public void IsSynced_ShouldReturnCorrectValue(string currentMalUsername, bool expected)
         {
@@ -123,8 +130,11 @@ namespace Miru.Tests
                 var cls = mock.Create<ShellViewModel>();
                 cls.MalUserName = currentMalUsername;
 
-                // Act and Assert
-                Assert.Equal(expected, cls.IsSynced);
+                // Act
+                var actual = cls.IsSynced;
+
+                // Assert
+                Assert.Equal(expected, actual);
             }
         }
 
@@ -134,8 +144,8 @@ namespace Miru.Tests
             using (var mock = AutoMock.GetLoose())
             {
                 // Arrange
-                mock.Mock<IMiruDbService>().Setup(x => x.ClearDb());
-                mock.Mock<IMiruDbService>().Setup(x => x.ClearLocalImageCache());
+                //mock.Mock<IMiruDbService>().Setup(x => x.ClearDb());
+                //mock.Mock<IMiruDbService>().Setup(x => x.ClearLocalImageCache());
 
                 var cls = mock.Create<ShellViewModel>();
 
@@ -155,14 +165,21 @@ namespace Miru.Tests
             }
         }
 
+        private const string BUSY_APP_STATUS_TEXT = "Miru -- Busy...";
+        private const string IDLE_APP_STATUS_TEXT = "Miru -- Idle";
+        private const string InternetConnectionProblemsAppStatusText = "Miru -- Problems with internet connection!";
+        private const string CUSTOM_APP_STATUS_DETAILED_DESCRIPTION = "custom";
+        private const string APP_STATUS_TEXT_FOR_CUSTOM_DESCRIPTION = "Miru -- custom";
+
+
         [Theory]
-        [InlineData(MiruAppStatus.Busy, null, MiruAppStatus.Busy, "Miru -- Busy...")]
-        [InlineData(MiruAppStatus.Idle, null, MiruAppStatus.Idle, "Miru -- Idle")]
-        [InlineData(MiruAppStatus.InternetConnectionProblems, null, MiruAppStatus.InternetConnectionProblems, "Miru -- Problems with internet connection!")]
-        [InlineData(MiruAppStatus.Busy, "custom message with Busy", MiruAppStatus.Busy, "Miru -- custom message with Busy")]
-        [InlineData(MiruAppStatus.Idle, "custom message with idle", MiruAppStatus.Idle, "Miru -- custom message with idle")]
-        [InlineData(MiruAppStatus.InternetConnectionProblems, "custom message with ICP", MiruAppStatus.InternetConnectionProblems, "Miru -- custom message with ICP")]
-        public void UpdateAppStatus_ShouldSetCorrectValues(MiruAppStatus newAppStatus, string detailedAppStatusDescription, 
+        [InlineData(MiruAppStatus.Busy, null, MiruAppStatus.Busy, BUSY_APP_STATUS_TEXT)]
+        [InlineData(MiruAppStatus.Idle, null, MiruAppStatus.Idle, IDLE_APP_STATUS_TEXT)]
+        [InlineData(MiruAppStatus.InternetConnectionProblems, null, MiruAppStatus.InternetConnectionProblems, InternetConnectionProblemsAppStatusText)]
+        [InlineData(MiruAppStatus.Busy, CUSTOM_APP_STATUS_DETAILED_DESCRIPTION, MiruAppStatus.Busy, APP_STATUS_TEXT_FOR_CUSTOM_DESCRIPTION)]
+        [InlineData(MiruAppStatus.Idle, CUSTOM_APP_STATUS_DETAILED_DESCRIPTION, MiruAppStatus.Idle, APP_STATUS_TEXT_FOR_CUSTOM_DESCRIPTION)]
+        [InlineData(MiruAppStatus.InternetConnectionProblems, CUSTOM_APP_STATUS_DETAILED_DESCRIPTION, MiruAppStatus.InternetConnectionProblems, APP_STATUS_TEXT_FOR_CUSTOM_DESCRIPTION)]
+        public void UpdateAppStatus_ShouldSetCorrectValues(MiruAppStatus inputAppStatus, string inputDetailedAppStatusDescription, 
             MiruAppStatus expectedAppStatus, string expectedAppStatusText)
         {
             using (var mock = AutoMock.GetLoose())
@@ -171,7 +188,7 @@ namespace Miru.Tests
                 var cls = mock.Create<ShellViewModel>();
 
                 // Act
-                cls.UpdateAppStatus(newAppStatus, detailedAppStatusDescription);
+                cls.UpdateAppStatus(inputAppStatus, inputDetailedAppStatusDescription);
 
                 // Assert
                 Assert.Equal(expectedAppStatus, cls.AppStatus);
@@ -221,7 +238,7 @@ namespace Miru.Tests
         [Theory]
         [InlineData(ContentDialogResult.Primary, 1)]
         [InlineData(ContentDialogResult.Secondary, 0)]
-        public void UpdateSenpaiData_ShouldUpdateOnlyOnPrimaryButton(ContentDialogResult clickedButton, int expected)
+        public void UpdateSenpaiData_ShouldUpdateOnlyOnPrimaryButton(ContentDialogResult clickedButton, int expectedTimesCalled)
         {
             using (var mock = AutoMock.GetLoose())
             {
@@ -259,7 +276,7 @@ namespace Miru.Tests
 
                 mock.Mock<ISimpleContentDialog>().Verify(x => x.ShowAsync(), Times.Once);
 
-                mock.Mock<IMiruDbService>().Verify(x => x.UpdateSenpaiData(), Times.Exactly(expected));
+                mock.Mock<IMiruDbService>().Verify(x => x.UpdateSenpaiData(), Times.Exactly(expectedTimesCalled));
             }
         }
 
@@ -454,16 +471,22 @@ namespace Miru.Tests
         }
 
         [Fact]
-        public void TimeZones_ReturnsCorrectValue()
+        public void TimeZones_ReturnsSystemTimeZones()
         {
             using (var mock = AutoMock.GetLoose())
             {
                 // Arrange
-                var fakeTimeZones = new ReadOnlyCollection<TimeZoneInfo>(new List<TimeZoneInfo>());
-                mock.Mock<IShellViewModel>().SetupGet(x => x.TimeZones).Returns(fakeTimeZones);
+                //var fakeTimeZones = new ReadOnlyCollection<TimeZoneInfo>(new List<TimeZoneInfo>());
+                //mock.Mock<IShellViewModel>().SetupGet(x => x.TimeZones).Returns(fakeTimeZones);
+                var cls = mock.Create<ShellViewModel>();
+                var expected = TimeZoneInfo.GetSystemTimeZones();
+
+                // Act
+                var actual = cls.TimeZones;
 
                 // Act & Assert
-                Assert.Equal(fakeTimeZones, mock.Mock<IShellViewModel>().Object.TimeZones);
+                //Assert.Equal(fakeTimeZones, mock.Mock<IShellViewModel>().Object.TimeZones);
+                Assert.Equal(expected, actual);
             }
         }
 
