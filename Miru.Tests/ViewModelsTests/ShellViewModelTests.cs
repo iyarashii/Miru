@@ -32,11 +32,17 @@ namespace Miru.Tests
 
 
         [Theory]
-        [InlineData(MIN_LENGTH_USERNAME, MiruAppStatus.Idle)]
-        [InlineData(CORRECT_LENGTH_USERNAME, MiruAppStatus.Idle)]
-        [InlineData(MAX_LENGTH_USERNAME, MiruAppStatus.Idle)]
-        [InlineData(CORRECT_LENGTH_USERNAME, MiruAppStatus.InternetConnectionProblems)]
-        public void CanSyncUserAnimeList_CorrectUsernameLengthAndAppStatusShouldReturnTrue(string typedInUsername, MiruAppStatus appStatus)
+        [InlineData(MIN_LENGTH_USERNAME, MiruAppStatus.Idle, true)]
+        [InlineData(CORRECT_LENGTH_USERNAME, MiruAppStatus.Idle, true)]
+        [InlineData(MAX_LENGTH_USERNAME, MiruAppStatus.Idle, true)]
+        [InlineData(CORRECT_LENGTH_USERNAME, MiruAppStatus.InternetConnectionProblems, true)]
+        [InlineData(CORRECT_LENGTH_USERNAME, MiruAppStatus.Busy, false)]
+        [InlineData(MAX_LENGTH_USERNAME, MiruAppStatus.Busy, false)]
+        [InlineData(EMPTY_USERNAME, MiruAppStatus.Busy, false)]
+        [InlineData(EMPTY_USERNAME, MiruAppStatus.Idle, false)]
+        [InlineData(WHITESPACE_ONLY_USERNAME, MiruAppStatus.Idle, false)]
+        [InlineData(USERNAME_WITH_WHITESPACE, MiruAppStatus.InternetConnectionProblems, false)]
+        public void CanSyncUserAnimeList_ShouldReturnCorrectValues(string typedInUsername, MiruAppStatus appStatus, bool expected)
         {
             using (var mock = AutoMock.GetLoose())
             {
@@ -47,29 +53,7 @@ namespace Miru.Tests
                 bool actual = cls.CanSyncUserAnimeList(typedInUsername, appStatus, true);
 
                 // Assert
-                Assert.True(actual); 
-            }
-        }
-
-        [Theory]
-        [InlineData(CORRECT_LENGTH_USERNAME, MiruAppStatus.Busy)]
-        [InlineData(MAX_LENGTH_USERNAME, MiruAppStatus.Busy)]
-        [InlineData(EMPTY_USERNAME, MiruAppStatus.Busy)]
-        [InlineData(EMPTY_USERNAME, MiruAppStatus.Idle)]
-        [InlineData(WHITESPACE_ONLY_USERNAME, MiruAppStatus.Idle)]
-        [InlineData(USERNAME_WITH_WHITESPACE, MiruAppStatus.InternetConnectionProblems)]
-        public void CanSyncUserAnimeList_IncorrectUsernameLengthOrAppStatusShouldReturnFalse(string typedInUsername, MiruAppStatus appStatus)
-        {
-            using (var mock = AutoMock.GetLoose())
-            {
-                // Arrange
-                var cls = mock.Create<ShellViewModel>();
-
-                // Act
-                bool actual = cls.CanSyncUserAnimeList(typedInUsername, appStatus, true);
-
-                // Assert
-                Assert.False(actual);
+                Assert.Equal(expected, actual); 
             }
         }
 
@@ -122,19 +106,19 @@ namespace Miru.Tests
         [InlineData(CORRECT_LENGTH_USERNAME, true)]
         [InlineData(EMPTY_USERNAME, false)]
         [InlineData(null, false)]
-        public void IsSynced_ShouldReturnCorrectValue(string currentMalUsername, bool expected)
+        public void IsSynced_ShouldReturnCorrectValue(string inputUsername, bool expectedReturnValue)
         {
             using (var mock = AutoMock.GetLoose())
             {
                 // Arrange
                 var cls = mock.Create<ShellViewModel>();
-                cls.MalUserName = currentMalUsername;
+                cls.MalUserName = inputUsername;
 
                 // Act
                 var actual = cls.IsSynced;
 
                 // Assert
-                Assert.Equal(expected, actual);
+                Assert.Equal(expectedReturnValue, actual);
             }
         }
 
@@ -733,24 +717,6 @@ namespace Miru.Tests
 
                 // Assert
                 Assert.Equal(testValue, cls.MalUserName);
-            }
-        }
-
-        [Theory]
-        [InlineData(true, "not empty")]
-        [InlineData(false, null)]
-        public void IsSynced_ReturnsCorrectValue(bool expected, string malUserName)
-        {
-            using (var mock = AutoMock.GetLoose())
-            {
-                // Arrange
-                var cls = mock.Create<ShellViewModel>();
-
-                // Act
-                cls.MalUserName = malUserName;
-
-                // Assert
-                Assert.Equal(expected, cls.IsSynced);
             }
         }
 
