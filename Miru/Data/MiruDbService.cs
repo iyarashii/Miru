@@ -58,7 +58,7 @@ namespace Miru.Data
                     var airingAnimeList = db.MiruAnimeModels.ToList();
 
                     // set airing anime list entries for each day of the week
-                    ViewModelContext.SortedAnimeListEntries.SortAnimeByAirDayOfWeek(airingAnimeList, AnimeListType.AiringAndWatching);
+                    ViewModelContext.SortedAnimeListEntries.DisplayAnimeSortedByAirDayOfWeek(airingAnimeList, AnimeListType.AiringAndWatching);
                 }
             }
         }
@@ -149,7 +149,7 @@ namespace Miru.Data
                 }
 
                 // set airing anime list entries for each day of the week
-                ViewModelContext.SortedAnimeListEntries.SortAnimeByAirDayOfWeek(airingAnimeList, animeListType);
+                ViewModelContext.SortedAnimeListEntries.DisplayAnimeSortedByAirDayOfWeek(airingAnimeList, animeListType);
             }
         }
 
