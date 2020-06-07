@@ -31,7 +31,7 @@ namespace Miru.Models
             }
             catch (JikanDotNet.Exceptions.JikanRequestException)
             {
-                return (false, $"Could not find the user \"{ malUsername }\". Please make sure you typed their name in correctly.");
+                return (false, $"Could not find the user \"{ malUsername }\". Please make sure you typed in the name correctly.");
             }
 
             return (true, string.Empty);
