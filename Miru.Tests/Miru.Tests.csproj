@@ -137,10 +137,6 @@
       <Project>{f2bd9029-7a34-4552-85b8-94c82fa0f4fa}</Project>
       <Name>Miru</Name>
     </ProjectReference>
-    <ProjectReference Include="..\MyInternetConnectionLibrary\MyInternetConnectionLibrary.csproj">
-      <Project>{fc9a5ffa-40e8-4ee2-8739-a0a44a5ac0c9}</Project>
-      <Name>MyInternetConnectionLibrary</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

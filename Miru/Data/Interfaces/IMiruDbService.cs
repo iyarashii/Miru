@@ -16,11 +16,11 @@ namespace Miru.Data
         void ChangeDisplayedAnimeList(AnimeListType animeListType, TimeZoneInfo selectedTimeZone, AnimeType selectedAnimeType, string animeNameFilter);
         void ClearDb();
         void ClearLocalImageCache();
-        Task<bool> GetDetailedSeasonAnimeListInfo(List<MiruAiringAnimeModel> detailedUserAnimeList);
-        Task<List<MiruAiringAnimeModel>> GetDetailedUserAnimeList(MiruDbContext db, ICollection<AnimeListEntry> currentUserAnimeListEntries);
+        Task<bool> GetDetailedSeasonAnimeListInfo(List<MiruAnimeModel> detailedUserAnimeList);
+        Task<List<MiruAnimeModel>> GetDetailedUserAnimeList(MiruDbContext db, ICollection<AnimeListEntry> currentUserAnimeListEntries);
         void GetSenpaiData();
         void LoadLastSyncedData();
-        List<MiruAiringAnimeModel> ParseTimeFromBroadcast(List<MiruAiringAnimeModel> detailedAnimeList);
+        List<MiruAnimeModel> ParseTimeFromBroadcast(List<MiruAnimeModel> detailedAnimeList);
         Task<bool> SaveDetailedAnimeListData(bool seasonSyncOn);
         Task SaveSyncedUserData();
         Task<Anime> TryToGetAnimeInfo(long malId, int millisecondsDelay);

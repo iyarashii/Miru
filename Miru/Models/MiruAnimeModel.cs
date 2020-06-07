@@ -7,7 +7,7 @@ using System.Windows.Media.Imaging;
 namespace Miru.Models
 {
     // data model for the anime entries used by this app
-    public class MiruAiringAnimeModel
+    public class MiruAnimeModel
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]

@@ -55,10 +55,10 @@ namespace Miru.Data
                     ViewModelContext.MalUserName = ViewModelContext.TypedInUsername = db.SyncedMyAnimeListUsers.FirstOrDefault().Username;
 
                     // get the user's list of the airing animes from the db
-                    var airingAnimeList = db.MiruAiringAnimeModels.ToList();
+                    var airingAnimeList = db.MiruAnimeModels.ToList();
 
                     // set airing anime list entries for each day of the week
-                    ViewModelContext.SortedAnimeListEntries.SortAiringAnime(airingAnimeList, AnimeListType.AiringAndWatching);
+                    ViewModelContext.SortedAnimeListEntries.SortAnimeByAirDayOfWeek(airingAnimeList, AnimeListType.AiringAndWatching);
                 }
             }
         }
@@ -68,7 +68,7 @@ namespace Miru.Data
         {
             using (var db = new MiruDbContext())
             {
-                db.Database.ExecuteSqlCommand("TRUNCATE TABLE [MiruAiringAnimeModels]");
+                db.Database.ExecuteSqlCommand("TRUNCATE TABLE [MiruAnimeModels]");
                 db.Database.ExecuteSqlCommand("TRUNCATE TABLE [SyncedMyAnimeListUsers]");
             }
         }
@@ -119,7 +119,7 @@ namespace Miru.Data
             using (var db = new MiruDbContext())
             {
                 // get the user's list of the airing animes from the db
-                var airingAnimeList = db.MiruAiringAnimeModels.ToList();
+                var airingAnimeList = db.MiruAnimeModels.ToList();
 
                 // filter list of the airing animes depending on type
                 switch (selectedAnimeType)
@@ -149,7 +149,7 @@ namespace Miru.Data
                 }
 
                 // set airing anime list entries for each day of the week
-                ViewModelContext.SortedAnimeListEntries.SortAiringAnime(airingAnimeList, animeListType);
+                ViewModelContext.SortedAnimeListEntries.SortAnimeByAirDayOfWeek(airingAnimeList, animeListType);
             }
         }
 
@@ -180,7 +180,7 @@ namespace Miru.Data
         // saves data received from the jikan API to the local database
         public async Task<bool> SaveDetailedAnimeListData(bool seasonSyncOn)
         {
-            List<MiruAiringAnimeModel> detailedAnimeList;
+            List<MiruAnimeModel> detailedAnimeList;
 
             // open temporary connection to the database
             using (var db = new MiruDbContext())
@@ -212,11 +212,11 @@ namespace Miru.Data
                 // parse day and time from the broadcast string
                 detailedAnimeList = ParseTimeFromBroadcast(detailedAnimeList);
 
-                // clear MiruAiringAnimeModels table from any data
-                db.Database.ExecuteSqlCommand("TRUNCATE TABLE [MiruAiringAnimeModels]");
+                // clear MiruAnimeModels table from any data
+                db.Database.ExecuteSqlCommand("TRUNCATE TABLE [MiruAnimeModels]");
 
-                // add miruAnimeModelsList to the MiruAiringAnimeModels table
-                db.MiruAiringAnimeModels.AddRange(detailedAnimeList);
+                // add miruAnimeModelsList to the MiruAnimeModels table
+                db.MiruAnimeModels.AddRange(detailedAnimeList);
 
                 // update database
                 await db.SaveChangesAsync();
@@ -226,12 +226,12 @@ namespace Miru.Data
 
         /// <summary>
         /// Gets detailed anime info for each AnimeListEntry in the collection and saves it as
-        /// MiruAiringAnimeModels list that contains the local broadcast time and the number of watched episodes by the user.
+        /// MiruAnimeModels list that contains the local broadcast time and the number of watched episodes by the user.
         /// </summary>
         /// <param name="db">Context of the database that is going to be updated.</param>
         /// <param name="currentUserAnimeListEntries">Collection of AnimeListEntries that are going to receive broadcast time data.</param>
         /// <returns></returns>
-        public async Task<List<MiruAiringAnimeModel>> GetDetailedUserAnimeList(MiruDbContext db, ICollection<AnimeListEntry> currentUserAnimeListEntries)
+        public async Task<List<MiruAnimeModel>> GetDetailedUserAnimeList(MiruDbContext db, ICollection<AnimeListEntry> currentUserAnimeListEntries)
         {
             DirectoryInfo di = new DirectoryInfo(Constants.ImageCacheFolderPath);
             if (!di.Exists)
@@ -240,7 +240,7 @@ namespace Miru.Data
             }
 
             // get anime data from the db
-            var detailedUserAnimeList = db.MiruAiringAnimeModels.ToList();
+            var detailedUserAnimeList = db.MiruAnimeModels.ToList();
 
             // set IsOnWatchingList flag to false for all anime models in the db
             detailedUserAnimeList.ForEach(x => { x.IsOnWatchingList = false; x.WatchedEpisodes = 0; });
@@ -279,7 +279,7 @@ namespace Miru.Data
                     {
                         string localImagePath = Path.Combine(Constants.ImageCacheFolderPath, $"{ animeInfo.MalId }.jpg");
                         // add airing anime created from the animeInfo data to the airingAnimes list
-                        detailedUserAnimeList.Add(new MiruAiringAnimeModel
+                        detailedUserAnimeList.Add(new MiruAnimeModel
                         {
                             MalId = animeInfo.MalId,
                             Broadcast = animeInfo.Broadcast ?? animeInfo.Aired.From.ToString(),
@@ -296,7 +296,7 @@ namespace Miru.Data
 
                         client.DownloadFile(animeInfo.ImageURL, localImagePath);
                     }
-                } 
+                }
             }
             return detailedUserAnimeList;
         }
@@ -306,7 +306,7 @@ namespace Miru.Data
         /// </summary>
         /// <param name="detailedUserAnimeList">List of detailed user anime data that is going to be updated with seasonal anime data.</param>
         /// <returns></returns>
-        public async Task<bool> GetDetailedSeasonAnimeListInfo(List<MiruAiringAnimeModel> detailedUserAnimeList)
+        public async Task<bool> GetDetailedSeasonAnimeListInfo(List<MiruAnimeModel> detailedUserAnimeList)
         {
             // set of all anime ids from the db
             HashSet<long> airingAnimesMalIDs = new HashSet<long>(detailedUserAnimeList.Select(x => x.MalId));
@@ -346,7 +346,7 @@ namespace Miru.Data
                         string localImagePath = Path.Combine(Constants.ImageCacheFolderPath, $"{ animeInfo.MalId }.jpg");
 
                         // add airing anime created from the animeInfo data to the miruAnimeModelsList
-                        detailedUserAnimeList.Add(new MiruAiringAnimeModel
+                        detailedUserAnimeList.Add(new MiruAnimeModel
                         {
                             MalId = animeInfo.MalId,
                             Broadcast = animeInfo.Broadcast ?? animeInfo.Aired.From.ToString(),
@@ -361,7 +361,7 @@ namespace Miru.Data
                         });
                         client.DownloadFile(animeInfo.ImageURL, localImagePath);
                     }
-                } 
+                }
             }
 
             // detailed anime list updated successfully
@@ -369,11 +369,11 @@ namespace Miru.Data
         }
 
         /// <summary>
-        /// Parses day and time from the broadcast string, converts it to the local time zone and saves to the LocalBroadcastTime property of the MiruAiringAnimeModel.
+        /// Parses day and time from the broadcast string, converts it to the local time zone and saves to the LocalBroadcastTime property of the MiruAnimeModel.
         /// </summary>
         /// <param name="detailedAnimeList">List of airing animes with broadcast strings but without parsed day and time data.</param>
         /// <returns>List of airing animes with parsed data saved in LocalBroadcastTime properties.</returns>
-        public List<MiruAiringAnimeModel> ParseTimeFromBroadcast(List<MiruAiringAnimeModel> detailedAnimeList)
+        public List<MiruAnimeModel> ParseTimeFromBroadcast(List<MiruAnimeModel> detailedAnimeList)
         {
             // local variables
             string dayOfTheWeek;

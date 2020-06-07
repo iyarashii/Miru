@@ -25,42 +25,31 @@ namespace Miru.Tests
         #region method tests
         public static IEnumerable<object[]> PrepareDataForFilterAnimeModelsByAnimeListType()
         {
-            yield return new object[] { AnimeListType.AiringAndWatching, true, true };
-            yield return new object[] { AnimeListType.Watching, true, It.IsAny<bool>() };
-            yield return new object[] { AnimeListType.Season, It.IsAny<bool>(), true };
+            yield return new object[] { AnimeListType.AiringAndWatching, new Predicate<MiruAnimeModel>(x => x.IsOnWatchingList && x.CurrentlyAiring) };
+            yield return new object[] { AnimeListType.Watching, new Predicate<MiruAnimeModel>(x => x.IsOnWatchingList) };
+            yield return new object[] { AnimeListType.Season, new Predicate<MiruAnimeModel>(x => x.CurrentlyAiring) };
         }
 
         [Theory]
         [MemberData(nameof(PrepareDataForFilterAnimeModelsByAnimeListType))]
-        public void FilterAnimeModelsByAnimeListType_ShouldFilterCorrectly(AnimeListType filterBy, bool isOnWatchingList, bool currentlyAiring)
+        public void FilterAnimeModelsByAnimeListType_ShouldFilterCorrectly(AnimeListType filterBy, Predicate<MiruAnimeModel> expectedFilterPredicate)
         {
             using (var mock = AutoMock.GetLoose())
             {
                 // Arrange
-                List<MiruAiringAnimeModel> animeTestModels = new List<MiruAiringAnimeModel>
+                List<MiruAnimeModel> animeTestModels = new List<MiruAnimeModel>
                 {
-                     new MiruAiringAnimeModel { IsOnWatchingList = true, CurrentlyAiring = true },
-                     new MiruAiringAnimeModel { IsOnWatchingList = true, CurrentlyAiring = It.IsAny<bool>() },
-                     new MiruAiringAnimeModel { IsOnWatchingList = It.IsAny<bool>(), CurrentlyAiring = true }
+                     new MiruAnimeModel { IsOnWatchingList = true, CurrentlyAiring = true },
+                     new MiruAnimeModel { IsOnWatchingList = true, CurrentlyAiring = false },
+                     new MiruAnimeModel { IsOnWatchingList = false, CurrentlyAiring = true }
                 };
-                var cls = mock.Create<SortedAnimeListEntries>();
+                var sut = mock.Create<SortedAnimeListEntries>();
 
                 // Act
-                var actual = cls.FilterAnimeModelsByAnimeListType(animeTestModels, filterBy);
-                bool expected = false;
-                //var expected = animeTestModels.Where(x => x.IsOnWatchingList == isOnWatchingList && x.CurrentlyAiring == currentlyAiring);
-                foreach (var i in animeTestModels)
-                {
-                    if(i.IsOnWatchingList == isOnWatchingList && i.CurrentlyAiring == currentlyAiring)
-                    {
-                        //expected.Add(i);
-                        expected = true;
-                    }
-                }
+                var filteredList = sut.FilterAnimeModelsByAnimeListType(animeTestModels, filterBy);
 
                 // Assert
-                //Assert.Equal(expected, actual);
-                Assert.True(expected);
+                Assert.True(filteredList.TrueForAll(expectedFilterPredicate));
             }
         }
         #endregion method tests

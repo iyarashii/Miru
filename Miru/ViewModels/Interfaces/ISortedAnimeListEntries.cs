@@ -6,13 +6,13 @@ namespace Miru.ViewModels
 {
     public interface ISortedAnimeListEntries
     {
-        ICollection<MiruAiringAnimeModel> FridayAiringAnimeList { get; set; }
-        ICollection<MiruAiringAnimeModel> MondayAiringAnimeList { get; set; }
-        ICollection<MiruAiringAnimeModel> SaturdayAiringAnimeList { get; set; }
-        ICollection<MiruAiringAnimeModel> SundayAiringAnimeList { get; set; }
-        ICollection<MiruAiringAnimeModel> ThursdayAiringAnimeList { get; set; }
-        ICollection<MiruAiringAnimeModel> TuesdayAiringAnimeList { get; set; }
-        ICollection<MiruAiringAnimeModel> WednesdayAiringAnimeList { get; set; }
-        void SortAiringAnime(List<MiruAiringAnimeModel> airingAnimeModels, AnimeListType animeListType);
+        ICollection<MiruAnimeModel> FridayAiringAnimeList { get; set; }
+        ICollection<MiruAnimeModel> MondayAiringAnimeList { get; set; }
+        ICollection<MiruAnimeModel> SaturdayAiringAnimeList { get; set; }
+        ICollection<MiruAnimeModel> SundayAiringAnimeList { get; set; }
+        ICollection<MiruAnimeModel> ThursdayAiringAnimeList { get; set; }
+        ICollection<MiruAnimeModel> TuesdayAiringAnimeList { get; set; }
+        ICollection<MiruAnimeModel> WednesdayAiringAnimeList { get; set; }
+        void SortAnimeByAirDayOfWeek(List<MiruAnimeModel> airingAnimeModels, AnimeListType animeListType);
     }
 }

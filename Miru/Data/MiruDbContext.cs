@@ -15,7 +15,7 @@ namespace Miru.Data
 
         // set db tables
         public DbSet<SyncedMyAnimeListUser> SyncedMyAnimeListUsers { get; set; }
-        public DbSet<MiruAiringAnimeModel> MiruAiringAnimeModels { get; set; }
+        public DbSet<MiruAnimeModel> MiruAnimeModels { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
