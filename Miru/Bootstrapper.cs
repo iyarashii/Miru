@@ -26,12 +26,15 @@ namespace Miru
             builder.RegisterType<CurrentSeasonModel>().As<ICurrentSeasonModel>();
             builder.RegisterType<CurrentUserAnimeListModel>().As<ICurrentUserAnimeListModel>();
             builder.RegisterType<Jikan>().As<IJikan>()
-                .WithParameters(
-                new[] 
-                { 
-                    new NamedParameter("surpressException", false), 
-                    new NamedParameter("useHttps", true) 
-                })
+                // local API endpoint
+                .WithParameter(new TypedParameter(typeof(string), "http://localhost:9001/public/v3/"))
+                // public API endpoint
+                //.WithParameters(
+                //new[]
+                //{
+                //    //new NamedParameter("surpressException", false), 
+                //    //new NamedParameter("useHttps", true) 
+                //})
                 .SingleInstance();
             builder.RegisterType<ProcessProxy>().As<IProcessProxy>();
             builder.RegisterType<ClipboardWrapper>().As<IClipboardWrapper>();
