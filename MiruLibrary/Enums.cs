@@ -1,8 +1,7 @@
-﻿using Miru.Views;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 
 // file used as a storage for enums used in this app
-namespace Miru
+namespace MiruLibrary
 {
     public enum MiruAppStatus
     {

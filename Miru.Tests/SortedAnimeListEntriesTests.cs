@@ -7,7 +7,7 @@ using Miru;
 using Miru.ViewModels;
 using Xunit;
 using Miru.Data;
-using Miru.Models;
+using MiruLibrary.Models;
 using Autofac.Extras.Moq;
 using ModernWpf;
 using ModernWpf.Controls;
@@ -17,6 +17,7 @@ using ToastNotifications.Core;
 using System.Collections.ObjectModel;
 using Caliburn.Micro;
 using System.Threading;
+using MiruLibrary;
 
 namespace Miru.Tests
 {
@@ -53,6 +54,30 @@ namespace Miru.Tests
         //        Assert.True(filteredList.TrueForAll(expectedFilterPredicate));
         //    }
         //}
+        [Fact]
+        public void SetAnimeSortedByAirDayOfWeekAndFilteredByGivenAnimeListType_CallsCorrectMethods()
+        {
+            using (var mock = AutoMock.GetLoose())
+            {
+                // Arrange
+                var sut = mock.Create<SortedAnimeListEntries>();
+
+                mock.Mock<IMiruAnimeModelProcessor>()
+                   .Setup(x => x.FilterAnimeModelsByAnimeListType(null, It.IsAny<AnimeListType>()));
+
+                mock.Mock<IMiruAnimeModelProcessor>()
+                    .Setup(x => x.FilterAnimeModelsByAirDayOfWeekAndOrderByAirTime(It.IsAny<IEnumerable<MiruAnimeModel>>(), It.IsAny<DayOfWeek>()));
+
+                // Act
+                sut.SetAnimeSortedByAirDayOfWeekAndFilteredByGivenAnimeListType(null, It.IsAny<AnimeListType>());
+
+                // Assert
+                mock.Mock<IMiruAnimeModelProcessor>()
+                    .Verify(x => x.FilterAnimeModelsByAnimeListType(null, It.IsAny<AnimeListType>()), Times.Once);
+                mock.Mock<IMiruAnimeModelProcessor>()
+                    .Verify(x => x.FilterAnimeModelsByAirDayOfWeekAndOrderByAirTime(It.IsAny<IEnumerable<MiruAnimeModel>>(), It.IsAny<DayOfWeek>()), Times.Exactly(7));
+            }
+        }
         #endregion method tests
     }
 }

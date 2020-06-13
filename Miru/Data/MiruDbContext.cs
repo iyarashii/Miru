@@ -1,5 +1,5 @@
 ﻿using JikanDotNet;
-using Miru.Models;
+using MiruLibrary.Models;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity;
 

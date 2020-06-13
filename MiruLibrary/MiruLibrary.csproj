@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{6FAFEDD7-C8D7-4E61-ACDA-D7BF99BBA95B}</ProjectGuid>
+    <ProjectGuid>{C56FA863-80E1-4CB1-B5C3-9806D40A05FB}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>MiruLibrary</RootNamespace>
@@ -31,7 +31,15 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="JikanDotNet, Version=1.4.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\JikanDotNet.1.4.0\lib\netstandard2.0\JikanDotNet.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="PresentationCore" />
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -39,9 +47,24 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Converters\EnumDescriptionTypeConverter.cs" />
+    <Compile Include="Enums.cs" />
+    <Compile Include="Models\CurrentSeasonModel.cs" />
+    <Compile Include="Models\CurrentUserAnimeListModel.cs" />
+    <Compile Include="Models\IMiruAnimeModelProcessor.cs" />
+    <Compile Include="Models\Interfaces\ICurrentSeasonModel.cs" />
+    <Compile Include="Models\Interfaces\ICurrentUserAnimeListModel.cs" />
+    <Compile Include="Models\MiruAnimeModel.cs" />
+    <Compile Include="Models\MiruAnimeModelProcessor.cs" />
+    <Compile Include="Models\SenpaiEntryModel.cs" />
+    <Compile Include="Models\SyncedMyAnimeListUser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

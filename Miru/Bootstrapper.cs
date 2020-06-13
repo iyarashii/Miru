@@ -1,7 +1,7 @@
 ﻿using Autofac;
 using Caliburn.Micro.Autofac;
 using Miru.Data;
-using Miru.Models;
+using MiruLibrary.Models;
 using Miru.ViewModels;
 using System.Windows;
 using JikanDotNet;
@@ -39,6 +39,7 @@ namespace Miru
             builder.RegisterType<ProcessProxy>().As<IProcessProxy>();
             builder.RegisterType<ClipboardWrapper>().As<IClipboardWrapper>();
             builder.RegisterType<ToastNotifierWrapper>().As<IToastNotifierWrapper>();
+            builder.RegisterType<MiruAnimeModelProcessor>().As<IMiruAnimeModelProcessor>();
         }
 
         protected override void ConfigureBootstrapper()

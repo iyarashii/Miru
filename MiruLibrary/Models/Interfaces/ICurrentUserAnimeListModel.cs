@@ -1,7 +1,7 @@
 ﻿using JikanDotNet;
 using System.Threading.Tasks;
 
-namespace Miru.Models
+namespace MiruLibrary.Models
 {
     public interface ICurrentUserAnimeListModel
     {

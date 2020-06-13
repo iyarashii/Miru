@@ -2,7 +2,7 @@
 using System.ComponentModel;
 using System.Reflection;
 
-namespace Miru.Views
+namespace MiruLibrary
 {
     // used for displaying enum description attribute instead of enum value
     public class EnumDescriptionTypeConverter : EnumConverter

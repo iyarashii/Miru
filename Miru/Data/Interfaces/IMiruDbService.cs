@@ -1,9 +1,11 @@
 ﻿using JikanDotNet;
-using Miru.Models;
+using MiruLibrary.Models;
 using Miru.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using MiruLibrary;
+using AnimeType = MiruLibrary.AnimeType;
 
 namespace Miru.Data
 {

@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.IO;
 using System.Windows.Media.Imaging;
 
-namespace Miru.Models
+namespace MiruLibrary.Models
 {
     // data model for the anime entries used by this app
     public class MiruAnimeModel

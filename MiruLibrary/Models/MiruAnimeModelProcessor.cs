@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Miru.Models
+namespace MiruLibrary.Models
 {
-    public class MiruAnimeModelProcessor
+    public class MiruAnimeModelProcessor : IMiruAnimeModelProcessor
     {
         // returns a list of anime models which belong to the specified anime list type
-        public static IEnumerable<MiruAnimeModel> FilterAnimeModelsByAnimeListType(IEnumerable<MiruAnimeModel> animeModels, AnimeListType animeListType)
+        public IEnumerable<MiruAnimeModel> FilterAnimeModelsByAnimeListType(IEnumerable<MiruAnimeModel> animeModels, AnimeListType animeListType)
         {
             switch (animeListType)
             {
@@ -34,7 +34,7 @@ namespace Miru.Models
         /// <returns>
         /// List of anime models filtered by the specific day of week and ordered by air time.
         /// </returns>
-        public static IEnumerable<MiruAnimeModel> FilterAnimeModelsByAirDayOfWeekAndOrderByAirTime(IEnumerable<MiruAnimeModel> animeModels, DayOfWeek dayOfWeek)
+        public IEnumerable<MiruAnimeModel> FilterAnimeModelsByAirDayOfWeekAndOrderByAirTime(IEnumerable<MiruAnimeModel> animeModels, DayOfWeek dayOfWeek)
         {
             return animeModels.Where(a => a.LocalBroadcastTime.Value.DayOfWeek == dayOfWeek).OrderBy(s => s.LocalBroadcastTime.Value.TimeOfDay).ToList();
         }

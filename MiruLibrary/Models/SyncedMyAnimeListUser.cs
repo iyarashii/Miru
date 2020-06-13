@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Miru.Models
+namespace MiruLibrary.Models
 {
     // data model for the synced user
     public class SyncedMyAnimeListUser

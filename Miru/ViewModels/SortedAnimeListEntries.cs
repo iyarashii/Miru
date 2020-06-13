@@ -1,15 +1,23 @@
 ﻿using Caliburn.Micro;
 using JikanDotNet;
-using Miru.Models;
+using MiruLibrary.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using MiruLibrary;
 
 namespace Miru.ViewModels
 {
     // wires up sorted anime list data to the correct properties that are used by the view
     public class SortedAnimeListEntries : PropertyChangedBase, ISortedAnimeListEntries
     {
+        public SortedAnimeListEntries(IMiruAnimeModelProcessor miruAnimeModelProcessor)
+        {
+            MiruAnimeModelProcessor = miruAnimeModelProcessor;
+        }
+
+        public IMiruAnimeModelProcessor MiruAnimeModelProcessor { get; set; }
+
         private IEnumerable<MiruAnimeModel> _mondayAiringAnimeList;
         private IEnumerable<MiruAnimeModel> _tuesdayAiringAnimeList;
         private IEnumerable<MiruAnimeModel> _wednesdayAiringAnimeList;
@@ -69,7 +77,7 @@ namespace Miru.ViewModels
         /// </summary>
         /// <param name="animeModels"></param>
         /// <param name="animeListType"></param>
-        public void DisplayAnimeSortedByAirDayOfWeek(IEnumerable<MiruAnimeModel> animeModels, AnimeListType animeListType)
+        public void SetAnimeSortedByAirDayOfWeekAndFilteredByGivenAnimeListType(IEnumerable<MiruAnimeModel> animeModels, AnimeListType animeListType)
         {
             animeModels = MiruAnimeModelProcessor.FilterAnimeModelsByAnimeListType(animeModels, animeListType);
 

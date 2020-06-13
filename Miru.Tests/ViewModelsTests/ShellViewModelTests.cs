@@ -7,7 +7,7 @@ using Miru;
 using Miru.ViewModels;
 using Xunit;
 using Miru.Data;
-using Miru.Models;
+using MiruLibrary.Models;
 using Autofac.Extras.Moq;
 using ModernWpf;
 using ModernWpf.Controls;
@@ -17,6 +17,7 @@ using ToastNotifications.Core;
 using System.Collections.ObjectModel;
 using Caliburn.Micro;
 using System.Threading;
+using MiruLibrary;
 
 namespace Miru.Tests
 {

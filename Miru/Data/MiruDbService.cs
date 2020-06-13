@@ -1,5 +1,5 @@
 ﻿using JikanDotNet;
-using Miru.Models;
+using MiruLibrary.Models;
 using Miru.ViewModels;
 using MyInternetConnectionLibrary;
 using Newtonsoft.Json;
@@ -9,6 +9,8 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using MiruLibrary;
+using AnimeType = MiruLibrary.AnimeType;
 
 namespace Miru.Data
 {
@@ -58,7 +60,7 @@ namespace Miru.Data
                     var airingAnimeList = db.MiruAnimeModels.ToList();
 
                     // set airing anime list entries for each day of the week
-                    ViewModelContext.SortedAnimeListEntries.DisplayAnimeSortedByAirDayOfWeek(airingAnimeList, AnimeListType.AiringAndWatching);
+                    ViewModelContext.SortedAnimeListEntries.SetAnimeSortedByAirDayOfWeekAndFilteredByGivenAnimeListType(airingAnimeList, AnimeListType.AiringAndWatching);
                 }
             }
         }
@@ -149,7 +151,7 @@ namespace Miru.Data
                 }
 
                 // set airing anime list entries for each day of the week
-                ViewModelContext.SortedAnimeListEntries.DisplayAnimeSortedByAirDayOfWeek(airingAnimeList, animeListType);
+                ViewModelContext.SortedAnimeListEntries.SetAnimeSortedByAirDayOfWeekAndFilteredByGivenAnimeListType(airingAnimeList, animeListType);
             }
         }
 

@@ -27,7 +27,7 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>14</ApplicationRevision>
+    <ApplicationRevision>15</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -161,14 +161,6 @@
     <Compile Include="Data\Migrations\Configuration.cs" />
     <Compile Include="Data\MiruDbContext.cs" />
     <Compile Include="Data\MiruDbService.cs" />
-    <Compile Include="Enums.cs" />
-    <Compile Include="Models\CurrentSeasonModel.cs" />
-    <Compile Include="Models\CurrentUserAnimeListModel.cs" />
-    <Compile Include="Models\Interfaces\ICurrentSeasonModel.cs" />
-    <Compile Include="Models\Interfaces\ICurrentUserAnimeListModel.cs" />
-    <Compile Include="Models\MiruAnimeModel.cs" />
-    <Compile Include="Models\MiruAnimeModelProcessor.cs" />
-    <Compile Include="Models\SenpaiEntryModel.cs" />
     <Compile Include="ViewModels\ClipboardWrapper.cs" />
     <Compile Include="ViewModels\Interfaces\IClipboardWrapper.cs" />
     <Compile Include="ViewModels\Interfaces\IShellViewModel.cs" />
@@ -177,12 +169,10 @@
     <Compile Include="ViewModels\Interfaces\IToastNotifierWrapper.cs" />
     <Compile Include="ViewModels\ProcessProxy.cs" />
     <Compile Include="ViewModels\SortedAnimeListEntries.cs" />
-    <Compile Include="Models\SyncedMyAnimeListUser.cs" />
     <Compile Include="ViewModels\ShellViewModel.cs" />
     <Compile Include="ViewModels\SimpleContentDialog.cs" />
     <Compile Include="ViewModels\ToastNotifierWrapper.cs" />
     <Compile Include="Views\Extensions\EnumBindingSourceExtension.cs" />
-    <Compile Include="Views\Converters\EnumDescriptionTypeConverter.cs" />
     <Compile Include="Views\Extensions\HyperlinkExtensions.cs" />
     <Compile Include="Views\Converters\InverseBooleanConverter.cs" />
     <Compile Include="Views\Extensions\RunVisibility.cs" />
@@ -256,7 +246,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MiruLibrary\MiruLibrary.csproj">
-      <Project>{6fafedd7-c8d7-4e61-acda-d7bf99bba95b}</Project>
+      <Project>{c56fa863-80e1-4cb1-b5c3-9806d40a05fb}</Project>
       <Name>MiruLibrary</Name>
     </ProjectReference>
     <ProjectReference Include="..\MyInternetConnectionLibrary\MyInternetConnectionLibrary.csproj">

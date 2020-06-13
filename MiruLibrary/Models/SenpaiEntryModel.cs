@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Miru.Models
+namespace MiruLibrary.Models
 {
     // model for senpai JSON data serialization
     public class SenpaiEntryModel
