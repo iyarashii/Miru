@@ -26,9 +26,9 @@ namespace Miru
             builder.RegisterType<CurrentSeasonModel>().As<ICurrentSeasonModel>();
             builder.RegisterType<CurrentUserAnimeListModel>().As<ICurrentUserAnimeListModel>();
             builder.RegisterType<Jikan>().As<IJikan>()
-                // local API endpoint
+                // dev API endpoint
                 .WithParameter(new TypedParameter(typeof(string), "http://localhost:9001/public/v3/"))
-                // public API endpoint
+                // prod API endpoint
                 //.WithParameters(
                 //new[]
                 //{
