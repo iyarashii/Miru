@@ -54,7 +54,7 @@
     <Compile Include="Enums.cs" />
     <Compile Include="Models\CurrentSeasonModel.cs" />
     <Compile Include="Models\CurrentUserAnimeListModel.cs" />
-    <Compile Include="Models\IMiruAnimeModelProcessor.cs" />
+    <Compile Include="Models\Interfaces\IMiruAnimeModelProcessor.cs" />
     <Compile Include="Models\Interfaces\ICurrentSeasonModel.cs" />
     <Compile Include="Models\Interfaces\ICurrentUserAnimeListModel.cs" />
     <Compile Include="Models\MiruAnimeModel.cs" />
