@@ -79,5 +79,11 @@ namespace Miru.Tests
             }
         }
         #endregion method tests
+
+        [Fact]
+        public void MiruAnimeModelProcessor_StoresCorrectly()
+        {
+
+        }
     }
 }
