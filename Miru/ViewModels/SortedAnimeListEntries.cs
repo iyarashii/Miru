@@ -16,7 +16,7 @@ namespace Miru.ViewModels
             MiruAnimeModelProcessor = miruAnimeModelProcessor;
         }
 
-        public IMiruAnimeModelProcessor MiruAnimeModelProcessor { get; set; }
+        public IMiruAnimeModelProcessor MiruAnimeModelProcessor { get; }
 
         private IEnumerable<MiruAnimeModel> _mondayAiringAnimeList;
         private IEnumerable<MiruAnimeModel> _tuesdayAiringAnimeList;

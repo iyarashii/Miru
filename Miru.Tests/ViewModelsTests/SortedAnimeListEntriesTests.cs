@@ -1,29 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Miru;
-using Miru.ViewModels;
-using Xunit;
-using Miru.Data;
-using MiruLibrary.Models;
+﻿using Autofac;
 using Autofac.Extras.Moq;
-using ModernWpf;
-using ModernWpf.Controls;
-using System.Windows.Media;
-using Moq;
-using ToastNotifications.Core;
-using System.Collections.ObjectModel;
-using Caliburn.Micro;
-using System.Threading;
+using Miru.ViewModels;
 using MiruLibrary;
+using MiruLibrary.Models;
+using Moq;
+using System;
+using System.Collections.Generic;
+using Xunit;
 
 namespace Miru.Tests
 {
     public class SortedAnimeListEntriesTests
     {
         #region method tests
+
         // TODO: move this to the MiruAnimeModelProcessor tests
         public static IEnumerable<object[]> PrepareDataForFilterAnimeModelsByAnimeListType()
         {
@@ -31,6 +21,7 @@ namespace Miru.Tests
             yield return new object[] { AnimeListType.Watching, new Predicate<MiruAnimeModel>(x => x.IsOnWatchingList) };
             yield return new object[] { AnimeListType.Season, new Predicate<MiruAnimeModel>(x => x.CurrentlyAiring) };
         }
+
         // TODO: move this test to the MiruAnimeModelProcessor tests
         //[Theory]
         //[MemberData(nameof(PrepareDataForFilterAnimeModelsByAnimeListType))]
@@ -78,12 +69,57 @@ namespace Miru.Tests
                     .Verify(x => x.FilterAnimeModelsByAirDayOfWeekAndOrderByAirTime(It.IsAny<IEnumerable<MiruAnimeModel>>(), It.IsAny<DayOfWeek>()), Times.Exactly(7));
             }
         }
+
         #endregion method tests
 
         [Fact]
-        public void MiruAnimeModelProcessor_StoresCorrectly()
+        public void MiruAnimeModelProcessor_ReturnsCorrectValue()
         {
+            using (var mock = AutoMock.GetLoose())
+            {
+                // Arrange
+                var fakeMiruAnimeModelProcessor = mock.Create<MiruAnimeModelProcessor>();
 
+                // Act
+                var sut = mock.Create<SortedAnimeListEntries>(new TypedParameter(typeof(IMiruAnimeModelProcessor), fakeMiruAnimeModelProcessor));
+
+                // Assert
+                Assert.Equal(fakeMiruAnimeModelProcessor, sut.MiruAnimeModelProcessor);
+            }
+        }
+
+        [Fact]
+        public void MondayAiringAnimeList_StoresCorrectly()
+        {
+            using (var mock = AutoMock.GetLoose())
+            {
+                // Arrange
+                var sut = mock.Create<SortedAnimeListEntries>();
+                var testValue = It.IsAny<IEnumerable<MiruAnimeModel>>();
+
+                // Act
+                sut.MondayAiringAnimeList = testValue;
+
+                // Assert
+                Assert.Equal(testValue, sut.MondayAiringAnimeList);
+            }
+        }
+
+        [Fact]
+        public void TuesdayAiringAnimeList_StoresCorrectly()
+        {
+            using (var mock = AutoMock.GetLoose())
+            {
+                // Arrange
+                var sut = mock.Create<SortedAnimeListEntries>();
+                var testValue = It.IsAny<IEnumerable<MiruAnimeModel>>();
+
+                // Act
+                sut.TuesdayAiringAnimeList = testValue;
+
+                // Assert
+                Assert.Equal(testValue, sut.TuesdayAiringAnimeList);
+            }
         }
     }
 }
