@@ -27,14 +27,17 @@ namespace Miru
             builder.RegisterType<CurrentUserAnimeListModel>().As<ICurrentUserAnimeListModel>();
             builder.RegisterType<Jikan>().As<IJikan>()
                 // dev API endpoint
+#if DEBUG
                 .WithParameter(new TypedParameter(typeof(string), "http://localhost:9001/public/v3/"))
                 // prod API endpoint
-                //.WithParameters(
-                //new[]
-                //{
-                //    //new NamedParameter("surpressException", false), 
-                //    //new NamedParameter("useHttps", true) 
-                //})
+#else
+                .WithParameters(
+                new[]
+                {
+                    new NamedParameter("surpressException", false),
+                    new NamedParameter("useHttps", true)
+                })
+#endif
                 .SingleInstance();
             builder.RegisterType<ProcessProxy>().As<IProcessProxy>();
             builder.RegisterType<ClipboardWrapper>().As<IClipboardWrapper>();
