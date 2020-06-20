@@ -121,5 +121,91 @@ namespace Miru.Tests
                 Assert.Equal(testValue, sut.TuesdayAiringAnimeList);
             }
         }
+
+        [Fact]
+        public void WednesdayAiringAnimeList_StoresCorrectly()
+        {
+            using (var mock = AutoMock.GetLoose())
+            {
+                // Arrange
+                var sut = mock.Create<SortedAnimeListEntries>();
+                var testValue = It.IsAny<IEnumerable<MiruAnimeModel>>();
+
+                // Act
+                sut.WednesdayAiringAnimeList = testValue;
+
+                // Assert
+                Assert.Equal(testValue, sut.WednesdayAiringAnimeList);
+            }
+        }
+
+        [Fact]
+        public void ThursdayAiringAnimeList_StoresCorrectly()
+        {
+            using (var mock = AutoMock.GetLoose())
+            {
+                // Arrange
+                var sut = mock.Create<SortedAnimeListEntries>();
+                var testValue = It.IsAny<IEnumerable<MiruAnimeModel>>();
+
+                // Act
+                sut.ThursdayAiringAnimeList = testValue;
+
+                // Assert
+                Assert.Equal(testValue, sut.ThursdayAiringAnimeList);
+            }
+        }
+
+        [Fact]
+        public void FridayAiringAnimeList_StoresCorrectly()
+        {
+            using (var mock = AutoMock.GetLoose())
+            {
+                // Arrange
+                var sut = mock.Create<SortedAnimeListEntries>();
+                var testValue = It.IsAny<IEnumerable<MiruAnimeModel>>();
+
+                // Act
+                sut.FridayAiringAnimeList = testValue;
+
+                // Assert
+                Assert.Equal(testValue, sut.FridayAiringAnimeList);
+            }
+        }
+
+        [Fact]
+        public void SaturdayAiringAnimeList_StoresCorrectly()
+        {
+            using (var mock = AutoMock.GetLoose())
+            {
+                // Arrange
+                var sut = mock.Create<SortedAnimeListEntries>();
+                var testValue = It.IsAny<IEnumerable<MiruAnimeModel>>();
+
+                // Act
+                sut.SaturdayAiringAnimeList = testValue;
+
+                // Assert
+                Assert.Equal(testValue, sut.SaturdayAiringAnimeList);
+            }
+        }
+
+        [Fact]
+        public void SundayAiringAnimeList_StoresCorrectly()
+        {
+            using (var mock = AutoMock.GetLoose())
+            {
+                // Arrange
+                var sut = mock.Create<SortedAnimeListEntries>();
+                var testValue = It.IsAny<IEnumerable<MiruAnimeModel>>();
+
+                // Act
+                sut.SundayAiringAnimeList = testValue;
+
+                // Assert
+                Assert.Equal(testValue, sut.SundayAiringAnimeList);
+            }
+        }
+
     }
 }
