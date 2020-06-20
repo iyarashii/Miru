@@ -312,7 +312,7 @@ namespace Miru.Tests
                     .Setup(x => x.SaveDetailedAnimeListData(isSeasonSyncOn))
                     .ReturnsAsync(saveDetailedAnimeListDataResult);
 
-                mock.Mock<IMiruDbService>().Setup(x => x.SaveSyncedUserData());
+                mock.Mock<IMiruDbService>().Setup(x => x.SaveSyncedUserData(It.IsAny<string>()));
 
                 var currentUserAnimeListMock = mock.Create<ICurrentUserAnimeListModel>();
                 var currentSeasonMock = mock.Create<ICurrentSeasonModel>();
@@ -331,7 +331,7 @@ namespace Miru.Tests
 
                 mock.Mock<IMiruDbService>().Verify(x => x.SaveDetailedAnimeListData(isSeasonSyncOn), Times.Exactly(expectedSaveDetailedAnimeListDataTimesCalled));
 
-                mock.Mock<IMiruDbService>().Verify(x => x.SaveSyncedUserData(), Times.Exactly(expectedSaveSyncedUserDataTimesCalled));
+                mock.Mock<IMiruDbService>().Verify(x => x.SaveSyncedUserData(It.IsAny<string>()), Times.Exactly(expectedSaveSyncedUserDataTimesCalled));
             }
         }
 
@@ -516,7 +516,7 @@ namespace Miru.Tests
             {
                 // Arrange
                 var cls = mock.Create<ShellViewModel>();
-                var testValue = AnimeListType.Watching;
+                var testValue = AnimeListType.AiringAndWatching;
                 mock.Mock<IMiruDbService>()
                     .Setup(x => x.ChangeDisplayedAnimeList(testValue, cls.SelectedTimeZone, cls.SelectedDisplayedAnimeType, cls.CurrentAnimeNameFilter));
 

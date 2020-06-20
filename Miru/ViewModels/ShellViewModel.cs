@@ -21,7 +21,7 @@ namespace Miru.ViewModels
         private MiruAppStatus _appStatus;
         private ApplicationTheme _currentApplicationTheme;
         private SolidColorBrush _daysOfTheWeekBrush;
-        private AnimeListType _selectedDisplayedAnimeList;
+        private AnimeListType _selectedDisplayedAnimeList = AnimeListType.Watching;
         private TimeZoneInfo _selectedTimeZone;
         private bool _canChangeDisplayedAnimeList;
         private AnimeType _selectedDisplayedAnimeType;
@@ -46,8 +46,11 @@ namespace Miru.ViewModels
 
             ToastNotifierWrapper = toastNotifierWrapper;
 
-            // set db service viewmodel context to this view model
-            DbService.ViewModelContext = this;
+            // subscribe to the events
+            DbService.UpdateSyncDate += new EventHandler<DateTime>(UpdateSyncDate);
+            DbService.UpdateAnimeListEntriesUI += new MiruDbService.SortedAnimeListEventHandler(SortedAnimeListEntries.SetAnimeSortedByAirDayOfWeekAndFilteredByGivenAnimeListType);
+            DbService.UpdateCurrentUsername += new EventHandler<string>(UpdateUsername);
+            DbService.UpdateAppStatusUI += new MiruDbService.UpdateAppStatusEventHandler(UpdateAppStatus);
 
             // set system's local time zone as initially selected time zone
             SelectedTimeZone = TimeZoneInfo.Local;
@@ -225,6 +228,7 @@ namespace Miru.ViewModels
             set
             {
                 _typedInUsername = value;
+                //DbService.CurrentUsername = value;
                 NotifyOfPropertyChange(() => TypedInUsername);
             }
         }
@@ -277,6 +281,23 @@ namespace Miru.ViewModels
         #endregion properties
 
         #region event handlers and guard methods
+
+        public void UpdateSyncDate(object sender, DateTime value)
+        {
+            SyncDate = value;
+        }
+
+        public void UpdateUsername(object sender, string name)
+        {
+            if(string.IsNullOrEmpty(TypedInUsername))
+            {
+                MalUserName = TypedInUsername = name;
+            }
+            else
+            {
+                MalUserName = name;
+            }
+        }
 
         // called by dark mode toggle switch
         public void ChangeTheme()
@@ -347,7 +368,7 @@ namespace Miru.ViewModels
 
             // save user data to the db
             UpdateAppStatus(MiruAppStatus.Busy, "Saving user data to the db...");
-            await DbService.SaveSyncedUserData();
+            await DbService.SaveSyncedUserData(typedInUsername);
 
             // save api data to the database
             if (!await DbService.SaveDetailedAnimeListData(seasonSyncOn))
@@ -360,7 +381,7 @@ namespace Miru.ViewModels
             MalUserName = TypedInUsername;
 
             // display sorted animes from user's watching anime list
-            SelectedDisplayedAnimeList = AnimeListType.AiringAndWatching;
+            SelectedDisplayedAnimeList = AnimeListType.Watching;
             SelectedTimeZone = TimeZoneInfo.Local;
 
             // update app status

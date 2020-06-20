@@ -1,6 +1,5 @@
 ﻿using JikanDotNet;
 using MiruLibrary.Models;
-using Miru.ViewModels;
 using MyInternetConnectionLibrary;
 using Newtonsoft.Json;
 using System;
@@ -17,6 +16,9 @@ namespace Miru.Data
     // contains the business logic that uses the local db
     public class MiruDbService : IMiruDbService
     {
+        private DateTime _syncDateData;
+        private string currentUsername;
+
         // constructor
         public MiruDbService(ICurrentSeasonModel currentSeasonModel, ICurrentUserAnimeListModel currentUserAnimeListModel, IJikan jikanWrapper)
         {
@@ -33,13 +35,42 @@ namespace Miru.Data
         private IJikan JikanWrapper { get; }
 
         // stores view model's context
-        public IShellViewModel ViewModelContext { get; set; }
+        //public IShellViewModel ViewModelContext { get; set; }
+        public DateTime SyncDateData
+        {
+            get => _syncDateData;
+            set
+            {
+                _syncDateData = value;
+                UpdateSyncDate(this, value);
+            }
+        }
+
+        public string CurrentUsername { get => currentUsername;
+            private set
+            {
+                if(currentUsername != value)
+                {
+                    currentUsername = value;
+                    UpdateCurrentUsername(this, value);
+                }
+            }
+        }
 
         // stores data model of the current anime season
         public ICurrentSeasonModel CurrentSeason { get; }
 
         // stores data model of the currently synced user's anime list
         public ICurrentUserAnimeListModel CurrentUserAnimeList { get; }
+
+        public delegate void SortedAnimeListEventHandler(List<MiruAnimeModel> animeModels, AnimeListType animeListType);
+        public delegate void UpdateAppStatusEventHandler(MiruAppStatus newAppStatus, string detailedAppStatusDescription);
+
+        public event EventHandler<DateTime> UpdateSyncDate;
+        public event EventHandler<string> UpdateCurrentUsername;
+
+        public event SortedAnimeListEventHandler UpdateAnimeListEntriesUI;
+        public event UpdateAppStatusEventHandler UpdateAppStatusUI;
 
         // load data from the last sync
         public void LoadLastSyncedData()
@@ -51,16 +82,18 @@ namespace Miru.Data
                 if (db.SyncedMyAnimeListUsers.Any())
                 {
                     // set SyncDate prop to the sync time of the last synchronization
-                    ViewModelContext.SyncDate = db.SyncedMyAnimeListUsers.FirstOrDefault().SyncTime;
+                    SyncDateData = db.SyncedMyAnimeListUsers.FirstOrDefault().SyncTime;
 
                     // set SyncStatusText and TypedInUsername props to the username of the last synchronized user
-                    ViewModelContext.MalUserName = ViewModelContext.TypedInUsername = db.SyncedMyAnimeListUsers.FirstOrDefault().Username;
+                    //ViewModelContext.MalUserName = ViewModelContext.TypedInUsername = db.SyncedMyAnimeListUsers.FirstOrDefault().Username;
+                    CurrentUsername = db.SyncedMyAnimeListUsers.FirstOrDefault().Username;
 
                     // get the user's list of the airing animes from the db
                     var airingAnimeList = db.MiruAnimeModels.ToList();
 
                     // set airing anime list entries for each day of the week
-                    ViewModelContext.SortedAnimeListEntries.SetAnimeSortedByAirDayOfWeekAndFilteredByGivenAnimeListType(airingAnimeList, AnimeListType.AiringAndWatching);
+                    //ViewModelContext.SortedAnimeListEntries.SetAnimeSortedByAirDayOfWeekAndFilteredByGivenAnimeListType(airingAnimeList, AnimeListType.AiringAndWatching);
+                    UpdateAnimeListEntriesUI(airingAnimeList, AnimeListType.Watching);
                 }
             }
         }
@@ -151,12 +184,13 @@ namespace Miru.Data
                 }
 
                 // set airing anime list entries for each day of the week
-                ViewModelContext.SortedAnimeListEntries.SetAnimeSortedByAirDayOfWeekAndFilteredByGivenAnimeListType(airingAnimeList, animeListType);
+                //ViewModelContext.SortedAnimeListEntries.SetAnimeSortedByAirDayOfWeekAndFilteredByGivenAnimeListType(airingAnimeList, animeListType);
+                UpdateAnimeListEntriesUI(airingAnimeList, animeListType);
             }
         }
 
         // saves user data to the local database
-        public async Task SaveSyncedUserData()
+        public async Task SaveSyncedUserData(string typedInUsername)
         {
             // open temporary connection to the database
             using (var db = new MiruDbContext())
@@ -170,8 +204,10 @@ namespace Miru.Data
                 // store the current user's username and sync date to the SyncedMyAnimeListUsers table
                 db.SyncedMyAnimeListUsers.Add(new SyncedMyAnimeListUser
                 {
-                    Username = ViewModelContext.TypedInUsername,
-                    SyncTime = ViewModelContext.SyncDate = DateTime.Now
+                    //Username = ViewModelContext.TypedInUsername,
+                    Username = typedInUsername,
+                    //SyncTime = ViewModelContext.SyncDate = DateTime.Now
+                    SyncTime = SyncDateData = DateTime.Now
                 });
 
                 // save changes to the database
@@ -187,7 +223,8 @@ namespace Miru.Data
             // open temporary connection to the database
             using (var db = new MiruDbContext())
             {
-                ViewModelContext.UpdateAppStatus(MiruAppStatus.Busy, "Getting detailed user anime list data...");
+                //ViewModelContext.UpdateAppStatus(MiruAppStatus.Busy, "Getting detailed user anime list data...");
+                UpdateAppStatusUI(MiruAppStatus.Busy, "Getting detailed user anime list data...");
 
                 // get user anime list with the detailed info
                 detailedAnimeList = await GetDetailedUserAnimeList(db, CurrentUserAnimeList.UserAnimeListData.Anime);
@@ -201,7 +238,8 @@ namespace Miru.Data
                 // if 'get current season list' button was used to sync data
                 if (seasonSyncOn)
                 {
-                    ViewModelContext.UpdateAppStatus(MiruAppStatus.Busy, "Getting detailed current season anime data...");
+                    //ViewModelContext.UpdateAppStatus(MiruAppStatus.Busy, "Getting detailed current season anime data...");
+                    UpdateAppStatusUI(MiruAppStatus.Busy, "Getting detailed current season anime data...");
 
                     // update user anime list with season anime detailed data if it fails return false
                     if (!await GetDetailedSeasonAnimeListInfo(detailedAnimeList))
@@ -209,7 +247,8 @@ namespace Miru.Data
                         return false;
                     }
                 }
-                ViewModelContext.UpdateAppStatus(MiruAppStatus.Busy, "Parse day and time from the broadcast string...");
+                //ViewModelContext.UpdateAppStatus(MiruAppStatus.Busy, "Parse day and time from the broadcast string...");
+                UpdateAppStatusUI(MiruAppStatus.Busy, "Parse day and time from the broadcast string...");
 
                 // parse day and time from the broadcast string
                 detailedAnimeList = ParseTimeFromBroadcast(detailedAnimeList);

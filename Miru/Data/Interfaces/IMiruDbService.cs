@@ -1,6 +1,5 @@
 ﻿using JikanDotNet;
 using MiruLibrary.Models;
-using Miru.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -13,7 +12,14 @@ namespace Miru.Data
     {
         ICurrentSeasonModel CurrentSeason { get; }
         ICurrentUserAnimeListModel CurrentUserAnimeList { get; }
-        IShellViewModel ViewModelContext { get; set; }
+        string CurrentUsername { get; }
+
+        event EventHandler<DateTime> UpdateSyncDate;
+        event MiruDbService.SortedAnimeListEventHandler UpdateAnimeListEntriesUI;
+        event EventHandler<string> UpdateCurrentUsername;
+        event MiruDbService.UpdateAppStatusEventHandler UpdateAppStatusUI;
+
+        //IShellViewModel ViewModelContext { get; set; }
 
         void ChangeDisplayedAnimeList(AnimeListType animeListType, TimeZoneInfo selectedTimeZone, AnimeType selectedAnimeType, string animeNameFilter);
         void ClearDb();
@@ -24,7 +30,7 @@ namespace Miru.Data
         void LoadLastSyncedData();
         List<MiruAnimeModel> ParseTimeFromBroadcast(List<MiruAnimeModel> detailedAnimeList);
         Task<bool> SaveDetailedAnimeListData(bool seasonSyncOn);
-        Task SaveSyncedUserData();
+        Task SaveSyncedUserData(string typedInUsername);
         Task<Anime> TryToGetAnimeInfo(long malId, int millisecondsDelay);
         void UpdateSenpaiData();
     }
