@@ -3,7 +3,7 @@ using MiruLibrary.Models;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity;
 
-namespace Miru.Data
+namespace MiruDatabaseLogicLayer
 {
     // app's default db context
     public class MiruDbContext : DbContext

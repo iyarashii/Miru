@@ -1,4 +1,4 @@
-﻿namespace Miru.Data.Migrations
+﻿namespace MiruDatabaseLogicLayer.Migrations
 {
     using System;
     using System.Data.Entity.Migrations;

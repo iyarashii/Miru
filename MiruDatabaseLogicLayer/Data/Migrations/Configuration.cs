@@ -1,8 +1,8 @@
-﻿namespace Miru.Data.Migrations
+﻿namespace MiruDatabaseLogicLayer.Migrations
 {
     using System.Data.Entity.Migrations;
 
-    internal sealed class Configuration : DbMigrationsConfiguration<Miru.Data.MiruDbContext>
+    internal sealed class Configuration : DbMigrationsConfiguration<MiruDatabaseLogicLayer.MiruDbContext>
     {
         public Configuration()
         {
@@ -10,7 +10,7 @@
             MigrationsDirectory = @"Data\Migrations";
         }
 
-        protected override void Seed(Miru.Data.MiruDbContext context)
+        protected override void Seed(MiruDatabaseLogicLayer.MiruDbContext context)
         {
             //  This method will be called after migrating to the latest version.
 

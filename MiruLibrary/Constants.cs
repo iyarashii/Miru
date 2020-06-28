@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace Miru
+namespace MiruLibrary
 {
     public static class Constants
     {

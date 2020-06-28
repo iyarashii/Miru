@@ -1,6 +1,6 @@
 ﻿using Autofac;
 using Caliburn.Micro.Autofac;
-using Miru.Data;
+using MiruDatabaseLogicLayer;
 using MiruLibrary.Models;
 using Miru.ViewModels;
 using System.Windows;

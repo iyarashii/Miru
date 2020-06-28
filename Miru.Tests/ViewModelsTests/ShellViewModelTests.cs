@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Miru;
 using Miru.ViewModels;
 using Xunit;
-using Miru.Data;
+using MiruDatabaseLogicLayer;
 using MiruLibrary.Models;
 using Autofac.Extras.Moq;
 using ModernWpf;

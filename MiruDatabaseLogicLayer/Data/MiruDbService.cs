@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 using MiruLibrary;
 using AnimeType = MiruLibrary.AnimeType;
 
-namespace Miru.Data
+namespace MiruDatabaseLogicLayer
 {
     // contains the business logic that uses the local db
     public class MiruDbService : IMiruDbService

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using MiruLibrary;
 using AnimeType = MiruLibrary.AnimeType;
 
-namespace Miru.Data
+namespace MiruDatabaseLogicLayer
 {
     public interface IMiruDbService
     {

@@ -138,6 +138,10 @@
     <Analyzer Include="..\packages\xunit.analyzers.0.10.0\analyzers\dotnet\cs\xunit.analyzers.dll" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\MiruDatabaseLogicLayer\MiruDatabaseLogicLayer.csproj">
+      <Project>{5827cab4-b769-4296-88f6-78358b52aac0}</Project>
+      <Name>MiruDatabaseLogicLayer</Name>
+    </ProjectReference>
     <ProjectReference Include="..\MiruLibrary\MiruLibrary.csproj">
       <Project>{c56fa863-80e1-4cb1-b5c3-9806d40a05fb}</Project>
       <Name>MiruLibrary</Name>

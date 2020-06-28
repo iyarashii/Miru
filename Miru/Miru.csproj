@@ -120,47 +120,6 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Constants.cs" />
-    <Compile Include="Data\Interfaces\IMiruDbService.cs" />
-    <Compile Include="Data\Migrations\202001251554307_AddSyncedUsersTable.cs" />
-    <Compile Include="Data\Migrations\202001251554307_AddSyncedUsersTable.designer.cs">
-      <DependentUpon>202001251554307_AddSyncedUsersTable.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Data\Migrations\202001252346182_AddAnimeAiringTimesTable.cs" />
-    <Compile Include="Data\Migrations\202001252346182_AddAnimeAiringTimesTable.designer.cs">
-      <DependentUpon>202001252346182_AddAnimeAiringTimesTable.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Data\Migrations\202001261232547_ModifyAnimeAiringTimeModel.cs" />
-    <Compile Include="Data\Migrations\202001261232547_ModifyAnimeAiringTimeModel.designer.cs">
-      <DependentUpon>202001261232547_ModifyAnimeAiringTimeModel.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Data\Migrations\202002101159035_RenameAnimeAiringTimesTable.cs" />
-    <Compile Include="Data\Migrations\202002101159035_RenameAnimeAiringTimesTable.designer.cs">
-      <DependentUpon>202002101159035_RenameAnimeAiringTimesTable.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Data\Migrations\202002181240582_UpdateMiruAiringAnimeModel.cs" />
-    <Compile Include="Data\Migrations\202002181240582_UpdateMiruAiringAnimeModel.designer.cs">
-      <DependentUpon>202002181240582_UpdateMiruAiringAnimeModel.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Data\Migrations\202003151434418_AddCurrentlyAiringFlag.cs" />
-    <Compile Include="Data\Migrations\202003151434418_AddCurrentlyAiringFlag.designer.cs">
-      <DependentUpon>202003151434418_AddCurrentlyAiringFlag.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Data\Migrations\202003151920351_AddAnimeType.cs" />
-    <Compile Include="Data\Migrations\202003151920351_AddAnimeType.designer.cs">
-      <DependentUpon>202003151920351_AddAnimeType.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Data\Migrations\202004091158179_AddLocalImagePathToMiruAnimeModel.cs" />
-    <Compile Include="Data\Migrations\202004091158179_AddLocalImagePathToMiruAnimeModel.designer.cs">
-      <DependentUpon>202004091158179_AddLocalImagePathToMiruAnimeModel.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Data\Migrations\202006071325437_RenameToMiruAnimeModelsColumn.cs" />
-    <Compile Include="Data\Migrations\202006071325437_RenameToMiruAnimeModelsColumn.designer.cs">
-      <DependentUpon>202006071325437_RenameToMiruAnimeModelsColumn.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Data\Migrations\Configuration.cs" />
-    <Compile Include="Data\MiruDbContext.cs" />
-    <Compile Include="Data\MiruDbService.cs" />
     <Compile Include="ViewModels\Helpers\ClipboardWrapper.cs" />
     <Compile Include="ViewModels\Interfaces\IClipboardWrapper.cs" />
     <Compile Include="ViewModels\Interfaces\IShellViewModel.cs" />
@@ -197,33 +156,6 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <EmbeddedResource Include="Data\Migrations\202001251554307_AddSyncedUsersTable.resx">
-      <DependentUpon>202001251554307_AddSyncedUsersTable.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Data\Migrations\202001252346182_AddAnimeAiringTimesTable.resx">
-      <DependentUpon>202001252346182_AddAnimeAiringTimesTable.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Data\Migrations\202001261232547_ModifyAnimeAiringTimeModel.resx">
-      <DependentUpon>202001261232547_ModifyAnimeAiringTimeModel.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Data\Migrations\202002101159035_RenameAnimeAiringTimesTable.resx">
-      <DependentUpon>202002101159035_RenameAnimeAiringTimesTable.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Data\Migrations\202002181240582_UpdateMiruAiringAnimeModel.resx">
-      <DependentUpon>202002181240582_UpdateMiruAiringAnimeModel.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Data\Migrations\202003151434418_AddCurrentlyAiringFlag.resx">
-      <DependentUpon>202003151434418_AddCurrentlyAiringFlag.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Data\Migrations\202003151920351_AddAnimeType.resx">
-      <DependentUpon>202003151920351_AddAnimeType.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Data\Migrations\202004091158179_AddLocalImagePathToMiruAnimeModel.resx">
-      <DependentUpon>202004091158179_AddLocalImagePathToMiruAnimeModel.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Data\Migrations\202006071325437_RenameToMiruAnimeModelsColumn.resx">
-      <DependentUpon>202006071325437_RenameToMiruAnimeModelsColumn.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -245,6 +177,10 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\MiruDatabaseLogicLayer\MiruDatabaseLogicLayer.csproj">
+      <Project>{5827cab4-b769-4296-88f6-78358b52aac0}</Project>
+      <Name>MiruDatabaseLogicLayer</Name>
+    </ProjectReference>
     <ProjectReference Include="..\MiruLibrary\MiruLibrary.csproj">
       <Project>{c56fa863-80e1-4cb1-b5c3-9806d40a05fb}</Project>
       <Name>MiruLibrary</Name>
