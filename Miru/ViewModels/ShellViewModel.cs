@@ -388,10 +388,11 @@ namespace Miru.ViewModels
             UpdateAppStatus(MiruAppStatus.Idle);
         }
 
-        // event handler for the Clear db button
-        public async Task OpenClearDatabaseDialog()
+        // event handler for the Clear local data button
+        public async Task OpenClearLocalDataDialog()
         {
-            ContentDialog.Config("Clear the database?");
+            ContentDialog.Config("Clear local data?",
+                                 content: "Clears local database and image cache.");
 
             UpdateAppStatus(MiruAppStatus.Busy);
 

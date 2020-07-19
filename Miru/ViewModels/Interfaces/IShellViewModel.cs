@@ -37,7 +37,7 @@ namespace Miru.ViewModels
 
         void ChangeTheme();
 
-        Task OpenClearDatabaseDialog();
+        Task OpenClearLocalDataDialog();
 
         void CopyAnimeTitleToClipboard(string animeTitle);
 

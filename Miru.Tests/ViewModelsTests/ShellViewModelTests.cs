@@ -182,7 +182,7 @@ namespace Miru.Tests
         }
 
         [Fact]
-        public void OpenClearDatabaseDialog_ValidCall()
+        public void OpenClearLocalDataDialog_ValidCall()
         {
             using (var mock = AutoMock.GetLoose())
             {
@@ -194,25 +194,27 @@ namespace Miru.Tests
                 mock.Mock<ISimpleContentDialog>()
                     .Setup(x => x.Config
                     (
-                        "Clear the database?",
+                        "Clear local data?",
                         "Yes",
                         "No",
-                        ContentDialogButton.Primary
+                        ContentDialogButton.Primary,
+                        "Clears local database and image cache."
                     ));
                 
                 var cls = mock.Create<ShellViewModel>();
 
                 // Act
-                cls.OpenClearDatabaseDialog().Wait();
+                cls.OpenClearLocalDataDialog().Wait();
 
                 // Assert
                 mock.Mock<ISimpleContentDialog>()
                     .Verify(x => x.Config
                     (
-                        "Clear the database?",
+                        "Clear local data?",
                         "Yes",
                         "No",
-                        ContentDialogButton.Primary
+                        ContentDialogButton.Primary,
+                        "Clears local database and image cache."
                     ),
                     Times.Once);
 
@@ -238,7 +240,8 @@ namespace Miru.Tests
                         "Update data from senpai.moe?",
                         "Yes",
                         "No",
-                        ContentDialogButton.Primary
+                        ContentDialogButton.Primary,
+                        null
                     ));
 
                 mock.Mock<IMiruDbService>().Setup(x => x.UpdateSenpaiData());
@@ -255,7 +258,8 @@ namespace Miru.Tests
                         "Update data from senpai.moe?",
                         "Yes",
                         "No",
-                        ContentDialogButton.Primary
+                        ContentDialogButton.Primary,
+                        null
                     ),
                     Times.Once);
 

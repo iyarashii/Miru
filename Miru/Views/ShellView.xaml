@@ -223,10 +223,10 @@
                 </ComboBox>
 
                 <!--clear db button-->
-                <Button x:Name="OpenClearDatabaseDialog"
+                <Button x:Name="OpenClearLocalDataDialog"
                         Margin="10,13,0,0"
                         IsEnabled="{Binding CanChangeDisplayedAnimeList}"
-                        Content="Clear db">
+                        Content="Clear local data">
                 </Button>
 
                 <!--update senpai button-->
