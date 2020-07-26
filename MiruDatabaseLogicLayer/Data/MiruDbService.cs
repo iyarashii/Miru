@@ -22,6 +22,7 @@ namespace MiruDatabaseLogicLayer
         // constructor
         public MiruDbService(ICurrentSeasonModel currentSeasonModel, ICurrentUserAnimeListModel currentUserAnimeListModel, IJikan jikanWrapper)
         {
+            // TODO: Remove commented out code that uses view model
             // TODO: check if you can somehow set view model context in the constructor
             // dependency injection
             CurrentSeason = currentSeasonModel;
@@ -349,8 +350,13 @@ namespace MiruDatabaseLogicLayer
         /// <returns></returns>
         public async Task<bool> GetDetailedSeasonAnimeListInfo(List<MiruAnimeModel> detailedUserAnimeList)
         {
+            // TODO: Added something to delete animes from the previous season that are no longer on your watching list and season ended -- check if good
+            // set airing flag to false for whole list to remove anime that already ended
+            detailedUserAnimeList.ForEach(x => x.CurrentlyAiring = false);
+
             // set of all anime ids from the db
             HashSet<long> airingAnimesMalIDs = new HashSet<long>(detailedUserAnimeList.Select(x => x.MalId));
+
 
             // list of anime entries in the current season
             var currentSeasonList = CurrentSeason.SeasonData.SeasonEntries.ToList();
