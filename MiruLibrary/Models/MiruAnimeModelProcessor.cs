@@ -36,7 +36,7 @@ namespace MiruLibrary.Models
         /// </returns>
         public IEnumerable<MiruAnimeModel> FilterAnimeModelsByAirDayOfWeekAndOrderByAirTime(IEnumerable<MiruAnimeModel> animeModels, DayOfWeek dayOfWeek)
         {
-            return animeModels.Where(a => a.LocalBroadcastTime.Value.DayOfWeek == dayOfWeek).OrderBy(s => s.LocalBroadcastTime.Value.TimeOfDay).ToList();
+            return animeModels.Where(a => a.LocalBroadcastTime.Value.DayOfWeek == dayOfWeek).OrderBy(s => s.LocalBroadcastTime.Value.TimeOfDay);
         }
     }
 }
