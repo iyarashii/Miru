@@ -22,8 +22,6 @@ namespace MiruDatabaseLogicLayer
         // constructor
         public MiruDbService(ICurrentSeasonModel currentSeasonModel, ICurrentUserAnimeListModel currentUserAnimeListModel, IJikan jikanWrapper)
         {
-            // TODO: Remove commented out code that uses view model
-            // TODO: check if you can somehow set view model context in the constructor
             // dependency injection
             CurrentSeason = currentSeasonModel;
             CurrentUserAnimeList = currentUserAnimeListModel;
@@ -36,7 +34,6 @@ namespace MiruDatabaseLogicLayer
         private IJikan JikanWrapper { get; }
 
         // stores view model's context
-        //public IShellViewModel ViewModelContext { get; set; }
         public DateTime SyncDateData
         {
             get => _syncDateData;
@@ -86,14 +83,12 @@ namespace MiruDatabaseLogicLayer
                     SyncDateData = db.SyncedMyAnimeListUsers.FirstOrDefault().SyncTime;
 
                     // set SyncStatusText and TypedInUsername props to the username of the last synchronized user
-                    //ViewModelContext.MalUserName = ViewModelContext.TypedInUsername = db.SyncedMyAnimeListUsers.FirstOrDefault().Username;
                     CurrentUsername = db.SyncedMyAnimeListUsers.FirstOrDefault().Username;
 
                     // get the user's list of the airing animes from the db
                     var airingAnimeList = db.MiruAnimeModels.ToList();
 
                     // set airing anime list entries for each day of the week
-                    //ViewModelContext.SortedAnimeListEntries.SetAnimeSortedByAirDayOfWeekAndFilteredByGivenAnimeListType(airingAnimeList, AnimeListType.AiringAndWatching);
                     UpdateAnimeListEntriesUI(airingAnimeList, AnimeListType.Watching);
                 }
             }
@@ -185,7 +180,6 @@ namespace MiruDatabaseLogicLayer
                 }
 
                 // set airing anime list entries for each day of the week
-                //ViewModelContext.SortedAnimeListEntries.SetAnimeSortedByAirDayOfWeekAndFilteredByGivenAnimeListType(airingAnimeList, animeListType);
                 UpdateAnimeListEntriesUI(airingAnimeList, animeListType);
             }
         }
@@ -205,9 +199,7 @@ namespace MiruDatabaseLogicLayer
                 // store the current user's username and sync date to the SyncedMyAnimeListUsers table
                 db.SyncedMyAnimeListUsers.Add(new SyncedMyAnimeListUser
                 {
-                    //Username = ViewModelContext.TypedInUsername,
                     Username = typedInUsername,
-                    //SyncTime = ViewModelContext.SyncDate = DateTime.Now
                     SyncTime = SyncDateData = DateTime.Now
                 });
 
@@ -224,7 +216,6 @@ namespace MiruDatabaseLogicLayer
             // open temporary connection to the database
             using (var db = new MiruDbContext())
             {
-                //ViewModelContext.UpdateAppStatus(MiruAppStatus.Busy, "Getting detailed user anime list data...");
                 UpdateAppStatusUI(MiruAppStatus.Busy, "Getting detailed user anime list data...");
 
                 // get user anime list with the detailed info
@@ -239,7 +230,6 @@ namespace MiruDatabaseLogicLayer
                 // if 'get current season list' button was used to sync data
                 if (seasonSyncOn)
                 {
-                    //ViewModelContext.UpdateAppStatus(MiruAppStatus.Busy, "Getting detailed current season anime data...");
                     UpdateAppStatusUI(MiruAppStatus.Busy, "Getting detailed current season anime data...");
 
                     // update user anime list with season anime detailed data if it fails return false
@@ -248,7 +238,6 @@ namespace MiruDatabaseLogicLayer
                         return false;
                     }
                 }
-                //ViewModelContext.UpdateAppStatus(MiruAppStatus.Busy, "Parse day and time from the broadcast string...");
                 UpdateAppStatusUI(MiruAppStatus.Busy, "Parse day and time from the broadcast string...");
 
                 // parse day and time from the broadcast string
