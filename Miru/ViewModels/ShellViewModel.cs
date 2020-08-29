@@ -30,7 +30,7 @@ namespace Miru.ViewModels
         private string _currentAnimeNameFilter;
 
         // constructor
-        public ShellViewModel(ISortedAnimeListEntries sortedAnimeListEntries, IMiruDbService miruDbService, ISimpleContentDialog contentDialog, IProcessProxy processProxy, IToastNotifierWrapper toastNotifierWrapper)
+        public ShellViewModel(ISortedAnimeListEntries sortedAnimeListEntries, IMiruDbService miruDbService, ISimpleContentDialog contentDialog, IToastNotifierWrapper toastNotifierWrapper)
         {
             // dependency injection
             _sortedAnimeListEntries = sortedAnimeListEntries;
@@ -39,8 +39,6 @@ namespace Miru.ViewModels
             DbService = miruDbService;
 
             ContentDialog = contentDialog;
-
-            AnimeURLProcessProxy = processProxy;
 
             ToastNotifierWrapper = toastNotifierWrapper;
 
@@ -69,9 +67,6 @@ namespace Miru.ViewModels
         #region properties
 
         public IToastNotifierWrapper ToastNotifierWrapper { get; }
-
-        // process proxy instance
-        public IProcessProxy AnimeURLProcessProxy { get; }
 
         // content dialog instance
         public ISimpleContentDialog ContentDialog { get; }
@@ -435,9 +430,7 @@ namespace Miru.ViewModels
         // opens MAL anime page
         public void OpenAnimeURL(string URL)
         {
-            //AnimeURLProcessProxy.Start(URL);
-            AnimeURLProcessProxy.StartInfo.FileName = URL;
-            AnimeURLProcessProxy.Start();
+            Process.Start(URL);
         }
 
         // saves anime title to the clipboard and shows notification describing this action

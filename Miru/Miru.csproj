@@ -120,12 +120,9 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="ViewModels\Interfaces\IClipboardWrapper.cs" />
     <Compile Include="ViewModels\Interfaces\IShellViewModel.cs" />
     <Compile Include="ViewModels\Interfaces\ISortedAnimeListEntries.cs" />
-    <Compile Include="ViewModels\Interfaces\IProcessProxy.cs" />
     <Compile Include="ViewModels\Interfaces\IToastNotifierWrapper.cs" />
-    <Compile Include="ViewModels\Helpers\ProcessProxy.cs" />
     <Compile Include="ViewModels\SortedAnimeListEntries.cs" />
     <Compile Include="ViewModels\ShellViewModel.cs" />
     <Compile Include="ViewModels\Helpers\SimpleContentDialog.cs" />

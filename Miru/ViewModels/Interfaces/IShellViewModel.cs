@@ -29,7 +29,6 @@ namespace Miru.ViewModels
         string TypedInUsername { get; set; }
         string UserAnimeListURL { get; set; }
         IToastNotifierWrapper ToastNotifierWrapper { get; }
-        IProcessProxy AnimeURLProcessProxy { get; }
         string CurrentAnimeNameFilter { get; set; }
 
         bool CanSyncUserAnimeList(string typedInUsername, MiruAppStatus appStatus, bool syncSeasonList);

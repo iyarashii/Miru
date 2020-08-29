@@ -340,27 +340,6 @@ namespace Miru.Tests
         }
 
         [Fact]
-        public void OpenAnimeURL_ValidCall()
-        {
-            using (var mock = AutoMock.GetLoose())
-            {
-                // Arrange
-                //mock.Mock<IProcessProxy>().Setup(x => x.Start(It.IsAny<string>()));
-                mock.Mock<IProcessProxy>().Setup(x => x.Start()).Returns(true);
-                mock.Mock<IProcessProxy>().SetupGet(x => x.StartInfo).Returns(new System.Diagnostics.ProcessStartInfo());
-
-                var cls = mock.Create<ShellViewModel>();
-
-                // Act
-                cls.OpenAnimeURL(It.IsAny<string>());
-
-                // Assert
-                //mock.Mock<IProcessProxy>().Verify(x => x.Start(It.IsAny<string>()), Times.Once);
-                mock.Mock<IProcessProxy>().Verify(x => x.Start(), Times.Once);
-            }
-        }
-
-        [Fact]
         public void CopyAnimeTitleToClipboard_ValidCall()
         {
             using (var mock = AutoMock.GetLoose())
@@ -391,20 +370,6 @@ namespace Miru.Tests
 
                 // Act & Assert
                 Assert.Equal(fakeToastNotifier, mock.Mock<IShellViewModel>().Object.ToastNotifierWrapper);
-            }
-        }
-
-        [Fact]
-        public void AnimeURLProcessProxy_ReturnsCorrectValue()
-        {
-            using (var mock = AutoMock.GetLoose())
-            {
-                // Arrange
-                var fakeProcessProxy = new ProcessProxy();
-                mock.Mock<IShellViewModel>().SetupGet(x => x.AnimeURLProcessProxy).Returns(fakeProcessProxy);
-
-                // Act & Assert
-                Assert.Equal(fakeProcessProxy, mock.Mock<IShellViewModel>().Object.AnimeURLProcessProxy);
             }
         }
 
