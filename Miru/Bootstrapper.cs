@@ -40,7 +40,6 @@ namespace Miru
 #endif
                 .SingleInstance();
             builder.RegisterType<ProcessProxy>().As<IProcessProxy>();
-            builder.RegisterType<ClipboardWrapper>().As<IClipboardWrapper>();
             builder.RegisterType<ToastNotifierWrapper>().As<IToastNotifierWrapper>();
             builder.RegisterType<MiruAnimeModelProcessor>().As<IMiruAnimeModelProcessor>();
         }
