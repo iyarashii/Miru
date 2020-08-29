@@ -23,7 +23,7 @@ namespace Miru.ViewModels
         AnimeListType SelectedDisplayedAnimeList { get; set; }
         AnimeType SelectedDisplayedAnimeType { get; set; }
         TimeZoneInfo SelectedTimeZone { get; set; }
-        ISortedAnimeListEntries SortedAnimeListEntries { get; set; }
+        ISortedAnimeListsViewModel SortedAnimeLists { get; set; }
         DateTime SyncDate { get; set; }
         ReadOnlyCollection<TimeZoneInfo> TimeZones { get; }
         string TypedInUsername { get; set; }

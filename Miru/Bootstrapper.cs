@@ -19,7 +19,7 @@ namespace Miru
 
         protected override void ConfigureContainer(ContainerBuilder builder)
         {
-            builder.RegisterType<SortedAnimeListEntries>().As<ISortedAnimeListEntries>();
+            builder.RegisterType<SortedAnimeListsViewModel>().As<ISortedAnimeListsViewModel>();
             builder.RegisterType<ShellViewModel>().As<IShellViewModel>();
             builder.RegisterType<MiruDbService>().As<IMiruDbService>();
             builder.RegisterType<SimpleContentDialog>().As<ISimpleContentDialog>();

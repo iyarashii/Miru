@@ -121,9 +121,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="ViewModels\Interfaces\IShellViewModel.cs" />
-    <Compile Include="ViewModels\Interfaces\ISortedAnimeListEntries.cs" />
+    <Compile Include="ViewModels\Interfaces\ISortedAnimeListsViewModel.cs" />
     <Compile Include="ViewModels\Interfaces\IToastNotifierWrapper.cs" />
-    <Compile Include="ViewModels\SortedAnimeListEntries.cs" />
+    <Compile Include="ViewModels\SortedAnimeListsViewModel.cs" />
     <Compile Include="ViewModels\ShellViewModel.cs" />
     <Compile Include="ViewModels\Helpers\SimpleContentDialog.cs" />
     <Compile Include="ViewModels\Helpers\ToastNotifierWrapper.cs" />

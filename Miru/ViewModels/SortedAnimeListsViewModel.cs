@@ -9,9 +9,9 @@ using MiruLibrary;
 namespace Miru.ViewModels
 {
     // wires up sorted anime list data to the correct properties that are used by the view
-    public class SortedAnimeListEntries : PropertyChangedBase, ISortedAnimeListEntries
+    public class SortedAnimeListsViewModel : PropertyChangedBase, ISortedAnimeListsViewModel
     {
-        public SortedAnimeListEntries(IMiruAnimeModelProcessor miruAnimeModelProcessor)
+        public SortedAnimeListsViewModel(IMiruAnimeModelProcessor miruAnimeModelProcessor)
         {
             MiruAnimeModelProcessor = miruAnimeModelProcessor;
         }

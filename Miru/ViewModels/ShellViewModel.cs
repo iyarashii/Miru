@@ -17,7 +17,7 @@ namespace Miru.ViewModels
         // private fields that are used with properties in this class
         private string _typedInUsername;
         private string _appStatusText;
-        private ISortedAnimeListEntries _sortedAnimeListEntries;
+        private ISortedAnimeListsViewModel _sortedAnimeLists;
         private MiruAppStatus _appStatus;
         private ApplicationTheme _currentApplicationTheme;
         private SolidColorBrush _daysOfTheWeekBrush;
@@ -30,10 +30,10 @@ namespace Miru.ViewModels
         private string _currentAnimeNameFilter;
 
         // constructor
-        public ShellViewModel(ISortedAnimeListEntries sortedAnimeListEntries, IMiruDbService miruDbService, ISimpleContentDialog contentDialog, IToastNotifierWrapper toastNotifierWrapper)
+        public ShellViewModel(ISortedAnimeListsViewModel sortedAnimeLists, IMiruDbService miruDbService, ISimpleContentDialog contentDialog, IToastNotifierWrapper toastNotifierWrapper)
         {
             // dependency injection
-            _sortedAnimeListEntries = sortedAnimeListEntries;
+            _sortedAnimeLists = sortedAnimeLists;
 
             // assign db service to the injected instance
             DbService = miruDbService;
@@ -44,7 +44,7 @@ namespace Miru.ViewModels
 
             // subscribe to the events
             DbService.UpdateSyncDate += new EventHandler<DateTime>(UpdateSyncDate);
-            DbService.UpdateAnimeListEntriesUI += new MiruDbService.SortedAnimeListEventHandler(SortedAnimeListEntries.SetAnimeSortedByAirDayOfWeekAndFilteredByGivenAnimeListType);
+            DbService.UpdateAnimeListEntriesUI += new MiruDbService.SortedAnimeListEventHandler(SortedAnimeLists.SetAnimeSortedByAirDayOfWeekAndFilteredByGivenAnimeListType);
             DbService.UpdateCurrentUsername += new EventHandler<string>(UpdateUsername);
             DbService.UpdateAppStatusUI += new MiruDbService.UpdateAppStatusEventHandler(UpdateAppStatus);
 
@@ -160,13 +160,13 @@ namespace Miru.ViewModels
         }
 
         // stores anime models sorted for each day of the week
-        public ISortedAnimeListEntries SortedAnimeListEntries
+        public ISortedAnimeListsViewModel SortedAnimeLists
         {
-            get { return _sortedAnimeListEntries; }
+            get { return _sortedAnimeLists; }
             set
             {
-                _sortedAnimeListEntries = value;
-                NotifyOfPropertyChange(() => SortedAnimeListEntries);
+                _sortedAnimeLists = value;
+                NotifyOfPropertyChange(() => SortedAnimeLists);
             }
         }
 

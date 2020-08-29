@@ -261,30 +261,30 @@
         <!-- Row 3 -->
         <!-- ############################ Datagrid for anime airing on MONDAY  ############################ -->
         <ContentControl Grid.Row="3" Grid.Column="1" Template="{StaticResource AiringAnimeDatagridTemplate}"
-                        Content="{Binding SortedAnimeListEntries.MondayAiringAnimeList}" />
+                        Content="{Binding SortedAnimeLists.MondayAiringAnimeList}" />
 
         <!-- ############################ Datagrid for anime airing on TUESDAY  ############################ -->
         <ContentControl Grid.Row="3" Grid.Column="2" Template="{StaticResource AiringAnimeDatagridTemplate}"
-                        Content="{Binding SortedAnimeListEntries.TuesdayAiringAnimeList}" />
+                        Content="{Binding SortedAnimeLists.TuesdayAiringAnimeList}" />
 
         <!-- ############################ Datagrid for anime airing on WEDNESDAY  ############################ -->
         <ContentControl Grid.Row="3" Grid.Column="3" Template="{StaticResource AiringAnimeDatagridTemplate}"
-                        Content="{Binding SortedAnimeListEntries.WednesdayAiringAnimeList}" />
+                        Content="{Binding SortedAnimeLists.WednesdayAiringAnimeList}" />
 
         <!-- ############################ Datagrid for anime airing on THURSDAY  ############################ -->
         <ContentControl Grid.Row="3" Grid.Column="4" Template="{StaticResource AiringAnimeDatagridTemplate}"
-                        Content="{Binding SortedAnimeListEntries.ThursdayAiringAnimeList}" />
+                        Content="{Binding SortedAnimeLists.ThursdayAiringAnimeList}" />
 
         <!-- ############################ Datagrid for anime airing on FRIDAY  ############################ -->
         <ContentControl Grid.Row="3" Grid.Column="5" Template="{StaticResource AiringAnimeDatagridTemplate}"
-                        Content="{Binding SortedAnimeListEntries.FridayAiringAnimeList}" />
+                        Content="{Binding SortedAnimeLists.FridayAiringAnimeList}" />
 
         <!-- ############################ Datagrid for anime airing on SATURDAY  ############################ -->
         <ContentControl Grid.Row="3" Grid.Column="6" Template="{StaticResource AiringAnimeDatagridTemplate}"
-                        Content="{Binding SortedAnimeListEntries.SaturdayAiringAnimeList}" />
+                        Content="{Binding SortedAnimeLists.SaturdayAiringAnimeList}" />
 
         <!-- ############################ Datagrid for anime airing on SUNDAY  ############################ -->
         <ContentControl Grid.Row="3" Grid.Column="7" Template="{StaticResource AiringAnimeDatagridTemplate}"
-                        Content="{Binding SortedAnimeListEntries.SundayAiringAnimeList}" />
+                        Content="{Binding SortedAnimeLists.SundayAiringAnimeList}" />
     </Grid>
 </Window>

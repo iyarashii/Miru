@@ -592,13 +592,13 @@ namespace Miru.Tests
             {
                 // Arrange
                 var cls = mock.Create<ShellViewModel>();
-                var testValue = It.IsAny<ISortedAnimeListEntries>();
+                var testValue = It.IsAny<ISortedAnimeListsViewModel>();
 
                 // Act
-                cls.SortedAnimeListEntries = testValue;
+                cls.SortedAnimeLists = testValue;
 
                 // Assert
-                Assert.Equal(testValue, cls.SortedAnimeListEntries);
+                Assert.Equal(testValue, cls.SortedAnimeLists);
             }
         }
 

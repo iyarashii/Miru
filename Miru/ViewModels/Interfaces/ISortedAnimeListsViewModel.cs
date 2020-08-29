@@ -5,7 +5,7 @@ using MiruLibrary;
 
 namespace Miru.ViewModels
 {
-    public interface ISortedAnimeListEntries
+    public interface ISortedAnimeListsViewModel
     {
         IEnumerable<MiruAnimeModel> FridayAiringAnimeList { get; set; }
         IEnumerable<MiruAnimeModel> MondayAiringAnimeList { get; set; }

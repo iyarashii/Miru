@@ -10,7 +10,7 @@ using Xunit;
 
 namespace Miru.Tests
 {
-    public class SortedAnimeListEntriesTests
+    public class SortedAnimeListsViewModelTests
     {
         #region method tests
 
@@ -20,7 +20,7 @@ namespace Miru.Tests
             using (var mock = AutoMock.GetLoose())
             {
                 // Arrange
-                var sut = mock.Create<SortedAnimeListEntries>();
+                var sut = mock.Create<SortedAnimeListsViewModel>();
 
                 mock.Mock<IMiruAnimeModelProcessor>()
                    .Setup(x => x.FilterAnimeModelsByAnimeListType(null, It.IsAny<AnimeListType>()));
@@ -50,7 +50,7 @@ namespace Miru.Tests
                 var fakeMiruAnimeModelProcessor = mock.Create<MiruAnimeModelProcessor>();
 
                 // Act
-                var sut = mock.Create<SortedAnimeListEntries>(new TypedParameter(typeof(IMiruAnimeModelProcessor), fakeMiruAnimeModelProcessor));
+                var sut = mock.Create<SortedAnimeListsViewModel>(new TypedParameter(typeof(IMiruAnimeModelProcessor), fakeMiruAnimeModelProcessor));
 
                 // Assert
                 Assert.Equal(fakeMiruAnimeModelProcessor, sut.MiruAnimeModelProcessor);
@@ -63,7 +63,7 @@ namespace Miru.Tests
             using (var mock = AutoMock.GetLoose())
             {
                 // Arrange
-                var sut = mock.Create<SortedAnimeListEntries>();
+                var sut = mock.Create<SortedAnimeListsViewModel>();
                 var testValue = It.IsAny<IEnumerable<MiruAnimeModel>>();
 
                 // Act
@@ -80,7 +80,7 @@ namespace Miru.Tests
             using (var mock = AutoMock.GetLoose())
             {
                 // Arrange
-                var sut = mock.Create<SortedAnimeListEntries>();
+                var sut = mock.Create<SortedAnimeListsViewModel>();
                 var testValue = It.IsAny<IEnumerable<MiruAnimeModel>>();
 
                 // Act
@@ -97,7 +97,7 @@ namespace Miru.Tests
             using (var mock = AutoMock.GetLoose())
             {
                 // Arrange
-                var sut = mock.Create<SortedAnimeListEntries>();
+                var sut = mock.Create<SortedAnimeListsViewModel>();
                 var testValue = It.IsAny<IEnumerable<MiruAnimeModel>>();
 
                 // Act
@@ -114,7 +114,7 @@ namespace Miru.Tests
             using (var mock = AutoMock.GetLoose())
             {
                 // Arrange
-                var sut = mock.Create<SortedAnimeListEntries>();
+                var sut = mock.Create<SortedAnimeListsViewModel>();
                 var testValue = It.IsAny<IEnumerable<MiruAnimeModel>>();
 
                 // Act
@@ -131,7 +131,7 @@ namespace Miru.Tests
             using (var mock = AutoMock.GetLoose())
             {
                 // Arrange
-                var sut = mock.Create<SortedAnimeListEntries>();
+                var sut = mock.Create<SortedAnimeListsViewModel>();
                 var testValue = It.IsAny<IEnumerable<MiruAnimeModel>>();
 
                 // Act
@@ -148,7 +148,7 @@ namespace Miru.Tests
             using (var mock = AutoMock.GetLoose())
             {
                 // Arrange
-                var sut = mock.Create<SortedAnimeListEntries>();
+                var sut = mock.Create<SortedAnimeListsViewModel>();
                 var testValue = It.IsAny<IEnumerable<MiruAnimeModel>>();
 
                 // Act
@@ -165,7 +165,7 @@ namespace Miru.Tests
             using (var mock = AutoMock.GetLoose())
             {
                 // Arrange
-                var sut = mock.Create<SortedAnimeListEntries>();
+                var sut = mock.Create<SortedAnimeListsViewModel>();
                 var testValue = It.IsAny<IEnumerable<MiruAnimeModel>>();
 
                 // Act
