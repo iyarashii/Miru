@@ -30,9 +30,9 @@ namespace Miru.ViewModels
 
         public MessageOptions DoNotFreezeOnMouseEnter { get; } = new MessageOptions { FreezeOnMouseEnter = false };
 
-        public void ShowInformation(string message, MessageOptions displayOptions)
+        public void DisplayToastNotification(string message)
         {
-            ToastNotifier.ShowInformation(message, displayOptions);
+            ToastNotifier.ShowInformation(message, DoNotFreezeOnMouseEnter);
         }
     }
 }

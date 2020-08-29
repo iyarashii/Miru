@@ -29,7 +29,6 @@ namespace Miru.ViewModels
         string TypedInUsername { get; set; }
         string UserAnimeListURL { get; set; }
         IToastNotifierWrapper ToastNotifierWrapper { get; }
-        IClipboardWrapper ClipboardWrapper { get; }
         IProcessProxy AnimeURLProcessProxy { get; }
         string CurrentAnimeNameFilter { get; set; }
 

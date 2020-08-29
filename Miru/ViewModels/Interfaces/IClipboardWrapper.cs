@@ -2,6 +2,6 @@
 {
     public interface IClipboardWrapper
     {
-        void SetText(string text);
+        void SetClipboardText(string text);
     }
 }

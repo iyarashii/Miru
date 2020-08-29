@@ -30,7 +30,7 @@ namespace Miru.ViewModels
         private string _currentAnimeNameFilter;
 
         // constructor
-        public ShellViewModel(ISortedAnimeListEntries sortedAnimeListEntries, IMiruDbService miruDbService, ISimpleContentDialog contentDialog, IProcessProxy processProxy, IClipboardWrapper clipboardWrapper, IToastNotifierWrapper toastNotifierWrapper)
+        public ShellViewModel(ISortedAnimeListEntries sortedAnimeListEntries, IMiruDbService miruDbService, ISimpleContentDialog contentDialog, IProcessProxy processProxy, IToastNotifierWrapper toastNotifierWrapper)
         {
             // dependency injection
             _sortedAnimeListEntries = sortedAnimeListEntries;
@@ -41,8 +41,6 @@ namespace Miru.ViewModels
             ContentDialog = contentDialog;
 
             AnimeURLProcessProxy = processProxy;
-
-            ClipboardWrapper = clipboardWrapper;
 
             ToastNotifierWrapper = toastNotifierWrapper;
 
@@ -71,8 +69,6 @@ namespace Miru.ViewModels
         #region properties
 
         public IToastNotifierWrapper ToastNotifierWrapper { get; }
-
-        public IClipboardWrapper ClipboardWrapper { get; }
 
         // process proxy instance
         public IProcessProxy AnimeURLProcessProxy { get; }
@@ -436,8 +432,6 @@ namespace Miru.ViewModels
             UpdateAppStatus(MiruAppStatus.Idle);
         }
 
-
-
         // opens MAL anime page
         public void OpenAnimeURL(string URL)
         {
@@ -449,9 +443,14 @@ namespace Miru.ViewModels
         // saves anime title to the clipboard and shows notification describing this action
         public void CopyAnimeTitleToClipboard(string animeTitle)
         {
-            string copyNotification = $"'{ animeTitle }' copied to the clipboard!";
-            ClipboardWrapper.SetText(animeTitle);
-            ToastNotifierWrapper.ShowInformation(copyNotification, ToastNotifierWrapper.DoNotFreezeOnMouseEnter);
+            System.Windows.Clipboard.SetText(animeTitle);
+            var animeTitleCopiedMessage = PrepareAnimeTitleCopiedNotification(animeTitle);
+            ToastNotifierWrapper.DisplayToastNotification(animeTitleCopiedMessage);
+        }
+
+        public string PrepareAnimeTitleCopiedNotification(string animeTitle)
+        {
+            return $"'{ animeTitle }' copied to the clipboard!";
         }
 
         public void UpdateAppStatus(MiruAppStatus newAppStatus, string detailedAppStatusDescription = null)

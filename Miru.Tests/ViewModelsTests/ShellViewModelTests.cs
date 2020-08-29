@@ -367,15 +367,13 @@ namespace Miru.Tests
             {
                 // Arrange
                 var cls = mock.Create<ShellViewModel>();
-                mock.Mock<IClipboardWrapper>().Setup(x => x.SetText(It.IsAny<string>()));
-                mock.Mock<IToastNotifierWrapper>().Setup(x => x.ShowInformation(It.IsAny<string>(), It.IsAny<MessageOptions>()));
+                var testValue = "dydnie";
 
                 // Act
-                cls.CopyAnimeTitleToClipboard(It.IsAny<string>());
+                cls.CopyAnimeTitleToClipboard(testValue);
 
                 // Assert
-                mock.Mock<IClipboardWrapper>().Verify(x => x.SetText(It.IsAny<string>()), Times.Once);
-                mock.Mock<IToastNotifierWrapper>().Verify(x => x.ShowInformation(It.IsAny<string>(), It.IsAny<MessageOptions>()), Times.Once);
+                Assert.Equal(testValue, System.Windows.Clipboard.GetText());
             }
         }
         #endregion methods tests
@@ -393,20 +391,6 @@ namespace Miru.Tests
 
                 // Act & Assert
                 Assert.Equal(fakeToastNotifier, mock.Mock<IShellViewModel>().Object.ToastNotifierWrapper);
-            }
-        }
-
-        [Fact]
-        public void ClipboardWrapper_ReturnsCorrectValue()
-        {
-            using (var mock = AutoMock.GetLoose())
-            {
-                // Arrange
-                var fakeClipboard = new ClipboardWrapper();
-                mock.Mock<IShellViewModel>().SetupGet(x => x.ClipboardWrapper).Returns(fakeClipboard);
-
-                // Act & Assert
-                Assert.Equal(fakeClipboard, mock.Mock<IShellViewModel>().Object.ClipboardWrapper);
             }
         }
 

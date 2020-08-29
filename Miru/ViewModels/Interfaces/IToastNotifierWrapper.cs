@@ -4,7 +4,7 @@ namespace Miru.ViewModels
 {
     public interface IToastNotifierWrapper
     {
-        void ShowInformation(string message, MessageOptions displayOptions);
+        void DisplayToastNotification(string message);
         MessageOptions DoNotFreezeOnMouseEnter { get; }
     }
 }
