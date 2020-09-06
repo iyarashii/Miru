@@ -71,13 +71,14 @@
                         </DataGridTemplateColumn>
 
                         <!-- right column with images -->
-                        <DataGridTemplateColumn Width="*">
+                        <!--<DataGridTemplateColumn Width="*">-->
+                        <DataGridTemplateColumn Width="{Binding Source={x:Reference AnimeImageSize}, Path=Value, Mode=OneWay}">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <Grid>
                                         <Grid.Background>
                                             <!--use mal icon as a placeholder for anime images-->
-                                            <ImageBrush ImageSource="/MAL-icon-256.png"/>
+                                            <ImageBrush ImageSource="/MAL-icon-256.png" Stretch="Uniform"/>
                                         </Grid.Background>
                                         <i:Interaction.Triggers>
                                             <i:EventTrigger EventName="MouseDown">
@@ -88,11 +89,12 @@
                                         </i:Interaction.Triggers>
                                         
                                         <!--<Image Source="/MAL-icon-256.png" />-->
-                                        <Image x:Name="animeMALImage" Source="{Binding LocalImageSource}" Stretch="Fill"/>
+                                        <Image x:Name="animeMALImage" Source="{Binding LocalImageSource}" Stretch="Uniform"/>
                                     </Grid>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
+                        
                     </DataGrid.Columns>
                 </DataGrid>
             </ControlTemplate>
@@ -117,11 +119,9 @@
             <RowDefinition Height="*" />
             <RowDefinition Height="20" />
         </Grid.RowDefinitions>
-
         
         <!-- Row 0 -->
         <StackPanel Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="8" Orientation="Horizontal">
-            
             <!--anime name filtering textbox-->
             <TextBox x:Name="CurrentAnimeNameFilter"
                      IsEnabled="{Binding CanChangeDisplayedAnimeList}"
@@ -130,8 +130,18 @@
                      ui:ControlHelper.Header="Filter by anime name"
                      ui:ControlHelper.PlaceholderText="CTRL+F to focus"
                      />
+            <!--anime image size selection-->
+            <ui:NumberBox x:Name="AnimeImageSize" Margin="10,0,0,0"
+                          ui:ControlHelper.Header="Anime images size"
+                          SpinButtonPlacementMode="Inline"
+                          SmallChange="5"
+                          LargeChange="50"
+                          Maximum="225"
+                          Minimum="20"
+                          Text="{Binding AnimeImageSizeInPixels}"
+                          Value="{Binding AnimeImageSizeInPixels, FallbackValue=150, Mode=TwoWay}"/>
+
         </StackPanel>
-        
         <!-- Row 1 -->
         <StackPanel Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="8" Orientation="Horizontal">
             <WrapPanel x:Name="FirstRowPanel">

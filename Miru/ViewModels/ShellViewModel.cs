@@ -28,6 +28,7 @@ namespace Miru.ViewModels
         private string _malUserName;
         private string _userAnimeListURL;
         private string _currentAnimeNameFilter;
+        private double _animeImageSizeInPixels;
 
         // constructor
         public ShellViewModel(ISortedAnimeListsViewModel sortedAnimeLists, IMiruDbService miruDbService, ISimpleContentDialog contentDialog, IToastNotifierWrapper toastNotifierWrapper)
@@ -39,8 +40,11 @@ namespace Miru.ViewModels
             DbService = miruDbService;
 
             ContentDialog = contentDialog;
-
             ToastNotifierWrapper = toastNotifierWrapper;
+
+            // TODO: Add config file that will save such values on app exit and load them on app start
+            AnimeImageSizeInPixels = 134;
+
 
             // subscribe to the events
             DbService.UpdateSyncDate += new EventHandler<DateTime>(UpdateSyncDate);
@@ -66,6 +70,24 @@ namespace Miru.ViewModels
 
         #region properties
 
+        public double AnimeImageSizeInPixels
+        {
+            get { return _animeImageSizeInPixels; }
+            set
+            {
+                if (double.IsNaN(value))
+                {
+                    double defaultSize = 134;
+                    // TODO: Add config file that will save such values on app exit and load them on app start
+                    _animeImageSizeInPixels = defaultSize;
+                }
+                else
+                {
+                    _animeImageSizeInPixels = value;
+                }
+                NotifyOfPropertyChange(() => AnimeImageSizeInPixels);
+            }
+        }
         public IToastNotifierWrapper ToastNotifierWrapper { get; }
 
         // content dialog instance

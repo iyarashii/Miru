@@ -4,6 +4,7 @@ using ModernWpf;
 using System;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
+using System.Windows.Controls;
 using System.Windows.Media;
 
 namespace Miru.ViewModels
@@ -30,6 +31,7 @@ namespace Miru.ViewModels
         string UserAnimeListURL { get; set; }
         IToastNotifierWrapper ToastNotifierWrapper { get; }
         string CurrentAnimeNameFilter { get; set; }
+        double AnimeImageSizeInPixels { get; set; }
 
         bool CanSyncUserAnimeList(string typedInUsername, MiruAppStatus appStatus, bool syncSeasonList);
 
