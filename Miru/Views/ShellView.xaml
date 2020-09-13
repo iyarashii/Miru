@@ -134,12 +134,12 @@
             <ui:NumberBox x:Name="AnimeImageSize" Margin="10,0,0,0"
                           ui:ControlHelper.Header="Anime images size"
                           SpinButtonPlacementMode="Inline"
-                          SmallChange="5"
+                          SmallChange="1"
                           LargeChange="50"
                           Maximum="225"
                           Minimum="20"
                           Text="{Binding AnimeImageSizeInPixels}"
-                          Value="{Binding AnimeImageSizeInPixels, FallbackValue=150, Mode=TwoWay}"/>
+                          Value="{Binding AnimeImageSizeInPixels, FallbackValue=134, Mode=TwoWay}"/>
 
         </StackPanel>
         <!-- Row 1 -->
