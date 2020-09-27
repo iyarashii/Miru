@@ -1,6 +1,7 @@
 ﻿using Caliburn.Micro;
 using MiruDatabaseLogicLayer;
 using MiruLibrary;
+using MiruLibrary.Models;
 using ModernWpf;
 using System;
 using System.Collections.ObjectModel;
@@ -31,7 +32,8 @@ namespace Miru.ViewModels
         private double _animeImageSizeInPixels;
 
         // constructor
-        public ShellViewModel(ISortedAnimeListsViewModel sortedAnimeLists, IMiruDbService miruDbService, ISimpleContentDialog contentDialog, IToastNotifierWrapper toastNotifierWrapper)
+        public ShellViewModel(ISortedAnimeListsViewModel sortedAnimeLists, IMiruDbService miruDbService, ISimpleContentDialog contentDialog, IToastNotifierWrapper toastNotifierWrapper,
+            UserSettings userSettings)
         {
             // dependency injection
             _sortedAnimeLists = sortedAnimeLists;
@@ -43,7 +45,7 @@ namespace Miru.ViewModels
             ToastNotifierWrapper = toastNotifierWrapper;
 
             // TODO: Add config file that will save such values on app exit and load them on app start
-            AnimeImageSizeInPixels = 134;
+            AnimeImageSizeInPixels = userSettings.AnimeImageSize;
 
 
             // subscribe to the events

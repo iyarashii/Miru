@@ -34,8 +34,8 @@
     <Reference Include="JikanDotNet, Version=1.4.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\JikanDotNet.1.4.0\lib\netstandard2.0\JikanDotNet.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="System" />
@@ -53,6 +53,7 @@
     <Compile Include="Constants.cs" />
     <Compile Include="Converters\EnumDescriptionTypeConverter.cs" />
     <Compile Include="Enums.cs" />
+    <Compile Include="Settings\ISettingsWriter.cs" />
     <Compile Include="Models\CurrentSeasonModel.cs" />
     <Compile Include="Models\CurrentUserAnimeListModel.cs" />
     <Compile Include="Models\Interfaces\IMiruAnimeModelProcessor.cs" />
@@ -62,9 +63,14 @@
     <Compile Include="Models\MiruAnimeModelProcessor.cs" />
     <Compile Include="Models\SenpaiEntryModel.cs" />
     <Compile Include="Models\SyncedMyAnimeListUser.cs" />
+    <Compile Include="Models\UserSettings.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Settings\ISettingsReader.cs" />
+    <Compile Include="Settings\SettingsReader.cs" />
+    <Compile Include="Settings\SettingsWriter.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

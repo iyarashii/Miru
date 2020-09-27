@@ -6,7 +6,7 @@ using Miru.ViewModels;
 using System.Windows;
 using JikanDotNet;
 using System;
-using ToastNotifications.Core;
+using MiruLibrary.Settings;
 
 namespace Miru
 {
@@ -20,7 +20,7 @@ namespace Miru
         protected override void ConfigureContainer(ContainerBuilder builder)
         {
             builder.RegisterType<SortedAnimeListsViewModel>().As<ISortedAnimeListsViewModel>();
-            builder.RegisterType<ShellViewModel>().As<IShellViewModel>();
+            builder.RegisterType<ShellViewModel>().As<IShellViewModel>().SingleInstance();
             builder.RegisterType<MiruDbService>().As<IMiruDbService>();
             builder.RegisterType<SimpleContentDialog>().As<ISimpleContentDialog>();
             builder.RegisterType<CurrentSeasonModel>().As<ICurrentSeasonModel>();
@@ -41,6 +41,7 @@ namespace Miru
                 .SingleInstance();
             builder.RegisterType<ToastNotifierWrapper>().As<IToastNotifierWrapper>();
             builder.RegisterType<MiruAnimeModelProcessor>().As<IMiruAnimeModelProcessor>();
+            builder.RegisterModule(new SettingsModule("config.json"));
         }
 
         protected override void ConfigureBootstrapper()
@@ -53,6 +54,21 @@ namespace Miru
         {
             // set starting view for this app
             DisplayRootViewFor<IShellViewModel>();
+        }
+
+        protected override void OnExit(object sender, EventArgs e)
+        {
+            SaveSettings();
+            base.OnExit(sender, e);
+        }
+
+        private void SaveSettings()
+        {
+            UserSettings userSettings = new UserSettings
+            {
+                AnimeImageSize = Container.Resolve<IShellViewModel>().AnimeImageSizeInPixels
+            };
+            Container.Resolve<ISettingsWriter>().Write(userSettings);
         }
     }
 }
