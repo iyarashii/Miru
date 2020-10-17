@@ -44,10 +44,6 @@ namespace Miru.ViewModels
             ContentDialog = contentDialog;
             ToastNotifierWrapper = toastNotifierWrapper;
 
-            // TODO: Add config file that will save such values on app exit and load them on app start
-            AnimeImageSizeInPixels = userSettings.AnimeImageSize;
-
-
             // subscribe to the events
             DbService.UpdateSyncDate += new EventHandler<DateTime>(UpdateSyncDate);
             DbService.UpdateAnimeListEntriesUI += new MiruDbService.SortedAnimeListEventHandler(SortedAnimeLists.SetAnimeSortedByAirDayOfWeekAndFilteredByGivenAnimeListType);
@@ -56,6 +52,11 @@ namespace Miru.ViewModels
 
             // set system's local time zone as initially selected time zone
             SelectedTimeZone = TimeZoneInfo.Local;
+
+            // TODO: move load from settings file to separate method/class
+            AnimeImageSizeInPixels = userSettings.AnimeImageSize;
+            SelectedDisplayedAnimeList = userSettings.DisplayedAnimeListType;
+            SelectedDisplayedAnimeType = userSettings.DisplayedAnimeType;
 
             // apply correct colors to the days of the week depending on windows theme during runtime
             UpdateBrushColors();

@@ -7,6 +7,7 @@ using System.Windows;
 using JikanDotNet;
 using System;
 using MiruLibrary.Settings;
+using MiruLibrary;
 
 namespace Miru
 {
@@ -41,7 +42,8 @@ namespace Miru
                 .SingleInstance();
             builder.RegisterType<ToastNotifierWrapper>().As<IToastNotifierWrapper>();
             builder.RegisterType<MiruAnimeModelProcessor>().As<IMiruAnimeModelProcessor>();
-            builder.RegisterModule(new SettingsModule("config.json"));
+            // path to the config file is passed here
+            builder.RegisterModule(new SettingsModule(Constants.SettingsPath));
         }
 
         protected override void ConfigureBootstrapper()
@@ -64,11 +66,18 @@ namespace Miru
 
         private void SaveSettings()
         {
-            UserSettings userSettings = new UserSettings
-            {
-                AnimeImageSize = Container.Resolve<IShellViewModel>().AnimeImageSizeInPixels
-            };
-            Container.Resolve<ISettingsWriter>().Write(userSettings);
+            //UserSettings userSettings = Container.Resolve<UserSettings>();
+            //userSettings.AnimeImageSize = Container.Resolve<IShellViewModel>().AnimeImageSizeInPixels;
+
+            Container.Resolve<UserSettings>().AnimeImageSize = Container.Resolve<IShellViewModel>().AnimeImageSizeInPixels;
+            Container.Resolve<UserSettings>().DisplayedAnimeListType = Container.Resolve<IShellViewModel>().SelectedDisplayedAnimeList;
+            Container.Resolve<UserSettings>().DisplayedAnimeType = Container.Resolve<IShellViewModel>().SelectedDisplayedAnimeType;
+            //UserSettings userSettings = new UserSettings
+            //{
+            //    AnimeImageSize = Container.Resolve<IShellViewModel>().AnimeImageSizeInPixels
+            //};
+
+            Container.Resolve<ISettingsWriter>().Write(Container.Resolve<UserSettings>());
         }
     }
 }
