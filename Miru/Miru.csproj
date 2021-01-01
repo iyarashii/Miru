@@ -222,7 +222,7 @@
       <Version>3.8.1</Version>
     </PackageReference>
     <PackageReference Include="JikanDotNet">
-      <Version>1.4.0</Version>
+      <Version>1.5.4</Version>
     </PackageReference>
     <PackageReference Include="ModernWpfUI">
       <Version>0.8.1</Version>
