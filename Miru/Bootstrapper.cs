@@ -29,7 +29,7 @@ namespace Miru
             builder.RegisterType<Jikan>().As<IJikan>()
                 // dev API endpoint
 #if DEBUG
-                .WithParameter(new TypedParameter(typeof(string), "http://localhost:9001/public/v3/"))
+                .WithParameter(new TypedParameter(typeof(string), "http://localhost:9000/v3/"))
                 // prod API endpoint
 #else
                 .WithParameters(
