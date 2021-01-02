@@ -58,8 +58,11 @@ namespace Miru.ViewModels
         }
 
         // constructor
-        public ShellViewModel(ISortedAnimeListsViewModel sortedAnimeLists, IMiruDbService miruDbService, ISimpleContentDialog contentDialog, IToastNotifierWrapper toastNotifierWrapper,
-            UserSettings userSettings)
+        public ShellViewModel(ISortedAnimeListsViewModel sortedAnimeLists,
+                              IMiruDbService miruDbService,
+                              ISimpleContentDialog contentDialog,
+                              IToastNotifierWrapper toastNotifierWrapper,
+                              UserSettings userSettings)
         {
             #region dependency injection
 
