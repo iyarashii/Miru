@@ -31,38 +31,53 @@ namespace Miru.ViewModels
         private string _currentAnimeNameFilter;
         private double _animeImageSizeInPixels;
 
-        // constructor
-        public ShellViewModel(ISortedAnimeListsViewModel sortedAnimeLists, IMiruDbService miruDbService, ISimpleContentDialog contentDialog, IToastNotifierWrapper toastNotifierWrapper,
-            UserSettings userSettings)
+        private void ConfigureDbService()
         {
-            // dependency injection
-            _sortedAnimeLists = sortedAnimeLists;
-
-            // assign db service to the injected instance
-            DbService = miruDbService;
-
-            ContentDialog = contentDialog;
-            ToastNotifierWrapper = toastNotifierWrapper;
-
             // subscribe to the events
             DbService.UpdateSyncDate += new EventHandler<DateTime>(UpdateSyncDate);
             DbService.UpdateAnimeListEntriesUI += new MiruDbService.SortedAnimeListEventHandler(SortedAnimeLists.SetAnimeSortedByAirDayOfWeekAndFilteredByGivenAnimeListType);
             DbService.UpdateCurrentUsername += new EventHandler<string>(UpdateUsername);
             DbService.UpdateAppStatusUI += new MiruDbService.UpdateAppStatusEventHandler(UpdateAppStatus);
+        }
 
-            // set system's local time zone as initially selected time zone
-            SelectedTimeZone = TimeZoneInfo.Local;
-
+        private void LoadUserSettings(UserSettings userSettings)
+        {
             // TODO: move load from settings file to separate method/class
             AnimeImageSizeInPixels = userSettings.AnimeImageSize;
             SelectedDisplayedAnimeList = userSettings.DisplayedAnimeListType;
             SelectedDisplayedAnimeType = userSettings.DisplayedAnimeType;
+        }
 
+        private void ConfigureAppColorTheme()
+        {
             // apply correct colors to the days of the week depending on windows theme during runtime
             UpdateBrushColors();
 
             // set app theme to prevent the app to react to windows theme change while the app is running
             ThemeManager.Current.ApplicationTheme = CurrentApplicationTheme;
+        }
+
+        // constructor
+        public ShellViewModel(ISortedAnimeListsViewModel sortedAnimeLists, IMiruDbService miruDbService, ISimpleContentDialog contentDialog, IToastNotifierWrapper toastNotifierWrapper,
+            UserSettings userSettings)
+        {
+            #region dependency injection
+
+            _sortedAnimeLists = sortedAnimeLists;
+            DbService = miruDbService;
+            ContentDialog = contentDialog;
+            ToastNotifierWrapper = toastNotifierWrapper;
+
+            #endregion dependency injection
+
+            ConfigureDbService();
+
+            // set system's local time zone as initially selected time zone
+            SelectedTimeZone = TimeZoneInfo.Local;
+
+            LoadUserSettings(userSettings);
+
+            ConfigureAppColorTheme();
 
             // load synced data from the db
             DbService.LoadLastSyncedData();
