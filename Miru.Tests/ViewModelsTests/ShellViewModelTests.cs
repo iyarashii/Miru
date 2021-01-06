@@ -58,6 +58,60 @@ namespace Miru.Tests
             }
         }
 
+        [Fact]
+        public void UpdateSyncDate_SetsSyncDateProperty()
+        {
+            using (var mock = AutoMock.GetLoose())
+            {
+                // Arrange
+                var cls = mock.Create<ShellViewModel>();
+                var testValue = new DateTime();
+
+                // Act
+                cls.UpdateSyncDate(null, testValue);
+
+                // Assert
+                Assert.Equal(testValue, cls.SyncDate);
+            }
+        }
+
+        [Fact]
+        public void UpdateUsername_WhenTypedInUsernameIsEmpty_SetBothMalUsernameAndTypedInUsername()
+        {
+            using (var mock = AutoMock.GetLoose())
+            {
+                // Arrange
+                var cls = mock.Create<ShellViewModel>();
+                var testValue = "name";
+
+                // Act
+                cls.UpdateUsername(null, testValue);
+
+                // Assert
+                Assert.Equal(testValue, cls.MalUserName);
+                Assert.Equal(testValue, cls.TypedInUsername);
+            }
+        }
+
+        [Fact]
+        public void UpdateUsername_WhenTypedInUsernameIsNotEmpty_SetOnlyMalUsername()
+        {
+            using (var mock = AutoMock.GetLoose())
+            {
+                // Arrange
+                var cls = mock.Create<ShellViewModel>();
+                var testValue = "name";
+                cls.TypedInUsername = "2137";
+
+                // Act
+                cls.UpdateUsername(null, testValue);
+
+                // Assert
+                Assert.Equal(testValue, cls.MalUserName);
+                Assert.NotEqual(testValue, cls.TypedInUsername);
+            }
+        }
+
         public static IEnumerable<object[]> GetBrushColors()
         {
             yield return new object[] { ApplicationTheme.Dark, Brushes.SeaGreen };
@@ -339,6 +393,7 @@ namespace Miru.Tests
             }
         }
 
+        //[StaFact]
         [Fact]
         public void CopyAnimeTitleToClipboard_ValidCall()
         {
@@ -347,17 +402,44 @@ namespace Miru.Tests
                 // Arrange
                 var cls = mock.Create<ShellViewModel>();
                 var testValue = "dydnie";
+                
+                Thread STAThread = new Thread(() =>
+                {
+                    var clipboardContentBeforeTest = System.Windows.Clipboard.GetText();
 
-                // Act
-                cls.CopyAnimeTitleToClipboard(testValue);
+                    // Act
+                    cls.CopyAnimeTitleToClipboard(testValue);
 
-                // Assert
-                Assert.Equal(testValue, System.Windows.Clipboard.GetText());
+                    // Assert
+                    Assert.Equal(testValue, System.Windows.Clipboard.GetText());
+                    System.Windows.Clipboard.SetText(clipboardContentBeforeTest);
+                });
+                STAThread.SetApartmentState(ApartmentState.STA);
+                STAThread.Start();
+                STAThread.Join();
             }
         }
         #endregion methods tests
 
         #region properties tests
+        [Theory]
+        [InlineData(double.NaN, 134.0)]
+        [InlineData(21.37, 21.37)]
+        [InlineData(1337, 1337)]
+        public void AnimeImageSizeInPixels_ReturnsCorrectValue(double testValue, double expected)
+        {
+            using (var mock = AutoMock.GetLoose())
+            {
+                // Arrange
+                var cls = mock.Create<ShellViewModel>();
+
+                // Act
+                cls.AnimeImageSizeInPixels = testValue;
+
+                // Assert
+                Assert.Equal(expected, cls.AnimeImageSizeInPixels);
+            }
+        }
 
         [Fact]
         public void ToastNotifierWrapper_ReturnsCorrectValue()
@@ -491,7 +573,7 @@ namespace Miru.Tests
             {
                 // Arrange
                 var cls = mock.Create<ShellViewModel>();
-                var testValue = AnimeType.TV;
+                var testValue = AnimeType.ONA;
                 mock.Mock<IMiruDbService>()
                     .Setup(x => x.ChangeDisplayedAnimeList(cls.SelectedDisplayedAnimeList, cls.SelectedTimeZone, testValue, cls.CurrentAnimeNameFilter));
 
