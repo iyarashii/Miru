@@ -371,11 +371,7 @@ namespace Miru.ViewModels
             return true;
         }
 
-        /// <summary>
-        /// Performs synchronization to the typed-in user's anime list on a button click (wired up via caliburn micro).
-        /// </summary>
-        /// <returns></returns>
-        public async Task SyncUserAnimeList(string typedInUsername, MiruAppStatus appStatus, bool seasonSyncOn)
+        public async Task<bool> GetUserAnimeList()
         {
             // get user's watching status anime list
             UpdateAppStatus(MiruAppStatus.Busy, "Getting current user anime list...");
@@ -385,32 +381,42 @@ namespace Miru.ViewModels
             if (!getCurrentUserAnimeListResult.Success)
             {
                 UpdateAppStatus(MiruAppStatus.Idle, getCurrentUserAnimeListResult.ErrorMessage);
-                return;
+                return false;
             }
+            return true;
+        }
 
+        public async Task<bool> GetCurrentSeason()
+        {
             // get current season
-            if (seasonSyncOn)
-            {
-                UpdateAppStatus(MiruAppStatus.Busy, "Getting current season anime list...");
+            UpdateAppStatus(MiruAppStatus.Busy, "Getting current season anime list...");
 
-                if (!await DbService.CurrentSeason.GetCurrentSeasonList(2000))
-                {
-                    UpdateAppStatus(MiruAppStatus.InternetConnectionProblems);
-                    return;
-                }
-            }
-
-            // save user data to the db
-            UpdateAppStatus(MiruAppStatus.Busy, "Saving user data to the db...");
-            await DbService.SaveSyncedUserData(typedInUsername);
-
-            // save api data to the database
-            if (!await DbService.SaveDetailedAnimeListData(seasonSyncOn))
+            if (!await DbService.CurrentSeason.GetCurrentSeasonList(2000))
             {
                 UpdateAppStatus(MiruAppStatus.InternetConnectionProblems);
-                return;
+                return false;
             }
+            return true;
+        }
 
+        public async Task SaveUserInfo(string username)
+        {
+            UpdateAppStatus(MiruAppStatus.Busy, "Saving user data to the db...");
+            await DbService.SaveSyncedUserData(username);
+        }
+
+        public async Task<bool> SaveAnimeListData(bool isSeasonSyncOn)
+        {
+            if (!await DbService.SaveDetailedAnimeListData(isSeasonSyncOn))
+            {
+                UpdateAppStatus(MiruAppStatus.InternetConnectionProblems);
+                return false;
+            }
+            return true;
+        }
+
+        public void UpdateUiAfterDataSync()
+        {
             // update displayed username and sync date
             MalUserName = TypedInUsername;
 
@@ -420,6 +426,31 @@ namespace Miru.ViewModels
 
             // update app status
             UpdateAppStatus(MiruAppStatus.Idle);
+        }
+
+        /// <summary>
+        /// Performs synchronization to the typed-in user's anime list on a button click (wired up via caliburn micro).
+        /// </summary>
+        /// <returns></returns>
+        public async Task SyncUserAnimeList(string typedInUsername, MiruAppStatus appStatus, bool seasonSyncOn)
+        {
+            // get user's watching status anime list
+            if (!await GetUserAnimeList()) return;
+
+            // get current season
+            if (seasonSyncOn)
+            {
+                if (!await GetCurrentSeason()) return;
+            }
+
+            // save user data to the db
+            await SaveUserInfo(typedInUsername);
+
+            // save api data to the database
+            if (!await SaveAnimeListData(seasonSyncOn)) return;
+
+            // update displayed username and sync date
+            UpdateUiAfterDataSync();
         }
 
         // event handler for the Clear local data button
