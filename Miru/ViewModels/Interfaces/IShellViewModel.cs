@@ -50,5 +50,10 @@ namespace Miru.ViewModels
         Task UpdateSenpaiData();
         void UpdateAppStatus(MiruAppStatus newAppStatus, string detailedAppStatusDescription = null);
         void ClearAppData();
+        Task<bool> GetUserAnimeList();
+        Task<bool> GetCurrentSeason();
+        Task SaveUserInfo(string username);
+        Task<bool> SaveAnimeListData(bool isSeasonSyncOn);
+        void UpdateUiAfterDataSync();
     }
 }
