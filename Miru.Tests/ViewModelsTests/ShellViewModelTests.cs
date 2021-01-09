@@ -323,52 +323,27 @@ namespace Miru.Tests
             }
         }
 
-        public static IEnumerable<object[]> GenerateValuesForSyncUserAnimeList()
-        {
-            yield return new object[] { true, (true, "error message"), true, true, 1, 1, 1 };
-
-            yield return new object[] { false, (true, "error message"), true, true, 0, 1, 1 };
-
-            yield return new object[] { true, (false, "error message"), true, true, 0, 0, 0 };
-
-            yield return new object[] { true, (true, "error message"), false, true, 1, 0, 0 };
-
-            yield return new object[] { true, (true, "error message"), true, false, 1, 1, 1 };
-
-            yield return new object[] { false, (true, "error message"), true, false, 0, 1, 1 };
-        }
-
-
         [Theory]
-        [MemberData(nameof(GenerateValuesForSyncUserAnimeList))]
-        public void SyncUserAnimeList_ValidCall
-            (
-            bool isSeasonSyncOn, 
-            (bool Success, string ErrorMessage) getCurrentUserAnimeListResult, 
-            bool getCurrentSeasonListResult,
-            bool saveDetailedAnimeListDataResult,
-            int expectedGetCurrentSeasonListTimesCalled,
-            int expectedSaveDetailedAnimeListDataTimesCalled,
-            int expectedSaveSyncedUserDataTimesCalled
-            )
+        [InlineData(false, 0)]
+        [InlineData(true, 1)]
+        public void SyncUserAnimeList_ValidCall(bool isSeasonSyncOn, int expectedGetCurrentSeasonListTimesCalled)
         {
-            using(var mock = AutoMock.GetLoose())
+            using (var mock = AutoMock.GetLoose())
             {
-
                 // Arrange
                 var cls = mock.Create<ShellViewModel>();
 
                 mock.Mock<ICurrentUserAnimeListModel>()
                     .Setup(x => x.GetCurrentUserAnimeList(null))
-                    .ReturnsAsync(getCurrentUserAnimeListResult);
+                    .ReturnsAsync((true, It.IsAny<string>()));
 
                 mock.Mock<ICurrentSeasonModel>()
                     .Setup(x => x.GetCurrentSeasonList(It.IsAny<int>()))
-                    .ReturnsAsync(getCurrentSeasonListResult);
+                    .ReturnsAsync(true);
 
                 mock.Mock<IMiruDbService>()
                     .Setup(x => x.SaveDetailedAnimeListData(isSeasonSyncOn))
-                    .ReturnsAsync(saveDetailedAnimeListDataResult);
+                    .ReturnsAsync(true);
 
                 mock.Mock<IMiruDbService>().Setup(x => x.SaveSyncedUserData(It.IsAny<string>()));
 
@@ -378,18 +353,145 @@ namespace Miru.Tests
                 mock.Mock<IMiruDbService>().SetupGet(x => x.CurrentUserAnimeList).Returns(currentUserAnimeListMock);
                 mock.Mock<IMiruDbService>().SetupGet(x => x.CurrentSeason).Returns(currentSeasonMock);
 
-
                 // Act
                 cls.SyncUserAnimeList(null, It.IsAny<MiruAppStatus>(), isSeasonSyncOn).Wait();
 
                 // Assert
-                mock.Mock<ICurrentUserAnimeListModel>().Verify(x => x.GetCurrentUserAnimeList(null), Times.Once);
-
                 mock.Mock<ICurrentSeasonModel>().Verify(x => x.GetCurrentSeasonList(It.IsAny<int>()), Times.Exactly(expectedGetCurrentSeasonListTimesCalled));
+            }
+        }
 
-                mock.Mock<IMiruDbService>().Verify(x => x.SaveDetailedAnimeListData(isSeasonSyncOn), Times.Exactly(expectedSaveDetailedAnimeListDataTimesCalled));
+        [Fact]
+        public void UpdateUiAfterDataSync_SetsCorrectProperties()
+        {
+            using (var mock = AutoMock.GetLoose())
+            {
+                // Arrange
+                var cls = mock.Create<ShellViewModel>();
+                var testValue = "2137";
+                cls.TypedInUsername = testValue;
+                mock.Mock<IMiruDbService>()
+                    .Setup(x => x.ChangeDisplayedAnimeList(
+                        It.IsAny<AnimeListType>(), 
+                        It.IsAny<TimeZoneInfo>(), 
+                        It.IsAny<AnimeType>(), 
+                        null));
 
-                mock.Mock<IMiruDbService>().Verify(x => x.SaveSyncedUserData(It.IsAny<string>()), Times.Exactly(expectedSaveSyncedUserDataTimesCalled));
+                // Act
+                cls.UpdateUiAfterDataSync();
+
+                // Assert
+                Assert.Equal(AnimeListType.Watching, cls.SelectedDisplayedAnimeList);
+                Assert.Equal(TimeZoneInfo.Local, cls.SelectedTimeZone);
+                Assert.Equal(testValue, cls.MalUserName);
+            }
+        }
+
+        [Theory]
+        [InlineData(true, true)]
+        [InlineData(false, false)]
+        public void SaveAnimeListData_ReturnsCorrectValue(bool saveDetailedAnimeListDataResult, bool expectedResult)
+        {
+            using (var mock = AutoMock.GetLoose())
+            {
+                // Arrange
+                var cls = mock.Create<ShellViewModel>();
+                mock.Mock<IMiruDbService>()
+                   .Setup(x => x.SaveDetailedAnimeListData(It.IsAny<bool>()))
+                   .ReturnsAsync(saveDetailedAnimeListDataResult);
+
+                // Act
+                var actualResult = cls.SaveAnimeListData(It.IsAny<bool>()).Result;
+
+                // Assert
+                Assert.Equal(expectedResult, actualResult);
+            }
+        }
+
+        [Fact]
+        public void SaveUserInfo_ValidCall()
+        {
+            using (var mock = AutoMock.GetLoose())
+            {
+                // Arrange
+                var cls = mock.Create<ShellViewModel>();
+                mock.Mock<IMiruDbService>()
+                   .Setup(x => x.SaveSyncedUserData(It.IsAny<string>()));
+
+                // Act
+                cls.SaveUserInfo(It.IsAny<string>()).Wait();
+
+                // Assert
+                mock.Mock<IMiruDbService>().Verify(x => x.SaveSyncedUserData(It.IsAny<string>()));
+            }
+        }
+
+        [Theory]
+        [InlineData(true, true)]
+        [InlineData(false, false)]
+        public void GetCurrentSeason_ReturnsCorrectValue(bool getCurrentSeasonListResult, bool expectedResult)
+        {
+            using (var mock = AutoMock.GetLoose())
+            {
+                // Arrange
+                var cls = mock.Create<ShellViewModel>();
+
+                mock.Mock<ICurrentSeasonModel>()
+                    .Setup(x => x.GetCurrentSeasonList(It.IsAny<int>()))
+                    .ReturnsAsync(getCurrentSeasonListResult);
+
+                var currentSeasonMock = mock.Create<ICurrentSeasonModel>();
+
+                mock.Mock<IMiruDbService>().SetupGet(x => x.CurrentSeason).Returns(currentSeasonMock);
+
+                // Act
+                var actualResult = cls.GetCurrentSeason().Result;
+
+                // Assert
+                Assert.Equal(expectedResult, actualResult);
+            }
+        }
+
+        [Theory]
+        [InlineData(true, true)]
+        [InlineData(false, false)]
+        public void GetUserAnimeList_ReturnsCorrectValue(bool getUserAnimeListResult, bool expectedResult)
+        {
+            using (var mock = AutoMock.GetLoose())
+            {
+                // Arrange
+                var cls = mock.Create<ShellViewModel>();
+
+                mock.Mock<ICurrentUserAnimeListModel>()
+                    .Setup(x => x.GetCurrentUserAnimeList(null))
+                    .ReturnsAsync((getUserAnimeListResult, It.IsAny<string>()));
+
+                var currentUserAnimeListMock = mock.Create<ICurrentUserAnimeListModel>();
+
+                mock.Mock<IMiruDbService>().SetupGet(x => x.CurrentUserAnimeList).Returns(currentUserAnimeListMock);
+
+                // Act
+                var actualResult = cls.GetUserAnimeList().Result;
+
+                // Assert
+                Assert.Equal(expectedResult, actualResult);
+            }
+        }
+
+        [Fact]
+        public void PrepareAnimeTitleCopiedNotification_ReturnsCorrectlyFormattedAnimeTitle()
+        {
+            using (var mock = AutoMock.GetLoose())
+            {
+                // Arrange
+                var cls = mock.Create<ShellViewModel>();
+                var testTitle = "2137";
+
+                // Act
+                var actualResult = cls.PrepareAnimeTitleCopiedNotification(testTitle);
+
+                // Assert
+                Assert.Equal("'2137' copied to the clipboard!", actualResult);
             }
         }
 
