@@ -22,14 +22,16 @@ namespace Miru.ViewModels
         private MiruAppStatus _appStatus;
         private ApplicationTheme _currentApplicationTheme;
         private SolidColorBrush _daysOfTheWeekBrush;
-        private AnimeListType _selectedDisplayedAnimeList = AnimeListType.Watching;
-        private TimeZoneInfo _selectedTimeZone;
         private bool _canChangeDisplayedAnimeList;
         private AnimeType _selectedDisplayedAnimeType;
         private string _malUserName;
         private string _userAnimeListURL;
         private string _currentAnimeNameFilter;
         private double _animeImageSizeInPixels;
+
+        // fields with default values for properties with setter logic
+        private AnimeListType _selectedDisplayedAnimeList = AnimeListType.Watching;
+        private TimeZoneInfo _selectedTimeZone = TimeZoneInfo.Local;
 
         private void ConfigureDbService()
         {
@@ -42,9 +44,8 @@ namespace Miru.ViewModels
 
         private void LoadUserSettings(UserSettings userSettings)
         {
-            // TODO: move load from settings file to separate method/class
             AnimeImageSizeInPixels = userSettings.AnimeImageSize;
-            SelectedDisplayedAnimeList = userSettings.DisplayedAnimeListType;
+            _selectedDisplayedAnimeList = userSettings.DisplayedAnimeListType;
             SelectedDisplayedAnimeType = userSettings.DisplayedAnimeType;
         }
 
@@ -75,15 +76,12 @@ namespace Miru.ViewModels
 
             ConfigureDbService();
 
-            // set system's local time zone as initially selected time zone
-            SelectedTimeZone = TimeZoneInfo.Local;
+            // load synced data from the db
+            DbService.LoadLastSyncedData();
 
             LoadUserSettings(userSettings);
 
             ConfigureAppColorTheme();
-
-            // load synced data from the db
-            DbService.LoadLastSyncedData();
 
             // set default app status
             UpdateAppStatus(MiruAppStatus.Idle);

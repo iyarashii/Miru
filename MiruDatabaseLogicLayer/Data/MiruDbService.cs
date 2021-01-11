@@ -84,12 +84,6 @@ namespace MiruDatabaseLogicLayer
 
                     // set SyncStatusText and TypedInUsername props to the username of the last synchronized user
                     CurrentUsername = db.SyncedMyAnimeListUsers.FirstOrDefault().Username;
-
-                    // get the user's list of the airing animes from the db
-                    var airingAnimeList = db.MiruAnimeModels.ToList();
-
-                    // set airing anime list entries for each day of the week
-                    UpdateAnimeListEntriesUI(airingAnimeList, AnimeListType.Watching);
                 }
             }
         }
