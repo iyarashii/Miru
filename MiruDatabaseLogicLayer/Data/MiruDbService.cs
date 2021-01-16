@@ -415,23 +415,17 @@ namespace MiruDatabaseLogicLayer
             var senpaiEntries = JsonConvert.DeserializeObject<SenpaiEntryModel>(File.ReadAllText(Constants.SenpaiFilePath));
             var senpaiIDs = senpaiEntries.Items.Select(x => x.MALID);
 
-            // remove airing animes without specified broadcast time (like OVAs)
-            detailedAnimeList.RemoveAll(x => !string.IsNullOrWhiteSpace(x.Broadcast) && (x.Broadcast.Contains("Unknown") || x.Broadcast.Contains("Not scheduled")));
-
             // for each airingAnime parse time and day of the week from the broadcast string
             foreach (var airingAnime in detailedAnimeList)
             {
-                if (DateTime.TryParse(airingAnime.Broadcast, out DateTime parsedBroadcast))
+                if (senpaiIDs.Contains(airingAnime.MalId))
                 {
-                    if (senpaiIDs.Contains(airingAnime.MalId))
-                    {
-                        airingAnime.Broadcast = senpaiEntries.Items.First(x => x.MALID == airingAnime.MalId).airdate;
-                        broadcastTime = DateTime.Parse(airingAnime.Broadcast);
-                    }
-                    else
-                    {
+                    airingAnime.Broadcast = senpaiEntries.Items.First(x => x.MALID == airingAnime.MalId).airdate;
+                    broadcastTime = DateTime.Parse(airingAnime.Broadcast);
+                }
+                else if (DateTime.TryParse(airingAnime.Broadcast, out DateTime parsedBroadcast))
+                {
                         broadcastTime = parsedBroadcast;
-                    }
                 }
                 else
                 {
