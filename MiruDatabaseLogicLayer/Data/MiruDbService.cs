@@ -20,20 +20,24 @@ namespace MiruDatabaseLogicLayer
         private string currentUsername;
 
         // constructor
-        public MiruDbService(ICurrentSeasonModel currentSeasonModel, ICurrentUserAnimeListModel currentUserAnimeListModel, IJikan jikanWrapper)
+        public MiruDbService(ICurrentSeasonModel currentSeasonModel, ICurrentUserAnimeListModel currentUserAnimeListModel, IJikan jikanWrapper, IMiruDbContext miruDbContext)
         {
-            // dependency injection
+            #region dependency injection
+
             CurrentSeason = currentSeasonModel;
             CurrentUserAnimeList = currentUserAnimeListModel;
             JikanWrapper = jikanWrapper;
+            MiruDbContext = miruDbContext;
+
+            #endregion dependency injection
 
             // if there is no local senpai data file get the JSON from senpai.moe
             GetSenpaiData();
         }
 
         private IJikan JikanWrapper { get; }
+        private IMiruDbContext MiruDbContext { get; }
 
-        // stores view model's context
         public DateTime SyncDateData
         {
             get => _syncDateData;
@@ -44,7 +48,9 @@ namespace MiruDatabaseLogicLayer
             }
         }
 
-        public string CurrentUsername { get => currentUsername;
+        public string CurrentUsername 
+        { 
+            get => currentUsername;
             private set
             {
                 if(currentUsername != value)
@@ -61,12 +67,13 @@ namespace MiruDatabaseLogicLayer
         // stores data model of the currently synced user's anime list
         public ICurrentUserAnimeListModel CurrentUserAnimeList { get; }
 
+        // create custom event handlers
         public delegate void SortedAnimeListEventHandler(List<MiruAnimeModel> animeModels, AnimeListType animeListType);
         public delegate void UpdateAppStatusEventHandler(MiruAppStatus newAppStatus, string detailedAppStatusDescription);
 
+        // create events for updating UI with the data from the db
         public event EventHandler<DateTime> UpdateSyncDate;
         public event EventHandler<string> UpdateCurrentUsername;
-
         public event SortedAnimeListEventHandler UpdateAnimeListEntriesUI;
         public event UpdateAppStatusEventHandler UpdateAppStatusUI;
 
@@ -74,15 +81,15 @@ namespace MiruDatabaseLogicLayer
         public void LoadLastSyncedData()
         {
             // open temporary connection to the database
-            using (var db = new MiruDbContext())
+            using (var db = MiruDbContext)
             {
                 // if SyncedMyAnimeListUsers table is not empty
                 if (db.SyncedMyAnimeListUsers.Any())
                 {
-                    // set SyncDate prop to the sync time of the last synchronization
+                    // load the sync time of the last synchronization
                     SyncDateData = db.SyncedMyAnimeListUsers.FirstOrDefault().SyncTime;
 
-                    // set SyncStatusText and TypedInUsername props to the username of the last synchronized user
+                    // load the username of the last synchronized user
                     CurrentUsername = db.SyncedMyAnimeListUsers.FirstOrDefault().Username;
                 }
             }
@@ -91,7 +98,7 @@ namespace MiruDatabaseLogicLayer
         // clears anime models and synced users tables
         public void ClearDb()
         {
-            using (var db = new MiruDbContext())
+            using (var db = MiruDbContext)
             {
                 db.Database.ExecuteSqlCommand("TRUNCATE TABLE [MiruAnimeModels]");
                 db.Database.ExecuteSqlCommand("TRUNCATE TABLE [SyncedMyAnimeListUsers]");
@@ -100,8 +107,8 @@ namespace MiruDatabaseLogicLayer
 
         public void ClearLocalImageCache()
         {
-            DirectoryInfo di = new DirectoryInfo(Constants.ImageCacheFolderPath);
-            foreach (FileInfo file in di.EnumerateFiles())
+            DirectoryInfo imageCacheFolder = new DirectoryInfo(Constants.ImageCacheFolderPath);
+            foreach (FileInfo file in imageCacheFolder.EnumerateFiles())
             {
                 file.Delete();
             }
@@ -141,7 +148,7 @@ namespace MiruDatabaseLogicLayer
         // changes data for the displayed anime list to match time zone and anime list type passed as parameters
         public void ChangeDisplayedAnimeList(AnimeListType animeListType, TimeZoneInfo selectedTimeZone, AnimeType selectedAnimeType, string animeNameFilter)
         {
-            using (var db = new MiruDbContext())
+            using (var db = MiruDbContext)
             {
                 // get the user's list of the airing animes from the db
                 var airingAnimeList = db.MiruAnimeModels.ToList();
@@ -182,7 +189,7 @@ namespace MiruDatabaseLogicLayer
         public async Task SaveSyncedUserData(string typedInUsername)
         {
             // open temporary connection to the database
-            using (var db = new MiruDbContext())
+            using (var db = MiruDbContext)
             {
                 // if SyncedMyAnimeListUsers table is not empty then delete all rows
                 if (db.SyncedMyAnimeListUsers.Any())
@@ -208,7 +215,7 @@ namespace MiruDatabaseLogicLayer
             List<MiruAnimeModel> detailedAnimeList;
 
             // open temporary connection to the database
-            using (var db = new MiruDbContext())
+            using (var db = MiruDbContext)
             {
                 UpdateAppStatusUI(MiruAppStatus.Busy, "Getting detailed user anime list data...");
 
@@ -256,7 +263,7 @@ namespace MiruDatabaseLogicLayer
         /// <param name="db">Context of the database that is going to be updated.</param>
         /// <param name="currentUserAnimeListEntries">Collection of AnimeListEntries that are going to receive broadcast time data.</param>
         /// <returns></returns>
-        public async Task<List<MiruAnimeModel>> GetDetailedUserAnimeList(MiruDbContext db, ICollection<AnimeListEntry> currentUserAnimeListEntries)
+        public async Task<List<MiruAnimeModel>> GetDetailedUserAnimeList(IMiruDbContext db, ICollection<AnimeListEntry> currentUserAnimeListEntries)
         {
             DirectoryInfo di = new DirectoryInfo(Constants.ImageCacheFolderPath);
             if (!di.Exists)

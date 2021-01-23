@@ -6,7 +6,7 @@ using System.Data.Entity;
 namespace MiruDatabaseLogicLayer
 {
     // app's default db context
-    public class MiruDbContext : DbContext
+    public class MiruDbContext : DbContext, IMiruDbContext
     {
         // specify database name
         public MiruDbContext() : base("MiruDatabase")
