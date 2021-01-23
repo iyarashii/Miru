@@ -37,8 +37,8 @@ namespace Miru.ViewModels
         {
             // subscribe to the events
             DbService.UpdateSyncDate += new EventHandler<DateTime>(UpdateSyncDate);
-            DbService.UpdateAnimeListEntriesUI += new MiruDbService.SortedAnimeListEventHandler(SortedAnimeLists.SetAnimeSortedByAirDayOfWeekAndFilteredByGivenAnimeListType);
             DbService.UpdateCurrentUsername += new EventHandler<string>(UpdateUsername);
+            DbService.UpdateAnimeListEntriesUI += new MiruDbService.SortedAnimeListEventHandler(SortedAnimeLists.SetAnimeSortedByAirDayOfWeekAndFilteredByGivenAnimeListType);
             DbService.UpdateAppStatusUI += new MiruDbService.UpdateAppStatusEventHandler(UpdateAppStatus);
         }
 
