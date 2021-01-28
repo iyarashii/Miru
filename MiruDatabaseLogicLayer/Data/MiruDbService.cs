@@ -27,7 +27,7 @@ namespace MiruDatabaseLogicLayer
             CurrentSeason = currentSeasonModel;
             CurrentUserAnimeList = currentUserAnimeListModel;
             JikanWrapper = jikanWrapper;
-            MiruDbContext = miruDbContext;
+            //MiruDbContext = new MiruDbContext();
 
             #endregion dependency injection
 
@@ -36,7 +36,7 @@ namespace MiruDatabaseLogicLayer
         }
 
         private IJikan JikanWrapper { get; }
-        private IMiruDbContext MiruDbContext { get; }
+        //private IMiruDbContext MiruDbContext { get; }
 
         public DateTime SyncDateData
         {
@@ -81,7 +81,7 @@ namespace MiruDatabaseLogicLayer
         public void LoadLastSyncedData()
         {
             // open temporary connection to the database
-            using (var db = MiruDbContext)
+            using (var db = new MiruDbContext())
             {
                 // if SyncedMyAnimeListUsers table is not empty
                 if (db.SyncedMyAnimeListUsers.Any())
@@ -98,7 +98,7 @@ namespace MiruDatabaseLogicLayer
         // clears anime models and synced users tables
         public void ClearDb()
         {
-            using (var db = MiruDbContext)
+            using (var db = new MiruDbContext())
             {
                 db.Database.ExecuteSqlCommand("TRUNCATE TABLE [MiruAnimeModels]");
                 db.Database.ExecuteSqlCommand("TRUNCATE TABLE [SyncedMyAnimeListUsers]");
@@ -148,36 +148,19 @@ namespace MiruDatabaseLogicLayer
         // changes data for the displayed anime list to match time zone and anime list type passed as parameters
         public void ChangeDisplayedAnimeList(AnimeListType animeListType, TimeZoneInfo selectedTimeZone, AnimeType selectedAnimeType, string animeNameFilter)
         {
-            using (var db = MiruDbContext)
+            using (var db = new MiruDbContext())
             {
                 // get the user's list of the airing animes from the db
                 var airingAnimeList = db.MiruAnimeModels.ToList();
 
-                // filter list of the airing animes depending on type
-                switch (selectedAnimeType)
-                {
-                    case AnimeType.Both:
-                        airingAnimeList.RemoveAll(x => x.Type != "TV" && x.Type != "ONA");
-                        break;
-
-                    case AnimeType.TV:
-                        airingAnimeList.RemoveAll(x => x.Type != "TV");
-                        break;
-
-                    case AnimeType.ONA:
-                        airingAnimeList.RemoveAll(x => x.Type != "ONA");
-                        break;
-                }
-
-                if (!string.IsNullOrWhiteSpace(animeNameFilter))
-                {
-                    airingAnimeList.RemoveAll(x => !(x.Title.IndexOf(animeNameFilter, StringComparison.OrdinalIgnoreCase) >= 0));
-                }
+                // filter the anime list
+                airingAnimeList.FilterByBroadcastType(selectedAnimeType);
+                airingAnimeList.FilterByTitle(animeNameFilter);
 
                 foreach (var airingAnime in airingAnimeList)
                 {
                     // save JST broadcast time converted to the selected timezone as local broadcast time
-                    airingAnime.LocalBroadcastTime = ConvertJstBroadcastTimeToSelectedTimeZone(airingAnime.JSTBroadcastTime.Value, selectedTimeZone);
+                    airingAnime.ConvertJstBroadcastTimeToSelectedTimeZone(selectedTimeZone);
                 }
 
                 // set airing anime list entries for each day of the week
@@ -189,7 +172,7 @@ namespace MiruDatabaseLogicLayer
         public async Task SaveSyncedUserData(string typedInUsername)
         {
             // open temporary connection to the database
-            using (var db = MiruDbContext)
+            using (var db = new MiruDbContext())
             {
                 // if SyncedMyAnimeListUsers table is not empty then delete all rows
                 if (db.SyncedMyAnimeListUsers.Any())
@@ -215,7 +198,7 @@ namespace MiruDatabaseLogicLayer
             List<MiruAnimeModel> detailedAnimeList;
 
             // open temporary connection to the database
-            using (var db = MiruDbContext)
+            using (var db = new MiruDbContext())
             {
                 UpdateAppStatusUI(MiruAppStatus.Busy, "Getting detailed user anime list data...");
 
@@ -439,11 +422,19 @@ namespace MiruDatabaseLogicLayer
                     // split the broadcast string into words
                     broadcastWords = airingAnime.Broadcast.Split(' ');
 
+                    if(broadcastWords.Length < 2)
+                    {
+                        continue;
+                    }
+
                     // set the first word of the broadcast string as a day of the week
                     dayOfTheWeek = broadcastWords[0];
 
                     // parse time from the 2nd broadcast string word
-                    time = DateTime.Parse(broadcastWords[2]);
+                    if(!DateTime.TryParse(broadcastWords[2], out time))
+                    {
+                        continue;
+                    }
 
                     // depending on the 1st word set the correct day
                     switch (dayOfTheWeek)
@@ -486,23 +477,11 @@ namespace MiruDatabaseLogicLayer
                 airingAnime.JSTBroadcastTime = broadcastTime;
 
                 // save JST broadcast time converted to your computer's local time to the model's property
-                airingAnime.LocalBroadcastTime = ConvertJstBroadcastTimeToSelectedTimeZone(broadcastTime, TimeZoneInfo.Local);
+                airingAnime.ConvertJstBroadcastTimeToSelectedTimeZone(TimeZoneInfo.Local);
             }
 
             // return list of airing animes with parsed data saved in LocalBroadcastTime properties
             return detailedAnimeList;
-        }
-
-        private DateTime ConvertJstBroadcastTimeToSelectedTimeZone(DateTime broadcastTime, TimeZoneInfo selectedTimeZone)
-        {
-            // covert JST to UTC
-            var broadcastTimeInSelectedTimeZone = TimeZoneInfo.ConvertTimeToUtc(broadcastTime, TimeZoneInfo.FindSystemTimeZoneById("Tokyo Standard Time"));
-
-            // get the UTC offset for the selected time zone
-            var utcOffset = selectedTimeZone.GetUtcOffset(DateTime.UtcNow);
-
-            // return Japanese broadcast time converted to selected time zone
-            return broadcastTimeInSelectedTimeZone.Add(utcOffset);
         }
 
         // tries to get the detailed anime information about anime with the given mal id, retries after given delay until the internet connection is working
