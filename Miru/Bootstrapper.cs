@@ -8,6 +8,7 @@ using JikanDotNet;
 using System;
 using MiruLibrary.Settings;
 using MiruLibrary;
+using System.IO.Abstractions;
 
 namespace Miru
 {
@@ -43,6 +44,8 @@ namespace Miru
             builder.RegisterType<ToastNotifierWrapper>().As<IToastNotifierWrapper>();
             builder.RegisterType<MiruAnimeModelProcessor>().As<IMiruAnimeModelProcessor>();
             builder.RegisterType<MiruDbContext>().As<IMiruDbContext>().SingleInstance();
+            builder.RegisterType<FileSystem>().As<IFileSystem>();
+            builder.RegisterType<FileSystemService>().As<IFileSystemService>();
             // path to the config file is passed here
             builder.RegisterModule(new SettingsModule(Constants.SettingsPath));
         }

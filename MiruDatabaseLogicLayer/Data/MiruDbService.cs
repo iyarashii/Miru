@@ -14,6 +14,7 @@ using AnimeType = MiruLibrary.AnimeType;
 namespace MiruDatabaseLogicLayer
 {
     // contains the business logic that uses the local db
+    // TODO: separate filesystem methods from this class and create DataService for ShellViewModel to contain both services
     public class MiruDbService : IMiruDbService
     {
         private DateTime _syncDateData;
@@ -30,9 +31,6 @@ namespace MiruDatabaseLogicLayer
             //MiruDbContext = new MiruDbContext();
 
             #endregion dependency injection
-
-            // if there is no local senpai data file get the JSON from senpai.moe
-            GetSenpaiData();
         }
 
         private IJikan JikanWrapper { get; }
@@ -102,46 +100,6 @@ namespace MiruDatabaseLogicLayer
             {
                 db.Database.ExecuteSqlCommand("TRUNCATE TABLE [MiruAnimeModels]");
                 db.Database.ExecuteSqlCommand("TRUNCATE TABLE [SyncedMyAnimeListUsers]");
-            }
-        }
-
-        public void ClearLocalImageCache()
-        {
-            DirectoryInfo imageCacheFolder = new DirectoryInfo(Constants.ImageCacheFolderPath);
-            foreach (FileInfo file in imageCacheFolder.EnumerateFiles())
-            {
-                file.Delete();
-            }
-        }
-
-        // updates senpai.json data file which is used as a backup for anime airing time
-        public void UpdateSenpaiData()
-        {
-            if (File.Exists(Constants.SenpaiFilePath))
-            {
-                File.Delete(Constants.SenpaiFilePath);
-                GetSenpaiData();
-            }
-            else
-            {
-                GetSenpaiData();
-            }
-        }
-
-        // gets the data from senpai.moe in a JSON form
-        public void GetSenpaiData()
-        {
-            if (File.Exists(Constants.SenpaiFilePath))
-            {
-                return;
-            }
-
-            // serialize JSON directly to a file
-            using (StreamWriter file = File.CreateText(Constants.SenpaiFilePath))
-            {
-                // get only MALID and airing_date json properties
-                var deserializedSenpaiData = JsonConvert.DeserializeObject<SenpaiEntryModel>(InternetConnection.client.GetStringAsync(Constants.SenpaiDataSourceURL).Result);
-                file.Write(JsonConvert.SerializeObject(deserializedSenpaiData, Formatting.Indented));
             }
         }
 

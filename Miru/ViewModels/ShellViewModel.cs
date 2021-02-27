@@ -61,6 +61,7 @@ namespace Miru.ViewModels
         // constructor
         public ShellViewModel(ISortedAnimeListsViewModel sortedAnimeLists,
                               IMiruDbService miruDbService,
+                              IFileSystemService fileSystemService,
                               ISimpleContentDialog contentDialog,
                               IToastNotifierWrapper toastNotifierWrapper,
                               UserSettings userSettings)
@@ -69,6 +70,7 @@ namespace Miru.ViewModels
 
             _sortedAnimeLists = sortedAnimeLists;
             DbService = miruDbService;
+            FileSystemService = fileSystemService;
             ContentDialog = contentDialog;
             ToastNotifierWrapper = toastNotifierWrapper;
 
@@ -114,6 +116,7 @@ namespace Miru.ViewModels
 
         // stores MiruDbService's instance that contains most of the business logic
         public IMiruDbService DbService { get; }
+        public IFileSystemService FileSystemService { get; }
 
         // stores collection of the time zones used by the system
         public ReadOnlyCollection<TimeZoneInfo> TimeZones { get; } = TimeZoneInfo.GetSystemTimeZones();
@@ -474,7 +477,7 @@ namespace Miru.ViewModels
         {
             UpdateAppStatus(MiruAppStatus.Busy, "Clearing data...");
             DbService.ClearDb();
-            DbService.ClearLocalImageCache();
+            FileSystemService.ClearImageCache();
             MalUserName = string.Empty;
             TypedInUsername = string.Empty;
             CurrentAnimeNameFilter = string.Empty;
@@ -493,7 +496,7 @@ namespace Miru.ViewModels
             if (result == ModernWpf.Controls.ContentDialogResult.Primary)
             {
                 UpdateAppStatus(MiruAppStatus.Busy, "Updating data from senpai...");
-                DbService.UpdateSenpaiData();
+                FileSystemService.UpdateSenpaiData();
             }
 
             UpdateAppStatus(MiruAppStatus.Idle);

@@ -200,7 +200,7 @@ namespace Miru.Tests
                 Assert.Equal(string.Empty, cls.TypedInUsername);
                 Assert.Equal(string.Empty, cls.CurrentAnimeNameFilter);
                 mock.Mock<IMiruDbService>().Verify(x => x.ClearDb(), Times.Once);
-                mock.Mock<IMiruDbService>().Verify(x => x.ClearLocalImageCache(), Times.Once);
+                mock.Mock<IFileSystemService>().Verify(x => x.ClearImageCache(), Times.Once);
             }
         }
 
@@ -298,7 +298,7 @@ namespace Miru.Tests
                         null
                     ));
 
-                mock.Mock<IMiruDbService>().Setup(x => x.UpdateSenpaiData());
+                mock.Mock<IFileSystemService>().Setup(x => x.UpdateSenpaiData());
 
                 var cls = mock.Create<ShellViewModel>();
 
@@ -319,7 +319,7 @@ namespace Miru.Tests
 
                 mock.Mock<ISimpleContentDialog>().Verify(x => x.ShowAsync(), Times.Once);
 
-                mock.Mock<IMiruDbService>().Verify(x => x.UpdateSenpaiData(), Times.Exactly(expectedTimesCalled));
+                mock.Mock<IFileSystemService>().Verify(x => x.UpdateSenpaiData(), Times.Exactly(expectedTimesCalled));
             }
         }
 
