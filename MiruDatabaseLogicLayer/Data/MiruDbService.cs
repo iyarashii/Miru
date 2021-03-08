@@ -21,19 +21,21 @@ namespace MiruDatabaseLogicLayer
         private string currentUsername;
 
         // constructor
-        public MiruDbService(ICurrentSeasonModel currentSeasonModel, ICurrentUserAnimeListModel currentUserAnimeListModel, IJikan jikanWrapper, IMiruDbContext miruDbContext)
+        public MiruDbService(ICurrentSeasonModel currentSeasonModel, ICurrentUserAnimeListModel currentUserAnimeListModel, IJikan jikanWrapper, IMiruDbContext miruDbContext, ISyncedMyAnimeListUser syncedMyAnimeListUser)
         {
             #region dependency injection
 
             CurrentSeason = currentSeasonModel;
             CurrentUserAnimeList = currentUserAnimeListModel;
             JikanWrapper = jikanWrapper;
+            SyncedMyAnimeListUser = syncedMyAnimeListUser;
             //MiruDbContext = new MiruDbContext();
 
             #endregion dependency injection
         }
 
         private IJikan JikanWrapper { get; }
+        private ISyncedMyAnimeListUser SyncedMyAnimeListUser { get; }
         //private IMiruDbContext MiruDbContext { get; }
 
         public DateTime SyncDateData
@@ -132,6 +134,7 @@ namespace MiruDatabaseLogicLayer
             // open temporary connection to the database
             using (var db = new MiruDbContext())
             {
+                //TODO: Change here if multiple users should be supported
                 // if SyncedMyAnimeListUsers table is not empty then delete all rows
                 if (db.SyncedMyAnimeListUsers.Any())
                 {
@@ -139,11 +142,10 @@ namespace MiruDatabaseLogicLayer
                 }
 
                 // store the current user's username and sync date to the SyncedMyAnimeListUsers table
-                db.SyncedMyAnimeListUsers.Add(new SyncedMyAnimeListUser
-                {
-                    Username = typedInUsername,
-                    SyncTime = SyncDateData = DateTime.Now
-                });
+                SyncedMyAnimeListUser.Username = typedInUsername;
+                SyncedMyAnimeListUser.SyncTime = SyncDateData = DateTime.Now;
+
+                db.SyncedMyAnimeListUsers.Add(SyncedMyAnimeListUser as SyncedMyAnimeListUser);
 
                 // save changes to the database
                 await db.SaveChangesAsync();

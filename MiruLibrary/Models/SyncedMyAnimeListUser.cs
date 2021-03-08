@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace MiruLibrary.Models
 {
     // data model for the synced user
-    public class SyncedMyAnimeListUser
+    public class SyncedMyAnimeListUser : ISyncedMyAnimeListUser
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]

@@ -46,6 +46,7 @@ namespace Miru
             builder.RegisterType<MiruDbContext>().As<IMiruDbContext>().SingleInstance();
             builder.RegisterType<FileSystem>().As<IFileSystem>();
             builder.RegisterType<FileSystemService>().As<IFileSystemService>();
+            builder.RegisterType<SyncedMyAnimeListUser>().As<ISyncedMyAnimeListUser>();
             // path to the config file is passed here
             builder.RegisterModule(new SettingsModule(Constants.SettingsPath));
         }
