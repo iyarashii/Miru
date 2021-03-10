@@ -25,6 +25,10 @@ namespace MiruLibrary.Models
         {
             get
             {
+                if (!File.Exists(LocalImagePath))
+                {
+                    return null;
+                }
                 var source = new BitmapImage();
                 source.BeginInit();
                 source.UriSource = new Uri(LocalImagePath, UriKind.RelativeOrAbsolute);

@@ -19,6 +19,10 @@ namespace MiruDatabaseLogicLayer
             FileSystem = fileSystem;
             ImageCacheFolder = FileSystem.DirectoryInfo.FromDirectoryName(Constants.ImageCacheFolderPath);
 
+            if (!ImageCacheFolder.Exists)
+            {
+                ImageCacheFolder.Create();
+            }
             // if there is no local senpai data file get the JSON from senpai.moe
             GetSenpaiData();
         }

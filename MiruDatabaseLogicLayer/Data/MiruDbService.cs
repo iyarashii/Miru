@@ -208,12 +208,6 @@ namespace MiruDatabaseLogicLayer
         /// <returns></returns>
         public async Task<List<MiruAnimeModel>> GetDetailedUserAnimeList(IMiruDbContext db, ICollection<AnimeListEntry> currentUserAnimeListEntries)
         {
-            DirectoryInfo di = new DirectoryInfo(Constants.ImageCacheFolderPath);
-            if (!di.Exists)
-            {
-                di.Create();
-            }
-
             // get anime data from the db
             var detailedUserAnimeList = db.MiruAnimeModels.ToList();
 
@@ -241,6 +235,8 @@ namespace MiruDatabaseLogicLayer
                         return null;
                     }
 
+                    string localImagePath = Path.Combine(Constants.ImageCacheFolderPath, $"{ animeInfo.MalId }.jpg");
+
                     // if the anime is already in the db just set IsOnWatchingList flag instead of adding it again
                     if (malIdsFromDb.Contains(animeListEntry.MalId))
                     {
@@ -252,7 +248,6 @@ namespace MiruDatabaseLogicLayer
                     }
                     else
                     {
-                        string localImagePath = Path.Combine(Constants.ImageCacheFolderPath, $"{ animeInfo.MalId }.jpg");
                         // add airing anime created from the animeInfo data to the airingAnimes list
                         detailedUserAnimeList.Add(new MiruAnimeModel
                         {
@@ -269,6 +264,10 @@ namespace MiruDatabaseLogicLayer
                             Type = animeInfo.Type
                         });
 
+                    }
+                    
+                    if (!File.Exists(localImagePath))
+                    {
                         client.DownloadFile(animeInfo.ImageURL, localImagePath);
                     }
                 }
@@ -316,6 +315,9 @@ namespace MiruDatabaseLogicLayer
                     {
                         return false;
                     }
+
+                    string localImagePath = Path.Combine(Constants.ImageCacheFolderPath, $"{ animeInfo.MalId }.jpg");
+
                     if (airingAnimesMalIDs.Contains(seasonEntry.MalId))
                     {
                         var modelToBeUpdated = detailedUserAnimeList.FirstOrDefault(x => x.MalId == seasonEntry.MalId);
@@ -323,8 +325,6 @@ namespace MiruDatabaseLogicLayer
                     }
                     else
                     {
-                        string localImagePath = Path.Combine(Constants.ImageCacheFolderPath, $"{ animeInfo.MalId }.jpg");
-
                         // add airing anime created from the animeInfo data to the miruAnimeModelsList
                         detailedUserAnimeList.Add(new MiruAnimeModel
                         {
@@ -339,8 +339,13 @@ namespace MiruDatabaseLogicLayer
                             CurrentlyAiring = true,
                             Type = animeInfo.Type
                         });
-                        client.DownloadFile(animeInfo.ImageURL, localImagePath);
                     }
+
+                    if (!File.Exists(localImagePath))
+                    {
+                        client.DownloadFile(animeInfo.ImageURL, localImagePath); 
+                    }
+
                 }
             }
 
