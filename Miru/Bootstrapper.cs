@@ -9,6 +9,7 @@ using System;
 using MiruLibrary.Settings;
 using MiruLibrary;
 using System.IO.Abstractions;
+using MyInternetConnectionLibrary;
 
 namespace Miru
 {
@@ -47,6 +48,8 @@ namespace Miru
             builder.RegisterType<FileSystem>().As<IFileSystem>();
             builder.RegisterType<FileSystemService>().As<IFileSystemService>();
             builder.RegisterType<SyncedMyAnimeListUser>().As<ISyncedMyAnimeListUser>();
+            builder.RegisterType<WebClientWrapper>().As<IWebClientWrapper>();
+            builder.RegisterType<WebService>().As<IWebService>();
             // path to the config file is passed here
             builder.RegisterModule(new SettingsModule(Constants.SettingsPath));
         }

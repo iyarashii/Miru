@@ -21,7 +21,7 @@ namespace MiruDatabaseLogicLayer
         private string currentUsername;
 
         // constructor
-        public MiruDbService(ICurrentSeasonModel currentSeasonModel, ICurrentUserAnimeListModel currentUserAnimeListModel, IJikan jikanWrapper, IMiruDbContext miruDbContext, ISyncedMyAnimeListUser syncedMyAnimeListUser)
+        public MiruDbService(ICurrentSeasonModel currentSeasonModel, ICurrentUserAnimeListModel currentUserAnimeListModel, IJikan jikanWrapper, IMiruDbContext miruDbContext, ISyncedMyAnimeListUser syncedMyAnimeListUser, IWebService webService)
         {
             #region dependency injection
 
@@ -29,11 +29,13 @@ namespace MiruDatabaseLogicLayer
             CurrentUserAnimeList = currentUserAnimeListModel;
             JikanWrapper = jikanWrapper;
             SyncedMyAnimeListUser = syncedMyAnimeListUser;
+            WebService = webService;
             //MiruDbContext = new MiruDbContext();
 
             #endregion dependency injection
         }
 
+        public IWebService WebService { get; }
         private IJikan JikanWrapper { get; }
         private ISyncedMyAnimeListUser SyncedMyAnimeListUser { get; }
         //private IMiruDbContext MiruDbContext { get; }
@@ -217,7 +219,7 @@ namespace MiruDatabaseLogicLayer
             // get mal ids of the anime models that were in the db
             var malIdsFromDb = new HashSet<long>(detailedUserAnimeList.Select(x => x.MalId));
 
-            using (WebClient client = new WebClient())
+            using (var client = WebService.CreateWebClient.Invoke())
             {
                 // for each airing anime from the animeListEntries collection
                 foreach (var animeListEntry in currentUserAnimeListEntries)
@@ -299,7 +301,7 @@ namespace MiruDatabaseLogicLayer
             // remove anime entries marked as 'for kids' from the list
             currentSeasonList.RemoveAll(x => x.Kids == true);
 
-            using (WebClient client = new WebClient())
+            using (var client = WebService.CreateWebClient.Invoke())
             {
                 // add season animes that are not a part of miruAnimeModelsList
                 foreach (var seasonEntry in currentSeasonList)
