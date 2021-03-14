@@ -21,7 +21,7 @@ namespace MiruDatabaseLogicLayer
         private string currentUsername;
 
         // constructor
-        public MiruDbService(ICurrentSeasonModel currentSeasonModel, ICurrentUserAnimeListModel currentUserAnimeListModel, IJikan jikanWrapper, IMiruDbContext miruDbContext, ISyncedMyAnimeListUser syncedMyAnimeListUser, IWebService webService)
+        public MiruDbService(ICurrentSeasonModel currentSeasonModel, ICurrentUserAnimeListModel currentUserAnimeListModel, IJikan jikanWrapper, Func<IMiruDbContext> createMiruDbContext, ISyncedMyAnimeListUser syncedMyAnimeListUser, IWebService webService)
         {
             #region dependency injection
 
@@ -30,7 +30,7 @@ namespace MiruDatabaseLogicLayer
             JikanWrapper = jikanWrapper;
             SyncedMyAnimeListUser = syncedMyAnimeListUser;
             WebService = webService;
-            //MiruDbContext = new MiruDbContext();
+            CreateMiruDbContext = createMiruDbContext;
 
             #endregion dependency injection
         }
@@ -38,7 +38,7 @@ namespace MiruDatabaseLogicLayer
         public IWebService WebService { get; }
         private IJikan JikanWrapper { get; }
         private ISyncedMyAnimeListUser SyncedMyAnimeListUser { get; }
-        //private IMiruDbContext MiruDbContext { get; }
+        private Func<IMiruDbContext> CreateMiruDbContext { get; }
 
         public DateTime SyncDateData
         {
@@ -83,7 +83,7 @@ namespace MiruDatabaseLogicLayer
         public void LoadLastSyncedData()
         {
             // open temporary connection to the database
-            using (var db = new MiruDbContext())
+            using (var db = CreateMiruDbContext.Invoke())
             {
                 // if SyncedMyAnimeListUsers table is not empty
                 if (db.SyncedMyAnimeListUsers.Any())
@@ -100,7 +100,7 @@ namespace MiruDatabaseLogicLayer
         // clears anime models and synced users tables
         public void ClearDb()
         {
-            using (var db = new MiruDbContext())
+            using (var db = CreateMiruDbContext.Invoke())
             {
                 db.Database.ExecuteSqlCommand("TRUNCATE TABLE [MiruAnimeModels]");
                 db.Database.ExecuteSqlCommand("TRUNCATE TABLE [SyncedMyAnimeListUsers]");
@@ -110,7 +110,7 @@ namespace MiruDatabaseLogicLayer
         // changes data for the displayed anime list to match time zone and anime list type passed as parameters
         public void ChangeDisplayedAnimeList(AnimeListType animeListType, TimeZoneInfo selectedTimeZone, AnimeType selectedAnimeType, string animeNameFilter)
         {
-            using (var db = new MiruDbContext())
+            using (var db = CreateMiruDbContext.Invoke())
             {
                 // get the user's list of the airing animes from the db
                 var airingAnimeList = db.MiruAnimeModels.ToList();
@@ -134,7 +134,7 @@ namespace MiruDatabaseLogicLayer
         public async Task SaveSyncedUserData(string typedInUsername)
         {
             // open temporary connection to the database
-            using (var db = new MiruDbContext())
+            using (var db = CreateMiruDbContext.Invoke())
             {
                 //TODO: Change here if multiple users should be supported
                 // if SyncedMyAnimeListUsers table is not empty then delete all rows
@@ -160,7 +160,7 @@ namespace MiruDatabaseLogicLayer
             List<MiruAnimeModel> detailedAnimeList;
 
             // open temporary connection to the database
-            using (var db = new MiruDbContext())
+            using (var db = CreateMiruDbContext.Invoke())
             {
                 UpdateAppStatusUI(MiruAppStatus.Busy, "Getting detailed user anime list data...");
 

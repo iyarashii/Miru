@@ -44,7 +44,7 @@ namespace Miru
                 .SingleInstance();
             builder.RegisterType<ToastNotifierWrapper>().As<IToastNotifierWrapper>();
             builder.RegisterType<MiruAnimeModelProcessor>().As<IMiruAnimeModelProcessor>();
-            builder.RegisterType<MiruDbContext>().As<IMiruDbContext>().SingleInstance();
+            builder.RegisterType<MiruDbContext>().As<IMiruDbContext>();
             builder.RegisterType<FileSystem>().As<IFileSystem>();
             builder.RegisterType<FileSystemService>().As<IFileSystemService>();
             builder.RegisterType<SyncedMyAnimeListUser>().As<ISyncedMyAnimeListUser>();
