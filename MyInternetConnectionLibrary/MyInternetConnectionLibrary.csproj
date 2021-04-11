@@ -5,6 +5,10 @@
     <Platforms>AnyCPU;x64</Platforms>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="JikanDotNet" Version="1.5.4" />
+  </ItemGroup>
+
   <!--<Target Name="ILMerge">
     --><!-- the ILMergePath property points to the location of ILMerge.exe console application --><!--
     <Exec Command="$(ILMergeConsolePath) Bin\Release\Miru.exe ^

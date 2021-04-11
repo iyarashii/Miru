@@ -1,4 +1,6 @@
 ﻿using JikanDotNet;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace MiruLibrary.Models
@@ -42,6 +44,20 @@ namespace MiruLibrary.Models
                 }
             }
             return true;
+        }
+
+        public List<AnimeSubEntry> GetFilteredSeasonList()
+        {
+            // list of anime entries in the current season
+            var currentSeasonList = SeasonData.SeasonEntries.ToList();
+
+            // remove anime entries with types other than 'TV' from the list
+            currentSeasonList.RemoveAll(x => x.Type != "TV" && x.Type != "ONA");
+
+            // remove anime entries marked as 'for kids' from the list
+            currentSeasonList.RemoveAll(x => x.Kids == true);
+
+            return currentSeasonList;
         }
     }
 }

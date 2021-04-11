@@ -17,7 +17,7 @@
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
     <IsWebBootstrapper>false</IsWebBootstrapper>
-    <PublishUrl>E:\studia\C#\iyarashii\MiruInstalka\latest\</PublishUrl>
+    <PublishUrl>E:\studia\C#\iyarashii\MiruInstalka\latest\debug\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
     <UpdateEnabled>false</UpdateEnabled>

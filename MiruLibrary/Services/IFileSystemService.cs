@@ -1,7 +1,8 @@
-﻿using System.IO;
+﻿using MyInternetConnectionLibrary;
+using System.IO;
 using System.IO.Abstractions;
 
-namespace MiruDatabaseLogicLayer
+namespace MiruLibrary
 {
     public interface IFileSystemService
     {
@@ -9,6 +10,7 @@ namespace MiruDatabaseLogicLayer
         IFileSystem FileSystem { get; }
 
         void ClearImageCache();
+        void DownloadFile(IWebClientWrapper client, string fileLocation, string url);
         void GetSenpaiData();
         void UpdateSenpaiData();
     }

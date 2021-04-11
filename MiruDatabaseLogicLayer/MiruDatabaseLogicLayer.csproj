@@ -88,8 +88,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Data\FileSystemService.cs" />
-    <Compile Include="Data\Interfaces\IFileSystemService.cs" />
     <Compile Include="Data\Interfaces\IMiruDbContext.cs" />
     <Compile Include="Data\Interfaces\IMiruDbService.cs" />
     <Compile Include="Data\Migrations\202001251554307_AddSyncedUsersTable.cs" />

@@ -10,6 +10,9 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyInternetConnectionLibrary", "MyInternetConnectionLibrary\MyInternetConnectionLibrary.csproj", "{7B98DA78-4B15-42D0-8E04-F947C1AA8BDA}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiruLibrary", "MiruLibrary\MiruLibrary.csproj", "{C56FA863-80E1-4CB1-B5C3-9806D40A05FB}"
+	ProjectSection(ProjectDependencies) = postProject
+		{7B98DA78-4B15-42D0-8E04-F947C1AA8BDA} = {7B98DA78-4B15-42D0-8E04-F947C1AA8BDA}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiruDatabaseLogicLayer", "MiruDatabaseLogicLayer\MiruDatabaseLogicLayer.csproj", "{5827CAB4-B769-4296-88F6-78358B52AAC0}"
 EndProject

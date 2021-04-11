@@ -1,4 +1,5 @@
 ﻿using JikanDotNet;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace MiruLibrary.Models
@@ -8,5 +9,6 @@ namespace MiruLibrary.Models
         Season SeasonData { get; }
 
         Task<bool> GetCurrentSeasonList(int requestRetryDelayInMs);
+        List<AnimeSubEntry> GetFilteredSeasonList();
     }
 }

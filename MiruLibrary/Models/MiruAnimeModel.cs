@@ -12,13 +12,27 @@ namespace MiruLibrary.Models
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public long MalId { get; set; }
-
         public string Broadcast { get; set; }
         public string Title { get; set; }
         public string URL { get; set; }
         public string ImageURL { get; set; }
 
-        public string LocalImagePath { get; set; }
+        private string _localImagePath;
+        public string LocalImagePath 
+        { 
+            get => _localImagePath;
+            set
+            {
+                if (value.Contains(@"\"))
+                {
+                    _localImagePath = value;
+                }
+                else
+                {
+                    _localImagePath = Path.Combine(Constants.ImageCacheFolderPath, $"{ value }.jpg");
+                }
+            }
+        }
 
         // returns cached image to the view
         public BitmapImage LocalImageSource
@@ -33,7 +47,7 @@ namespace MiruLibrary.Models
                 source.BeginInit();
                 source.UriSource = new Uri(LocalImagePath, UriKind.RelativeOrAbsolute);
                 source.CacheOption = BitmapCacheOption.OnLoad;
-                source.EndInit(); 
+                source.EndInit();
                 // not sure if GC still needs this source.Freeze();
                 return source;
             }

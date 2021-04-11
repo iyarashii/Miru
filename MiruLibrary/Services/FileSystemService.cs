@@ -10,7 +10,7 @@ using MiruLibrary.Models;
 using MyInternetConnectionLibrary;
 using Newtonsoft.Json;
 
-namespace MiruDatabaseLogicLayer
+namespace MiruLibrary
 {
     public class FileSystemService : IFileSystemService
     {
@@ -65,6 +65,14 @@ namespace MiruDatabaseLogicLayer
                 // get only MALID and airing_date json properties
                 var deserializedSenpaiData = JsonConvert.DeserializeObject<SenpaiEntryModel>(InternetConnection.client.GetStringAsync(Constants.SenpaiDataSourceURL).Result);
                 file.Write(JsonConvert.SerializeObject(deserializedSenpaiData, Formatting.Indented));
+            }
+        }
+
+        public void DownloadFile(IWebClientWrapper client, string fileLocation, string url)
+        {
+            if (!FileSystem.File.Exists(fileLocation))
+            {
+                client.DownloadFile(url, fileLocation);
             }
         }
     }

@@ -50,6 +50,7 @@ namespace Miru
             builder.RegisterType<SyncedMyAnimeListUser>().As<ISyncedMyAnimeListUser>();
             builder.RegisterType<WebClientWrapper>().As<IWebClientWrapper>();
             builder.RegisterType<WebService>().As<IWebService>();
+            builder.RegisterType<MiruAnimeModel>();
             // path to the config file is passed here
             builder.RegisterModule(new SettingsModule(Constants.SettingsPath));
         }
