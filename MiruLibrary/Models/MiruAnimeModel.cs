@@ -55,6 +55,7 @@ namespace MiruLibrary.Models
         public DateTime? LocalBroadcastTime { get; set; }
         public DateTime? JSTBroadcastTime { get; set; }
         public bool IsOnWatchingList { get; set; }
+        public bool IsOnSenpai { get; set; }
 
         // is the anime currently airing status flag
         public bool CurrentlyAiring { get; set; }

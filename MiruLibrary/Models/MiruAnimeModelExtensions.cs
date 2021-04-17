@@ -76,10 +76,12 @@ namespace MiruLibrary.Models
                 {
                     airingAnime.Broadcast = senpaiEntries.Items.First(x => x.MALID == airingAnime.MalId).airdate;
                     broadcastTime = DateTime.Parse(airingAnime.Broadcast);
+                    airingAnime.IsOnSenpai = true;
                 }
                 else if (DateTime.TryParse(airingAnime.Broadcast, out DateTime parsedBroadcast))
                 {
                     broadcastTime = parsedBroadcast;
+                    airingAnime.IsOnSenpai = false;
                 }
                 else
                 {
@@ -135,6 +137,7 @@ namespace MiruLibrary.Models
                             broadcastTime = new DateTime();
                             break;
                     }
+                    airingAnime.IsOnSenpai = false;
                 }
 
                 // save JST broadcast time parsed from the Broadcast string

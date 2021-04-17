@@ -20,7 +20,10 @@ namespace MiruLibrary
         Watching,
 
         [Description("Current Season")]
-        Season
+        Season,
+
+        [Description("Senpai - Current Season")]
+        Senpai
     }
 
     [TypeConverter(typeof(EnumDescriptionTypeConverter))]

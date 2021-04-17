@@ -126,6 +126,10 @@
     <Compile Include="Data\Migrations\202006071325437_RenameToMiruAnimeModelsColumn.Designer.cs">
       <DependentUpon>202006071325437_RenameToMiruAnimeModelsColumn.cs</DependentUpon>
     </Compile>
+    <Compile Include="Data\Migrations\202104171832312_AddIsOnSenpaiField.cs" />
+    <Compile Include="Data\Migrations\202104171832312_AddIsOnSenpaiField.designer.cs">
+      <DependentUpon>202104171832312_AddIsOnSenpaiField.cs</DependentUpon>
+    </Compile>
     <Compile Include="Data\Migrations\Configuration.cs" />
     <Compile Include="Data\MiruDbContext.cs" />
     <Compile Include="Data\MiruDbService.cs" />
@@ -158,6 +162,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Data\Migrations\202006071325437_RenameToMiruAnimeModelsColumn.resx">
       <DependentUpon>202006071325437_RenameToMiruAnimeModelsColumn.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Data\Migrations\202104171832312_AddIsOnSenpaiField.resx">
+      <DependentUpon>202104171832312_AddIsOnSenpaiField.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
