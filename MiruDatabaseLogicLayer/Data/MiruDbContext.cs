@@ -14,8 +14,8 @@ namespace MiruDatabaseLogicLayer
         }
 
         // set db tables
-        public DbSet<SyncedMyAnimeListUser> SyncedMyAnimeListUsers { get; set; }
-        public DbSet<MiruAnimeModel> MiruAnimeModels { get; set; }
+        public virtual DbSet<SyncedMyAnimeListUser> SyncedMyAnimeListUsers { get; set; }
+        public virtual DbSet<MiruAnimeModel> MiruAnimeModels { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
