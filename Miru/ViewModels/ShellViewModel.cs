@@ -511,7 +511,7 @@ namespace Miru.ViewModels
         // saves anime title to the clipboard and shows notification describing this action
         public void CopyAnimeTitleToClipboard(string animeTitle)
         {
-            System.Windows.Clipboard.SetText(animeTitle);
+            System.Windows.Clipboard.SetDataObject(animeTitle);
             var animeTitleCopiedMessage = PrepareAnimeTitleCopiedNotification(animeTitle);
             ToastNotifierWrapper.DisplayToastNotification(animeTitleCopiedMessage);
         }
