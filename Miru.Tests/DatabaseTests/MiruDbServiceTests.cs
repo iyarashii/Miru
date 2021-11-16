@@ -1,12 +1,16 @@
 ﻿using Autofac;
 using Autofac.Extras.Moq;
+using JikanDotNet;
 using MiruDatabaseLogicLayer;
+using MiruLibrary;
 using MiruLibrary.Models;
 using Moq;
+using MyInternetConnectionLibrary;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Xunit;
@@ -54,6 +58,42 @@ namespace Miru.Tests.DatabaseTests
                 // Assert
                 Assert.Equal(testSyncDate, cls.SyncDateData);
                 Assert.Equal(testUsername, cls.CurrentUsername);
+            }
+        }
+
+        // this test is just an example how you could test private properties set by constructor
+        [Fact]
+        public void MiruDbService_ConstructorSetsPropertiesCorrectly()
+        {
+            using (var mock = AutoMock.GetLoose())
+            {
+                // Arrange
+                var currentSeasonModel = new Mock<ICurrentSeasonModel>();
+                var currentUserAnimeListModel = new Mock<ICurrentUserAnimeListModel>();
+                var jikanWrapper = new Mock<IJikan>();
+                var createMiruDbContext = new Mock<Func<IMiruDbContext>>();
+                var syncedMyAnimeListUser = new Mock<ISyncedMyAnimeListUser>();
+                var webService = new Mock<IWebService>();
+                var fileSystemService = new Mock<Lazy<IFileSystemService>>();
+                var createMiruAnimeModel = new Mock<Func<MiruAnimeModel>>();
+
+                Type clsType = typeof(MiruDbService);
+                var privateProperties = clsType.GetProperties(BindingFlags.NonPublic | BindingFlags.Instance).ToList();
+
+                // Act
+                var cls = new MiruDbService(currentSeasonModel.Object, currentUserAnimeListModel.Object, 
+                    jikanWrapper.Object, createMiruDbContext.Object, syncedMyAnimeListUser.Object, webService.Object,
+                    fileSystemService.Object, createMiruAnimeModel.Object);
+
+                // Assert
+                Assert.Equal(currentSeasonModel.Object, cls.CurrentSeason);
+                Assert.Equal(currentUserAnimeListModel.Object, cls.CurrentUserAnimeList);
+                Assert.Equal(webService.Object, cls.WebService);
+                Assert.Equal(jikanWrapper.Object, privateProperties.Where(x => x.Name == "JikanWrapper").First().GetValue(cls));
+                Assert.Equal(syncedMyAnimeListUser.Object, privateProperties.Where(x => x.Name == "SyncedMyAnimeListUser").First().GetValue(cls));
+                Assert.Equal(createMiruDbContext.Object, privateProperties.Where(x => x.Name == "CreateMiruDbContext").First().GetValue(cls));
+                Assert.Equal(fileSystemService.Object, privateProperties.Where(x => x.Name == "FileSystemService").First().GetValue(cls));
+                Assert.Equal(createMiruAnimeModel.Object, privateProperties.Where(x => x.Name == "CreateMiruAnimeModel").First().GetValue(cls));
             }
         }
     }
