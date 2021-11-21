@@ -11,5 +11,6 @@ namespace MiruDatabaseLogicLayer
         DbSet<SyncedMyAnimeListUser> SyncedMyAnimeListUsers { get; set; }
         Database Database { get; }
         Task<int> SaveChangesAsync();
+        int ExecuteSqlCommand(string sql, params object[] parameters);
     }
 }

@@ -114,8 +114,8 @@ namespace MiruDatabaseLogicLayer
         {
             using (var db = CreateMiruDbContext.Invoke())
             {
-                db.Database.ExecuteSqlCommand("TRUNCATE TABLE [MiruAnimeModels]");
-                db.Database.ExecuteSqlCommand("TRUNCATE TABLE [SyncedMyAnimeListUsers]");
+                db.ExecuteSqlCommand("TRUNCATE TABLE [MiruAnimeModels]");
+                db.ExecuteSqlCommand("TRUNCATE TABLE [SyncedMyAnimeListUsers]");
             }
         }
 

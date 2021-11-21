@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using Xunit;
@@ -19,18 +20,35 @@ namespace Miru.Tests.DatabaseTests
 {
     public class MiruDbServiceTests
     {
-        private MiruDbService SetupMiruDbServiceMock(AutoMock mock, IQueryable<SyncedMyAnimeListUser> data)
+        private IMiruDbService SetupMiruDbServiceMock(Mock<IMiruDbContext> mockContext, AutoMock mock,[Optional] IQueryable<SyncedMyAnimeListUser> userDbSetData, [Optional] IQueryable<MiruAnimeModel> miruAnimeModelDbSetData)
         {
+            //var mockDb = new Mock<Database>();
+            //mockContext.Setup(d => d.Database).Returns(mockDb.Object);
+            mockContext.Setup(s => s.ExecuteSqlCommand("TRUNCATE TABLE [MiruAnimeModels]")).Returns(0);
+            mockContext.Setup(s => s.ExecuteSqlCommand("TRUNCATE TABLE [SyncedMyAnimeListUsers]")).Returns(0);
+
             // https://docs.microsoft.com/en-us/ef/ef6/fundamentals/testing/mocking
             // wire up the IQueryable implementation for the DbSet more info in the link above
-            var mockUserSet = new Mock<DbSet<SyncedMyAnimeListUser>>();
-            mockUserSet.As<IQueryable<SyncedMyAnimeListUser>>().Setup(m => m.Provider).Returns(data.Provider);
-            mockUserSet.As<IQueryable<SyncedMyAnimeListUser>>().Setup(m => m.Expression).Returns(data.Expression);
-            mockUserSet.As<IQueryable<SyncedMyAnimeListUser>>().Setup(m => m.ElementType).Returns(data.ElementType);
-            mockUserSet.As<IQueryable<SyncedMyAnimeListUser>>().Setup(m => m.GetEnumerator()).Returns(data.GetEnumerator());
+            if (userDbSetData != null)
+            {
+                var mockUserSet = new Mock<DbSet<SyncedMyAnimeListUser>>();
+                mockUserSet.As<IQueryable<SyncedMyAnimeListUser>>().Setup(m => m.Provider).Returns(userDbSetData.Provider);
+                mockUserSet.As<IQueryable<SyncedMyAnimeListUser>>().Setup(m => m.Expression).Returns(userDbSetData.Expression);
+                mockUserSet.As<IQueryable<SyncedMyAnimeListUser>>().Setup(m => m.ElementType).Returns(userDbSetData.ElementType);
+                mockUserSet.As<IQueryable<SyncedMyAnimeListUser>>().Setup(m => m.GetEnumerator()).Returns(userDbSetData.GetEnumerator());
+                mockContext.Setup(m => m.SyncedMyAnimeListUsers).Returns(mockUserSet.Object); 
+            }
 
-            var mockContext = new Mock<MiruDbContext>();
-            mockContext.Setup(m => m.SyncedMyAnimeListUsers).Returns(mockUserSet.Object);
+            if (miruAnimeModelDbSetData != null)
+            {
+                var mockAnimeModelSet = new Mock<DbSet<MiruAnimeModel>>();
+                mockAnimeModelSet.As<IQueryable<MiruAnimeModel>>().Setup(m => m.Provider).Returns(miruAnimeModelDbSetData.Provider);
+                mockAnimeModelSet.As<IQueryable<MiruAnimeModel>>().Setup(m => m.Expression).Returns(miruAnimeModelDbSetData.Expression);
+                mockAnimeModelSet.As<IQueryable<MiruAnimeModel>>().Setup(m => m.ElementType).Returns(miruAnimeModelDbSetData.ElementType);
+                mockAnimeModelSet.As<IQueryable<MiruAnimeModel>>().Setup(m => m.GetEnumerator()).Returns(miruAnimeModelDbSetData.GetEnumerator());
+                mockContext.Setup(m => m.MiruAnimeModels).Returns(mockAnimeModelSet.Object);
+            }
+
             var mockEventHandler = new Mock<EventHandler<DateTime>>();
             var mockUsernameEventHandler = new Mock<EventHandler<string>>();
 
@@ -49,6 +67,7 @@ namespace Miru.Tests.DatabaseTests
             using (var mock = AutoMock.GetLoose())
             {
                 // Arrange
+                var mockContext = new Mock<IMiruDbContext>();
                 var testSyncDate = It.IsAny<DateTime>();
                 var testUsername = "some text to make property see change";
                 var data = new List<SyncedMyAnimeListUser>
@@ -56,7 +75,7 @@ namespace Miru.Tests.DatabaseTests
                     new SyncedMyAnimeListUser { Username = testUsername, SyncTime = testSyncDate },
                 }.AsQueryable();
 
-                var cls = SetupMiruDbServiceMock(mock, data);
+                var cls = SetupMiruDbServiceMock(mockContext, mock, data);
 
                 //cls.UpdateSyncDate += new EventHandler<DateTime>((x, y) => { });
 
@@ -75,10 +94,11 @@ namespace Miru.Tests.DatabaseTests
             using (var mock = AutoMock.GetLoose())
             {
                 // Arrange
+                var mockContext = new Mock<IMiruDbContext>();
                 DateTime testSyncDate = default;
                 var data = new List<SyncedMyAnimeListUser>().AsQueryable();
 
-                var cls = SetupMiruDbServiceMock(mock, data);
+                var cls = SetupMiruDbServiceMock(mockContext, mock, data);
 
                 // Act
                 cls.LoadLastSyncedData();
@@ -122,6 +142,39 @@ namespace Miru.Tests.DatabaseTests
                 Assert.Equal(createMiruDbContext.Object, privateProperties.Where(x => x.Name == "CreateMiruDbContext").First().GetValue(cls));
                 Assert.Equal(fileSystemService.Object, privateProperties.Where(x => x.Name == "FileSystemService").First().GetValue(cls));
                 Assert.Equal(createMiruAnimeModel.Object, privateProperties.Where(x => x.Name == "CreateMiruAnimeModel").First().GetValue(cls));
+            }
+        }
+
+        [Fact]
+        public void ClearDb_TruncatesTables()
+        {
+            using (var mock = AutoMock.GetLoose())
+            {
+                // Arrange
+                var mockContext = new Mock<IMiruDbContext>();
+                //var userSetData = new List<SyncedMyAnimeListUser>
+                //{
+                //    new SyncedMyAnimeListUser { Username = It.IsAny<string>(), SyncTime = It.IsAny<DateTime>() },
+                //}.AsQueryable();
+
+                //var animeModelSetData = new List<MiruAnimeModel>
+                //{
+                //    new MiruAnimeModel { Title = "test" },
+                //}.AsQueryable();
+
+                //var cls = SetupMiruDbServiceMock(mockContext, mock, userSetData, animeModelSetData);
+                var cls = SetupMiruDbServiceMock(mockContext, mock);
+                //Type clsType = typeof(MiruDbService);
+                //var privateProperties = clsType.GetProperties(BindingFlags.NonPublic | BindingFlags.Instance).ToList();
+                //Func<IMiruDbContext> createDb = privateProperties.Where(x => x.Name == "CreateMiruDbContext").First().GetValue(cls) as Func<IMiruDbContext>;
+                //var db = createDb.Invoke();
+
+                // Act
+                cls.ClearDb();
+
+                // Assert
+                mockContext.Verify(x => x.ExecuteSqlCommand("TRUNCATE TABLE [MiruAnimeModels]"), Times.Once);
+                mockContext.Verify(x => x.ExecuteSqlCommand("TRUNCATE TABLE [SyncedMyAnimeListUsers]"), Times.Once);
             }
         }
     }

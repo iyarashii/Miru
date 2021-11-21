@@ -25,5 +25,6 @@ namespace MiruDatabaseLogicLayer
         void LoadLastSyncedData();
         Task<bool> SaveDetailedAnimeListData(bool seasonSyncOn);
         Task SaveSyncedUserData(string typedInUsername);
+        DateTime SyncDateData { get; set; }
     }
 }

@@ -13,6 +13,12 @@ namespace MiruDatabaseLogicLayer
         {
         }
 
+        // for tests
+        public int ExecuteSqlCommand(string sql, params object[] parameters)
+        {
+            return Database.ExecuteSqlCommand(sql, parameters);
+        }
+
         // set db tables
         public virtual DbSet<SyncedMyAnimeListUser> SyncedMyAnimeListUsers { get; set; }
         public virtual DbSet<MiruAnimeModel> MiruAnimeModels { get; set; }
