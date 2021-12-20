@@ -1,4 +1,5 @@
 ﻿using Caliburn.Micro;
+using Microsoft.Win32;
 using MiruDatabaseLogicLayer;
 using MiruLibrary;
 using MiruLibrary.Models;
@@ -58,6 +59,29 @@ namespace Miru.ViewModels
             ThemeManager.Current.ApplicationTheme = CurrentApplicationTheme;
         }
 
+        public bool IsSqlLocalDbInstalled()
+        {
+            string[] installedVersions;
+            var sqlLocalDbIsInstalled = false;
+            var sqlLocalDbRegistry = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Microsoft SQL Server Local DB\Installed Versions\");
+            if (sqlLocalDbRegistry != null)
+            {
+                installedVersions = sqlLocalDbRegistry.GetSubKeyNames();
+                foreach (var s in installedVersions)
+                {
+                    if (string.IsNullOrEmpty(s))
+                        continue;
+                    // 13.0 is SQL LocalDB 2016 version
+                    if (float.Parse(s) >= 13.0)
+                    {
+                        sqlLocalDbIsInstalled = true;
+                        break;
+                    }
+                }
+            }
+            return sqlLocalDbIsInstalled;
+        }
+
         // constructor
         public ShellViewModel(ISortedAnimeListsViewModel sortedAnimeLists,
                               IMiruDbService miruDbService,
@@ -76,17 +100,20 @@ namespace Miru.ViewModels
 
             #endregion dependency injection
 
-            ConfigureDbService();
+            if (IsSqlLocalDbInstalled())
+            {
+                ConfigureDbService();
 
-            // load synced data from the db
-            DbService.LoadLastSyncedData();
+                // load synced data from the db
+                DbService.LoadLastSyncedData();
 
-            LoadUserSettings(userSettings);
+                LoadUserSettings(userSettings);
+
+                // set default app status
+                UpdateAppStatus(MiruAppStatus.Idle);
+            }
 
             ConfigureAppColorTheme();
-
-            // set default app status
-            UpdateAppStatus(MiruAppStatus.Idle);
         }
 
         #region properties
@@ -530,6 +557,29 @@ namespace Miru.ViewModels
             if (detailedAppStatusDescription != null)
             {
                 AppStatusText = detailedAppStatusDescription;
+            }
+        }
+
+        // event handler for the Clear local data button
+        public async Task OpenNoLocalDbInfoDialog()
+        {
+            var link = @"https://docs.microsoft.com/en-us/sql/database-engine/configure-windows/sql-server-express-localdb?view=sql-server-ver15";
+
+            ContentDialog.Config("No SQL Server Express LocalDB found", "Close", "", secondaryButtonText:"Open LocalDB Download Page",
+                                 content: $"Please install SQL Server Express LocalDB 2016 or newer for this app to work!");
+
+            UpdateAppStatus(MiruAppStatus.Busy);
+
+            // display confirmation pop-up window
+            var result = await ContentDialog.ShowAsync();
+            if (result == ModernWpf.Controls.ContentDialogResult.Primary)
+            {
+                Environment.Exit(0);
+            }
+            if (result == ModernWpf.Controls.ContentDialogResult.Secondary)
+            {
+                Process.Start(link);
+                Environment.Exit(0);
             }
         }
 

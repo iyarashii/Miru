@@ -11,6 +11,6 @@ namespace Miru.ViewModels
         string CloseButtonText { get; set; }
         ContentDialogButton DefaultButton { get; set; }
         void Config(object title, string primaryButtonText = "Yes", string closeButtonText = "No",
-            ContentDialogButton defaultButton = ContentDialogButton.Primary, object content = null);
+            ContentDialogButton defaultButton = ContentDialogButton.Primary, object content = null, string secondaryButtonText = "");
     }
 }

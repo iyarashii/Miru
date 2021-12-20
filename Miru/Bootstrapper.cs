@@ -15,8 +15,48 @@ namespace Miru
 {
     public class Bootstrapper : AutofacBootstrapper<IShellViewModel>
     {
+        //[DllImport("kernel32.dll")]
+        //static extern IntPtr GetConsoleWindow();
+
+        //[DllImport("user32.dll")]
+        //static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+
+        //const int SW_HIDE = 0;
+        //const int SW_SHOW = 5;
         public Bootstrapper()
         {
+            // this is example code of how to check and display message about localDB being present in console window
+
+            //var handle = GetConsoleWindow();
+            //ShowWindow(handle, SW_HIDE);
+            //string[] installedVersions;
+            //var sqlLocalDbIsInstalled = false;
+
+            //// check if localDB is installed
+            //var sqlLocalDbRegistry = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Microsoft SQL Server Local DB\Installed Versions\");
+            //if (sqlLocalDbRegistry != null)
+            //{
+            //    installedVersions = sqlLocalDbRegistry.GetSubKeyNames();
+            //    foreach (var s in installedVersions)
+            //    {
+            //        if (string.IsNullOrEmpty(s))
+            //            continue;
+            //        if (float.Parse(s) >= 13.0)
+            //        {
+            //            sqlLocalDbIsInstalled = true;
+            //            break;
+            //        }
+            //    }
+            //}
+            
+            //if (!sqlLocalDbIsInstalled /*&& installedVersions.All(s => string.IsNullOrEmpty(s))*/)
+            //{
+            //    ShowWindow(handle, SW_SHOW);
+            //    Console.WriteLine("LocalDB installation not detected!\nPlease install SQL Server Express LocalDB 2016 or newer!");
+            //    Console.ReadKey();
+            //    Environment.Exit(0);
+            //}
+
             Initialize();
         }
 
@@ -61,10 +101,14 @@ namespace Miru
             EnforceNamespaceConvention = false;
         }
 
-        protected override void OnStartup(object sender, StartupEventArgs e)
+        protected override async void OnStartup(object sender, StartupEventArgs e)
         {
             // set starting view for this app
             DisplayRootViewFor<IShellViewModel>();
+
+            var sqLocalDbPresent = Container.Resolve<ShellViewModel>().IsSqlLocalDbInstalled();
+            if (!sqLocalDbPresent)
+                await Container.Resolve<ShellViewModel>().OpenNoLocalDbInfoDialog();
         }
 
         protected override void OnExit(object sender, EventArgs e)
