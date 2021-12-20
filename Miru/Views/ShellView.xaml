@@ -127,12 +127,12 @@
                      IsEnabled="{Binding CanChangeDisplayedAnimeList}"
                      local:TextBoxHelper.FocusGesture="CTRL+F"
                      MaxLength="100"
-                     ui:ControlHelper.Header="Filter by anime name"
+                     ui:ControlHelper.Header="Filter Titles"
                      ui:ControlHelper.PlaceholderText="CTRL+F to focus"
                      />
             <!--anime image size selection-->
             <ui:NumberBox x:Name="AnimeImageSize" Margin="10,0,0,0"
-                          ui:ControlHelper.Header="Anime images size"
+                          ui:ControlHelper.Header="Art Size"
                           SpinButtonPlacementMode="Inline"
                           SmallChange="1"
                           LargeChange="50"
@@ -191,7 +191,7 @@
 
                 <!--season sync button-->
                 <Button Margin="10,13,10,0" MinWidth="100"
-                 Content="Get current season list">
+                 Content="Get Shows From The Current Season">
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="Click">
                             <cal:ActionMessage MethodName="SyncUserAnimeList">
@@ -207,7 +207,7 @@
                 <ComboBox x:Name="DisplayedAnimeList"
                       Margin="0,0,0,10"
                       IsEnabled="{Binding CanChangeDisplayedAnimeList}"
-                      ui:ControlHelper.Header="Displayed anime list"
+                      ui:ControlHelper.Header="List Type"
                       SelectedItem="{Binding SelectedDisplayedAnimeList}"
                       ItemsSource="{Binding Source={local:EnumBindingSource {x:Type enums:AnimeListType}}}">
                 </ComboBox>
@@ -216,7 +216,7 @@
                 <ComboBox x:Name="DisplayedAnimeType"
                       Margin="10,0,0,10"
                       IsEnabled="{Binding CanChangeDisplayedAnimeList}"
-                      ui:ControlHelper.Header="Displayed anime type"
+                      ui:ControlHelper.Header="Broadcast Type"
                       SelectedItem="{Binding SelectedDisplayedAnimeType}"
                       ItemsSource="{Binding Source={local:EnumBindingSource {x:Type enums:AnimeType}}}">
                 </ComboBox>
@@ -226,7 +226,7 @@
                 <ComboBox x:Name="TimeZone"
                       Margin="10,0,0,10"
                       IsEnabled="{Binding CanChangeDisplayedAnimeList}"
-                      ui:ControlHelper.Header="Time zone"
+                      ui:ControlHelper.Header="Time Zone"
                       SelectedItem="{Binding SelectedTimeZone}"
                       ItemsSource="{Binding TimeZones}"
                       DisplayMemberPath="DisplayName">
@@ -236,18 +236,18 @@
                 <Button x:Name="OpenClearLocalDataDialog"
                         Margin="10,13,0,0"
                         IsEnabled="{Binding CanChangeDisplayedAnimeList}"
-                        Content="Clear local data">
+                        Content="Clear Cache">
                 </Button>
 
                 <!--update senpai button-->
                 <Button x:Name="UpdateSenpaiData"
                         IsEnabled="{Binding CanChangeDisplayedAnimeList}"
                         Margin="10,13,0,0"
-                        Content="Update data from senpai">
+                        Content="Update Senpai Data">
                 </Button>
 
                 <!--dark mode switch-->
-                <ui:ToggleSwitch Width="100" Margin="10,0,0,10" Header="Dark mode" OffContent="Off" OnContent="On" IsOn="{Binding IsDarkModeOn}">
+                <ui:ToggleSwitch Width="100" Margin="10,0,0,10" Header="Dark Mode" OffContent="Off" OnContent="On" IsOn="{Binding IsDarkModeOn}">
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="Toggled">
                             <cal:ActionMessage MethodName="ChangeTheme">
