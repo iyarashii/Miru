@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 
 namespace MiruLibrary.Models
@@ -62,8 +63,11 @@ namespace MiruLibrary.Models
             // local variables
             string dayOfTheWeek;
             string[] broadcastWords;
-            DateTime broadcastTime;
+            DateTime broadcastTime = default;
             DateTime time;
+
+            var jp = CultureInfo.GetCultureInfo("ja-JP");
+            string[] formats = { "dd/MM/yyyy HH:mm", "d/MM/yyyy HH:mm" };
 
             // deserialize data from senpai as a backup source of anime broadcast time
             var senpaiEntries = JsonConvert.DeserializeObject<SenpaiEntryModel>(fileSystemService.FileSystem.File.ReadAllText(Constants.SenpaiFilePath));
@@ -72,18 +76,28 @@ namespace MiruLibrary.Models
             // for each airingAnime parse time and day of the week from the broadcast string
             foreach (var airingAnime in detailedAnimeList)
             {
+                bool parsed = false;
                 if (senpaiIDs.Contains(airingAnime.MalId))
                 {
-                    airingAnime.Broadcast = senpaiEntries.Items.First(x => x.MALID == airingAnime.MalId).airdate;
-                    broadcastTime = DateTime.Parse(airingAnime.Broadcast);
                     airingAnime.IsOnSenpai = true;
-                }
-                else if (DateTime.TryParse(airingAnime.Broadcast, out DateTime parsedBroadcast))
-                {
-                    broadcastTime = parsedBroadcast;
-                    airingAnime.IsOnSenpai = false;
+                    var airDateAndTime = senpaiEntries.Items.First(x => x.MALID == airingAnime.MalId).airdate;
+                    parsed = DateTime.TryParseExact(airDateAndTime, formats, jp, DateTimeStyles.None, out DateTime parsedSenpaiBroadcast);
+                    if (parsed)
+                    {
+                        airingAnime.Broadcast = airDateAndTime;
+                        broadcastTime = parsedSenpaiBroadcast;
+                    }
                 }
                 else
+                {
+                    airingAnime.IsOnSenpai = false;
+                }
+
+                if (!parsed && DateTime.TryParseExact(airingAnime.Broadcast, formats, jp, DateTimeStyles.None, out DateTime parsedBroadcast))
+                {
+                    broadcastTime = parsedBroadcast;
+                }
+                else if (!parsed)
                 {
                     // split the broadcast string into words
                     broadcastWords = airingAnime.Broadcast.Split(' ');
