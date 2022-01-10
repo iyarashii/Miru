@@ -252,7 +252,8 @@ namespace Miru.Tests
                         "Yes",
                         "No",
                         ContentDialogButton.Primary,
-                        "Clears local database and image cache."
+                        "Clears local database and image cache.",
+                        ""
                     ));
                 
                 var cls = mock.Create<ShellViewModel>();
@@ -268,7 +269,8 @@ namespace Miru.Tests
                         "Yes",
                         "No",
                         ContentDialogButton.Primary,
-                        "Clears local database and image cache."
+                        "Clears local database and image cache.",
+                        ""
                     ),
                     Times.Once);
 
@@ -295,7 +297,8 @@ namespace Miru.Tests
                         "Yes",
                         "No",
                         ContentDialogButton.Primary,
-                        null
+                        null,
+                        ""
                     ));
 
                 mock.Mock<IFileSystemService>().Setup(x => x.UpdateSenpaiData());
@@ -313,7 +316,8 @@ namespace Miru.Tests
                         "Yes",
                         "No",
                         ContentDialogButton.Primary,
-                        null
+                        null,
+                        ""
                     ),
                     Times.Once);
 

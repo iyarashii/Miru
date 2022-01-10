@@ -13,7 +13,7 @@ namespace Miru.Tests.ViewModelsTests
 {
     public class SimpleContentDialogTests
     {
-        [Fact]
+        [StaFact]
         public void Config_ValidCall()
         {
             using (var mock = AutoMock.GetLoose())
@@ -31,6 +31,7 @@ namespace Miru.Tests.ViewModelsTests
                 Assert.Equal("No", cls.CloseButtonText);
                 Assert.Equal(ContentDialogButton.Primary, cls.DefaultButton);
                 Assert.Null(cls.Content);
+                Assert.Equal("", cls.SecondaryButtonText);
             }
         }
     }
