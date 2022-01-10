@@ -102,7 +102,7 @@ namespace MiruLibrary.Models
                     // split the broadcast string into words
                     broadcastWords = airingAnime.Broadcast.Split(' ');
 
-                    if (broadcastWords.Length < 2)
+                    if (broadcastWords.Length <= 2)
                     {
                         continue;
                     }
@@ -115,7 +115,7 @@ namespace MiruLibrary.Models
                     {
                         continue;
                     }
-
+                    
                     // depending on the 1st word set the correct day
                     switch (dayOfTheWeek)
                     {
