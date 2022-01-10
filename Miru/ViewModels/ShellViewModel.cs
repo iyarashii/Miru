@@ -7,10 +7,10 @@ using ModernWpf;
 using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Media;
-using ToastNotifications.Messages;
 
 namespace Miru.ViewModels
 {
@@ -72,7 +72,9 @@ namespace Miru.ViewModels
                     if (string.IsNullOrEmpty(s))
                         continue;
                     // 13.0 is SQL LocalDB 2016 version
-                    if (float.Parse(s) >= 13.0)
+                    if (!float.TryParse(s, NumberStyles.Float, CultureInfo.InvariantCulture ,out float parsedVersion)) break;
+
+                    if (parsedVersion >= 13.0)
                     {
                         sqlLocalDbIsInstalled = true;
                         break;
