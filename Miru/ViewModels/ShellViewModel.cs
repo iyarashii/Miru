@@ -59,29 +59,28 @@ namespace Miru.ViewModels
             ThemeManager.Current.ApplicationTheme = CurrentApplicationTheme;
         }
 
-        public bool IsSqlLocalDbInstalled()
+        public bool CheckSqlLocalDbInstallationPresence()
         {
             string[] installedVersions;
-            var sqlLocalDbIsInstalled = false;
+            var sqlLocalDbPresent = false;
             var sqlLocalDbRegistry = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Microsoft SQL Server Local DB\Installed Versions\");
             if (sqlLocalDbRegistry != null)
             {
                 installedVersions = sqlLocalDbRegistry.GetSubKeyNames();
-                foreach (var s in installedVersions)
+                foreach (var version in installedVersions)
                 {
-                    if (string.IsNullOrEmpty(s))
-                        continue;
-                    // 13.0 is SQL LocalDB 2016 version
-                    if (!float.TryParse(s, NumberStyles.Float, CultureInfo.InvariantCulture ,out float parsedVersion)) break;
+                    if (string.IsNullOrEmpty(version)) continue;
+                    if (!float.TryParse(version, NumberStyles.Float, CultureInfo.InvariantCulture, out float parsedVersion)) break;
 
+                    // 13.0 is SQL LocalDB 2016 version
                     if (parsedVersion >= 13.0)
                     {
-                        sqlLocalDbIsInstalled = true;
+                        sqlLocalDbPresent = true;
                         break;
                     }
                 }
             }
-            return sqlLocalDbIsInstalled;
+            return sqlLocalDbPresent;
         }
 
         // constructor
@@ -102,7 +101,7 @@ namespace Miru.ViewModels
 
             #endregion dependency injection
 
-            if (IsSqlLocalDbInstalled())
+            if (CheckSqlLocalDbInstallationPresence())
             {
                 ConfigureDbService();
 

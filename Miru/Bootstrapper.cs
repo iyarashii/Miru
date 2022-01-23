@@ -66,7 +66,7 @@ namespace Miru
             // set starting view for this app
             DisplayRootViewFor<IShellViewModel>();
 
-            var sqLocalDbPresent = Container.Resolve<ShellViewModel>().IsSqlLocalDbInstalled();
+            var sqLocalDbPresent = Container.Resolve<ShellViewModel>().CheckSqlLocalDbInstallationPresence();
             if (!sqLocalDbPresent)
                 await Container.Resolve<ShellViewModel>().OpenNoLocalDbInfoDialog();
         }
