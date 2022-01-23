@@ -261,27 +261,4 @@
     <Resource Include="MAL-icon-256.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!--<Target Name="ILMerge">
-    -->
-  <!-- the ILMergePath property points to the location of ILMerge.exe console application -->
-  <!--
-    <Exec Command="$(ILMergeConsolePath) Bin\Release\Miru.exe ^
-          /out:MiruPortable.exe ^
-    Bin\Release\Caliburn.Micro.dll ^
-    Bin\Release\Caliburn.Micro.Platform.Core.dll ^
-    Bin\Release\Caliburn.Micro.Platform.dll ^
-    Bin\Release\EntityFramework.dll ^
-    Bin\Release\EntityFramework.SqlServer.dll ^
-    Bin\Release\JikanDotNet.dll ^
-    Bin\Release\MyInternetConnectionLibrary.dll ^
-    Bin\Release\Newtonsoft.Json.dll ^
-    Bin\Release\System.Windows.Interactivity.dll ^
-    Bin\Release\ToastNotifications.dll ^
-    Bin\Release\ToastNotifications.Messages.dll ^
-    Bin\Release\Xceed.Wpf.AvalonDock.dll ^
-    Bin\Release\Xceed.Wpf.AvalonDock.Themes.Aero.dll ^
-    Bin\Release\Xceed.Wpf.AvalonDock.Themes.Metro.dll ^
-    Bin\Release\Xceed.Wpf.AvalonDock.Themes.VS2010.dll ^
-    Bin\Release\Xceed.Wpf.Toolkit.dll " />
-  </Target>-->
 </Project>
