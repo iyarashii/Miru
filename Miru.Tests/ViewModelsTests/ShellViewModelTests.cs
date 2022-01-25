@@ -112,7 +112,7 @@ namespace Miru.Tests
             }
         }
 
-        public static IEnumerable<object[]> GetBrushColors()
+        public static IEnumerable<object[]> GetBrushColorsData()
         {
             yield return new object[] { ApplicationTheme.Dark, Brushes.SeaGreen };
             yield return new object[] { ApplicationTheme.Light, Brushes.Lime };
@@ -120,7 +120,7 @@ namespace Miru.Tests
         }
 
         [Theory]
-        [MemberData(nameof(GetBrushColors))]
+        [MemberData(nameof(GetBrushColorsData))]
         public void UpdateBrushColors_ShouldSetDifferentColorsForDifferentThemes(ApplicationTheme applicationTheme, SolidColorBrush expected)
         {
 
