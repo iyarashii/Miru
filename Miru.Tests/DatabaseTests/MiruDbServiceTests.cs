@@ -20,6 +20,7 @@ namespace Miru.Tests.DatabaseTests
 {
     public class MiruDbServiceTests
     {
+        public bool EventExecuted { get; set; } = false;
         private IMiruDbService SetupMiruDbServiceMock(Mock<IMiruDbContext> mockContext, AutoMock mock,[Optional] IQueryable<SyncedMyAnimeListUser> userDbSetData, [Optional] IQueryable<MiruAnimeModel> miruAnimeModelDbSetData)
         {
             mockContext.Setup(s => s.ExecuteSqlCommand("TRUNCATE TABLE [MiruAnimeModels]")).Returns(0);
@@ -53,8 +54,12 @@ namespace Miru.Tests.DatabaseTests
             Func<IMiruDbContext> mockFunc = () => { return mockContext.Object; };
 
             var cls = mock.Create<MiruDbService>(new NamedParameter("createMiruDbContext", mockFunc));
+
+            //var mockSortedAnimeListEventHandler = new Mock<MiruDbService.SortedAnimeListEventHandler>();
+
             cls.UpdateSyncDate += mockEventHandler.Object;
             cls.UpdateCurrentUsername += mockUsernameEventHandler.Object;
+            cls.UpdateAnimeListEntriesUI += (x, y) => EventExecuted = true;
 
             return cls;
         }
@@ -156,6 +161,28 @@ namespace Miru.Tests.DatabaseTests
                 // Assert
                 mockContext.Verify(x => x.ExecuteSqlCommand("TRUNCATE TABLE [MiruAnimeModels]"), Times.Once);
                 mockContext.Verify(x => x.ExecuteSqlCommand("TRUNCATE TABLE [SyncedMyAnimeListUsers]"), Times.Once);
+            }
+        }
+
+        [Fact]
+        public void ChangeDisplayedAnimeList_Fires_UpdateAnimeListEntriesUI_Event()
+        {
+            using (var mock = AutoMock.GetLoose())
+            {
+                // Arrange
+                var mockContext = new Mock<IMiruDbContext>();
+                var data = new List<MiruAnimeModel>
+                {
+                    new MiruAnimeModel {Title = "nnn" },
+                }.AsQueryable();
+                var cls = SetupMiruDbServiceMock(mockContext, mock, miruAnimeModelDbSetData: data);
+
+                // Act
+                cls.ChangeDisplayedAnimeList(It.IsAny<AnimeListType>(), It.IsAny<TimeZoneInfo>(), It.IsAny<MiruLibrary.AnimeType>(), It.IsAny<string>());
+                //Mock.Of<TimeZoneInfo>() -- System.NotSupportedException : Type to mock must be an interface, a delegate, or a non-sealed, non-static class.
+
+                // Assert
+                Assert.True(EventExecuted);
             }
         }
     }
