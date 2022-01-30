@@ -25,6 +25,9 @@ namespace MiruDatabaseLogicLayer
         void LoadLastSyncedData();
         Task<bool> SaveDetailedAnimeListData(bool seasonSyncOn);
         Task SaveSyncedUserData(string typedInUsername);
+        List<MiruAnimeModel> GetFilteredUserAnimeList(IMiruDbContext db, AnimeType selectedBroadcastType, string title, TimeZoneInfo selectedTimeZone);
+
         DateTime SyncDateData { get; set; }
+        IMiruAnimeModelExtensionsWrapper MiruAnimeModelExtensionsWrapper { get; }
     }
 }

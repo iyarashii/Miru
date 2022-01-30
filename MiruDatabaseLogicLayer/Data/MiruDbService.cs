@@ -30,7 +30,8 @@ namespace MiruDatabaseLogicLayer
             ISyncedMyAnimeListUser syncedMyAnimeListUser, 
             IWebService webService, 
             Lazy<IFileSystemService> fileSystemService,
-            Func<MiruAnimeModel> createMiruAnimeModel)
+            Func<MiruAnimeModel> createMiruAnimeModel,
+            IMiruAnimeModelExtensionsWrapper miruAnimeModelExtensionsWrapper)
         {
             #region dependency injection
 
@@ -42,6 +43,7 @@ namespace MiruDatabaseLogicLayer
             CreateMiruDbContext = createMiruDbContext;
             FileSystemService = fileSystemService;
             CreateMiruAnimeModel = createMiruAnimeModel;
+            MiruAnimeModelExtensionsWrapper = miruAnimeModelExtensionsWrapper;
 
             #endregion dependency injection
         }
@@ -52,6 +54,7 @@ namespace MiruDatabaseLogicLayer
         private ISyncedMyAnimeListUser SyncedMyAnimeListUser { get; }
         private Func<IMiruDbContext> CreateMiruDbContext { get; }
         private Func<MiruAnimeModel> CreateMiruAnimeModel { get; }
+        public IMiruAnimeModelExtensionsWrapper MiruAnimeModelExtensionsWrapper { get; }
 
         public DateTime SyncDateData
         {
@@ -146,7 +149,8 @@ namespace MiruDatabaseLogicLayer
 
             // filter the anime list
             userAnimeList.FilterByBroadcastType(selectedBroadcastType);
-            userAnimeList.FilterByTitle(title);
+            //userAnimeList.FilterByTitle(title);
+            MiruAnimeModelExtensionsWrapper.FilterByTitle(userAnimeList, title);
 
             foreach (var animeEntry in userAnimeList)
             {

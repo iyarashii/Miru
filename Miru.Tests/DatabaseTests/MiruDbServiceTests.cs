@@ -20,7 +20,18 @@ namespace Miru.Tests.DatabaseTests
 {
     public class MiruDbServiceTests
     {
-        private IMiruDbService SetupMiruDbServiceMock(Mock<IMiruDbContext> mockContext, AutoMock mock,[Optional] IQueryable<SyncedMyAnimeListUser> userDbSetData, [Optional] IQueryable<MiruAnimeModel> miruAnimeModelDbSetData)
+        private IMiruDbService SetupMiruDbServiceMock(Mock<IMiruDbContext> mockContext, AutoMock mock,
+                                                     [Optional] IQueryable<SyncedMyAnimeListUser> userDbSetData,
+                                                     [Optional] IQueryable<MiruAnimeModel> miruAnimeModelDbSetData,
+                                                     [Optional] IMiruAnimeModelExtensionsWrapper mockWrapper)
+        {
+            return SetupMiruDbServiceMock(mockContext, mock, userDbSetData, miruAnimeModelDbSetData, mockWrapper, out _);
+        }
+        private IMiruDbService SetupMiruDbServiceMock(Mock<IMiruDbContext> mockContext, AutoMock mock,
+                                                     [Optional] IQueryable<SyncedMyAnimeListUser> userDbSetData, 
+                                                     [Optional] IQueryable<MiruAnimeModel> miruAnimeModelDbSetData,
+                                                     [Optional] IMiruAnimeModelExtensionsWrapper mockWrapper,
+                                                     out IMiruDbContext miruDbContext)
         {
             mockContext.Setup(s => s.ExecuteSqlCommand("TRUNCATE TABLE [MiruAnimeModels]")).Returns(0);
             mockContext.Setup(s => s.ExecuteSqlCommand("TRUNCATE TABLE [SyncedMyAnimeListUsers]")).Returns(0);
@@ -52,8 +63,9 @@ namespace Miru.Tests.DatabaseTests
 
             Func<IMiruDbContext> mockFunc = () => { return mockContext.Object; };
 
-            var cls = mock.Create<MiruDbService>(new NamedParameter("createMiruDbContext", mockFunc));
+            var cls = mock.Create<MiruDbService>(new NamedParameter("createMiruDbContext", mockFunc), new NamedParameter("miruAnimeModelExtensionsWrapper", mockWrapper));
 
+            miruDbContext = mockContext.Object;
 
             cls.UpdateSyncDate += mockEventHandler.Object;
             cls.UpdateCurrentUsername += mockUsernameEventHandler.Object;
@@ -122,6 +134,7 @@ namespace Miru.Tests.DatabaseTests
                 var webService = new Mock<IWebService>();
                 var fileSystemService = new Mock<Lazy<IFileSystemService>>();
                 var createMiruAnimeModel = new Mock<Func<MiruAnimeModel>>();
+                var miruAnimeModelExtensionsWrapper = new Mock<MiruAnimeModelExtensionsWrapper>();
 
                 Type clsType = typeof(MiruDbService);
                 var privateProperties = clsType.GetProperties(BindingFlags.NonPublic | BindingFlags.Instance).ToList();
@@ -129,7 +142,7 @@ namespace Miru.Tests.DatabaseTests
                 // Act
                 var cls = new MiruDbService(currentSeasonModel.Object, currentUserAnimeListModel.Object, 
                     jikanWrapper.Object, createMiruDbContext.Object, syncedMyAnimeListUser.Object, webService.Object,
-                    fileSystemService.Object, createMiruAnimeModel.Object);
+                    fileSystemService.Object, createMiruAnimeModel.Object, miruAnimeModelExtensionsWrapper.Object);
 
                 // Assert
                 Assert.Equal(currentSeasonModel.Object, cls.CurrentSeason);
@@ -169,11 +182,12 @@ namespace Miru.Tests.DatabaseTests
                 // Arrange
                 var eventExecuted = false;
                 var mockContext = new Mock<IMiruDbContext>();
+                var mockWrapper = Mock.Of<IMiruAnimeModelExtensionsWrapper>();
                 var data = new List<MiruAnimeModel>
                 {
                     new MiruAnimeModel {Title = "nnn" },
                 }.AsQueryable();
-                var cls = SetupMiruDbServiceMock(mockContext, mock, miruAnimeModelDbSetData: data);
+                var cls = SetupMiruDbServiceMock(mockContext, mock, miruAnimeModelDbSetData: data, mockWrapper: mockWrapper);
                 cls.UpdateAnimeListEntriesUI += (x, y) => eventExecuted = true;
 
                 // Act
@@ -181,6 +195,28 @@ namespace Miru.Tests.DatabaseTests
 
                 // Assert
                 Assert.True(eventExecuted);
+            }
+        }
+
+        [Fact]
+        public void GetFilteredUserAnimeList_CallsCorrectFilters()
+        {
+            using (var mock = AutoMock.GetLoose())
+            {
+                // Arrange
+                var mockContext = new Mock<IMiruDbContext>();
+                var mockWrapper = new Mock<IMiruAnimeModelExtensionsWrapper>();
+                var data = new List<MiruAnimeModel>
+                {
+                    new MiruAnimeModel {Title = "nnn" },
+                }.AsQueryable();
+                var cls = SetupMiruDbServiceMock(mockContext, mock, miruAnimeModelDbSetData: data, miruDbContext: out IMiruDbContext db, mockWrapper: mockWrapper.Object);
+
+                // Act
+                cls.GetFilteredUserAnimeList(db, It.IsAny<MiruLibrary.AnimeType>(), It.IsAny<string>(), It.IsAny<TimeZoneInfo>());
+
+                // Assert
+                mockWrapper.Verify(x => x.FilterByTitle(It.IsAny<List<MiruAnimeModel>>(), It.IsAny<string>()), Times.Once);
             }
         }
     }
