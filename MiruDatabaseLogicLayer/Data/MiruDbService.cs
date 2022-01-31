@@ -148,14 +148,16 @@ namespace MiruDatabaseLogicLayer
             var userAnimeList = db.MiruAnimeModels.ToList();
 
             // filter the anime list
-            userAnimeList.FilterByBroadcastType(selectedBroadcastType);
+            //userAnimeList.FilterByBroadcastType(selectedBroadcastType);
+            MiruAnimeModelExtensionsWrapper.FilterByBroadcastType(userAnimeList, selectedBroadcastType);
             //userAnimeList.FilterByTitle(title);
             MiruAnimeModelExtensionsWrapper.FilterByTitle(userAnimeList, title);
 
             foreach (var animeEntry in userAnimeList)
             {
                 // save JST broadcast time converted to the selected timezone as local broadcast time
-                animeEntry.ConvertJstBroadcastTimeToSelectedTimeZone(selectedTimeZone);
+                //animeEntry.ConvertJstBroadcastTimeToSelectedTimeZone(selectedTimeZone);
+                MiruAnimeModelExtensionsWrapper.ConvertJstBroadcastTimeToSelectedTimeZone(animeEntry, selectedTimeZone);
             }
 
             return userAnimeList;

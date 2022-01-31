@@ -208,7 +208,9 @@ namespace Miru.Tests.DatabaseTests
                 var mockWrapper = new Mock<IMiruAnimeModelExtensionsWrapper>();
                 var data = new List<MiruAnimeModel>
                 {
-                    new MiruAnimeModel {Title = "nnn" },
+                    new MiruAnimeModel {Title = "1" },
+                    new MiruAnimeModel {Title = "2" },
+                    new MiruAnimeModel {Title = "3" },
                 }.AsQueryable();
                 var cls = SetupMiruDbServiceMock(mockContext, mock, miruAnimeModelDbSetData: data, miruDbContext: out IMiruDbContext db, mockWrapper: mockWrapper.Object);
 
@@ -217,6 +219,8 @@ namespace Miru.Tests.DatabaseTests
 
                 // Assert
                 mockWrapper.Verify(x => x.FilterByTitle(It.IsAny<List<MiruAnimeModel>>(), It.IsAny<string>()), Times.Once);
+                mockWrapper.Verify(x => x.FilterByBroadcastType(It.IsAny<List<MiruAnimeModel>>(), It.IsAny<MiruLibrary.AnimeType>()), Times.Once);
+                mockWrapper.Verify(x => x.ConvertJstBroadcastTimeToSelectedTimeZone(It.IsAny<MiruAnimeModel>(), It.IsAny<TimeZoneInfo>()), Times.Exactly(data.Count()));
             }
         }
     }

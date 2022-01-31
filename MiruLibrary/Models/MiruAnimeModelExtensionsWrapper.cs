@@ -12,5 +12,15 @@ namespace MiruLibrary.Models
         {
             animeList.FilterByTitle(title);
         }
+        
+        public void FilterByBroadcastType(List<MiruAnimeModel> animeList, AnimeType broadcastType)
+        {
+            animeList.FilterByBroadcastType(broadcastType);
+        }
+
+        public void ConvertJstBroadcastTimeToSelectedTimeZone(MiruAnimeModel anime, TimeZoneInfo selectedTimeZone)
+        {
+            anime.ConvertJstBroadcastTimeToSelectedTimeZone(selectedTimeZone);
+        }
     }
 }
