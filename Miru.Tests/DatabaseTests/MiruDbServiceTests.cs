@@ -258,5 +258,37 @@ namespace Miru.Tests.DatabaseTests
                 Assert.Contains(result.First(x => x.Title == title && x.Type == broadcastType.ToString()), result);
             }
         }
+
+        [Theory]
+        [InlineData("tako", 3)]
+        [InlineData("gura", 4)]
+        [InlineData("YMD", 0)]
+        public void GetFilteredUserAnimeList_FilterByTitle_WorksCorrectly(string title, int expectedFilteredListSize)
+        {
+            using (var mock = AutoMock.GetLoose())
+            {
+                // Arrange
+                var mockContext = new Mock<IMiruDbContext>();
+                var mockWrapper = mock.Create<MiruAnimeModelExtensionsWrapper>();
+                var data = new List<MiruAnimeModel>
+                {
+                    new MiruAnimeModel {Title = "tako", Type = "TV"},
+                    new MiruAnimeModel {Title = "tako", Type = "TV"},
+                    new MiruAnimeModel {Title = "takodachi", Type = "TV"},
+                    new MiruAnimeModel {Title = "gura", Type = "TV"},
+                    new MiruAnimeModel {Title = "gura", Type = "TV"},
+                    new MiruAnimeModel {Title = "guraxxx", Type = "TV"},
+                    new MiruAnimeModel {Title = "gura123", Type = "TV"},
+                }.AsQueryable();
+                var cls = SetupMiruDbServiceMock(mockContext, mock, miruAnimeModelDbSetData: data, miruDbContext: out IMiruDbContext db, mockWrapper: mockWrapper);
+
+                // Act
+                var result = cls.GetFilteredUserAnimeList(db, AnimeType.TV, title, It.IsAny<TimeZoneInfo>());
+
+                // Assert
+                Assert.All(result, x => Assert.Contains(title, x.Title));
+                Assert.Equal(expectedFilteredListSize, result.Count());
+            }
+        }
     }
 }
