@@ -290,5 +290,40 @@ namespace Miru.Tests.DatabaseTests
                 Assert.Equal(expectedFilteredListSize, result.Count());
             }
         }
+
+        [Theory]
+        [InlineData(AnimeType.TV, 3)]
+        [InlineData(AnimeType.ONA, 4)]
+        [InlineData(AnimeType.Both, 7)]
+        public void GetFilteredUserAnimeList_FilterByBroadcastType_WorksCorrectly(AnimeType broadcastType, int expectedFilteredListSize)
+        {
+            using (var mock = AutoMock.GetLoose())
+            {
+                // Arrange
+                var mockContext = new Mock<IMiruDbContext>();
+                var mockWrapper = mock.Create<MiruAnimeModelExtensionsWrapper>();
+                var data = new List<MiruAnimeModel>
+                {
+                    new MiruAnimeModel {Title = "tako", Type = "TV"},
+                    new MiruAnimeModel {Title = "tako", Type = "TV"},
+                    new MiruAnimeModel {Title = "tako", Type = "TV"},
+                    new MiruAnimeModel {Title = "tako", Type = "ONA"},
+                    new MiruAnimeModel {Title = "tako", Type = "ONA"},
+                    new MiruAnimeModel {Title = "tako", Type = "ONA"},
+                    new MiruAnimeModel {Title = "tako", Type = "ONA"},
+                }.AsQueryable();
+                var cls = SetupMiruDbServiceMock(mockContext, mock, miruAnimeModelDbSetData: data, miruDbContext: out IMiruDbContext db, mockWrapper: mockWrapper);
+
+                var converter = new EnumDescriptionTypeConverter(typeof(AnimeType));
+                var animeBroadcastTypeDescription = converter.ConvertToString(broadcastType);
+
+                // Act
+                var result = cls.GetFilteredUserAnimeList(db, broadcastType, "tako", It.IsAny<TimeZoneInfo>());
+
+                // Assert
+                Assert.All(result, x => Assert.Contains(x.Type, animeBroadcastTypeDescription));
+                Assert.Equal(expectedFilteredListSize, result.Count());
+            }
+        }
     }
 }
