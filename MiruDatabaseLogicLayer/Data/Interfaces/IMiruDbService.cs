@@ -28,6 +28,5 @@ namespace MiruDatabaseLogicLayer
         List<MiruAnimeModel> GetFilteredUserAnimeList(IMiruDbContext db, AnimeType selectedBroadcastType, string title, TimeZoneInfo selectedTimeZone);
 
         DateTime SyncDateData { get; set; }
-        IMiruAnimeModelExtensionsWrapper MiruAnimeModelExtensionsWrapper { get; }
     }
 }

@@ -30,8 +30,7 @@ namespace MiruDatabaseLogicLayer
             ISyncedMyAnimeListUser syncedMyAnimeListUser, 
             IWebService webService, 
             Lazy<IFileSystemService> fileSystemService,
-            Func<MiruAnimeModel> createMiruAnimeModel,
-            IMiruAnimeModelExtensionsWrapper miruAnimeModelExtensionsWrapper)
+            Func<MiruAnimeModel> createMiruAnimeModel)
         {
             #region dependency injection
 
@@ -43,7 +42,6 @@ namespace MiruDatabaseLogicLayer
             CreateMiruDbContext = createMiruDbContext;
             FileSystemService = fileSystemService;
             CreateMiruAnimeModel = createMiruAnimeModel;
-            MiruAnimeModelExtensionsWrapper = miruAnimeModelExtensionsWrapper;
 
             #endregion dependency injection
         }
@@ -54,7 +52,6 @@ namespace MiruDatabaseLogicLayer
         private ISyncedMyAnimeListUser SyncedMyAnimeListUser { get; }
         private Func<IMiruDbContext> CreateMiruDbContext { get; }
         private Func<MiruAnimeModel> CreateMiruAnimeModel { get; }
-        public IMiruAnimeModelExtensionsWrapper MiruAnimeModelExtensionsWrapper { get; }
 
         public DateTime SyncDateData
         {
@@ -148,16 +145,13 @@ namespace MiruDatabaseLogicLayer
             var userAnimeList = db.MiruAnimeModels.ToList();
 
             // filter the anime list
-            //userAnimeList.FilterByBroadcastType(selectedBroadcastType);
-            MiruAnimeModelExtensionsWrapper.FilterByBroadcastType(userAnimeList, selectedBroadcastType);
-            //userAnimeList.FilterByTitle(title);
-            MiruAnimeModelExtensionsWrapper.FilterByTitle(userAnimeList, title);
+            userAnimeList.FilterByBroadcastType(selectedBroadcastType);
+            userAnimeList.FilterByTitle(title);
 
             foreach (var animeEntry in userAnimeList)
             {
                 // save JST broadcast time converted to the selected timezone as local broadcast time
-                //animeEntry.ConvertJstBroadcastTimeToSelectedTimeZone(selectedTimeZone);
-                MiruAnimeModelExtensionsWrapper.ConvertJstBroadcastTimeToSelectedTimeZone(animeEntry, selectedTimeZone);
+                animeEntry.ConvertJstBroadcastTimeToSelectedTimeZone(selectedTimeZone);
             }
 
             return userAnimeList;

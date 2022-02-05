@@ -23,15 +23,13 @@ namespace Miru.Tests.DatabaseTests
     {
         private IMiruDbService SetupMiruDbServiceMock(Mock<IMiruDbContext> mockContext, AutoMock mock,
                                                      [Optional] IQueryable<SyncedMyAnimeListUser> userDbSetData,
-                                                     [Optional] IQueryable<MiruAnimeModel> miruAnimeModelDbSetData,
-                                                     [Optional] IMiruAnimeModelExtensionsWrapper mockWrapper)
+                                                     [Optional] IQueryable<MiruAnimeModel> miruAnimeModelDbSetData)
         {
-            return SetupMiruDbServiceMock(mockContext, mock, userDbSetData, miruAnimeModelDbSetData, mockWrapper, out _);
+            return SetupMiruDbServiceMock(mockContext, mock, userDbSetData, miruAnimeModelDbSetData, out _);
         }
         private IMiruDbService SetupMiruDbServiceMock(Mock<IMiruDbContext> mockContext, AutoMock mock,
                                                      [Optional] IQueryable<SyncedMyAnimeListUser> userDbSetData, 
-                                                     [Optional] IQueryable<MiruAnimeModel> miruAnimeModelDbSetData,
-                                                     [Optional] IMiruAnimeModelExtensionsWrapper mockWrapper,
+                                                     [Optional] IQueryable<MiruAnimeModel> miruAnimeModelDbSetData,                                                     
                                                      out IMiruDbContext miruDbContext)
         {
             mockContext.Setup(s => s.ExecuteSqlCommand("TRUNCATE TABLE [MiruAnimeModels]")).Returns(0);
@@ -64,7 +62,7 @@ namespace Miru.Tests.DatabaseTests
 
             Func<IMiruDbContext> mockFunc = () => { return mockContext.Object; };
 
-            var cls = mock.Create<MiruDbService>(new NamedParameter("createMiruDbContext", mockFunc), new NamedParameter("miruAnimeModelExtensionsWrapper", mockWrapper));
+            var cls = mock.Create<MiruDbService>(new NamedParameter("createMiruDbContext", mockFunc));
 
             miruDbContext = mockContext.Object;
 
@@ -135,7 +133,6 @@ namespace Miru.Tests.DatabaseTests
                 var webService = new Mock<IWebService>();
                 var fileSystemService = new Mock<Lazy<IFileSystemService>>();
                 var createMiruAnimeModel = new Mock<Func<MiruAnimeModel>>();
-                var miruAnimeModelExtensionsWrapper = new Mock<MiruAnimeModelExtensionsWrapper>();
 
                 Type clsType = typeof(MiruDbService);
                 var privateProperties = clsType.GetProperties(BindingFlags.NonPublic | BindingFlags.Instance).ToList();
@@ -143,7 +140,7 @@ namespace Miru.Tests.DatabaseTests
                 // Act
                 var cls = new MiruDbService(currentSeasonModel.Object, currentUserAnimeListModel.Object, 
                     jikanWrapper.Object, createMiruDbContext.Object, syncedMyAnimeListUser.Object, webService.Object,
-                    fileSystemService.Object, createMiruAnimeModel.Object, miruAnimeModelExtensionsWrapper.Object);
+                    fileSystemService.Object, createMiruAnimeModel.Object);
 
                 // Assert
                 Assert.Equal(currentSeasonModel.Object, cls.CurrentSeason);
@@ -183,12 +180,11 @@ namespace Miru.Tests.DatabaseTests
                 // Arrange
                 var eventExecuted = false;
                 var mockContext = new Mock<IMiruDbContext>();
-                var mockWrapper = Mock.Of<IMiruAnimeModelExtensionsWrapper>();
                 var data = new List<MiruAnimeModel>
                 {
                     new MiruAnimeModel {Title = "nnn" },
                 }.AsQueryable();
-                var cls = SetupMiruDbServiceMock(mockContext, mock, miruAnimeModelDbSetData: data, mockWrapper: mockWrapper);
+                var cls = SetupMiruDbServiceMock(mockContext, mock, miruAnimeModelDbSetData: data);
                 cls.UpdateAnimeListEntriesUI += (x, y) => eventExecuted = true;
 
                 // Act
@@ -199,65 +195,6 @@ namespace Miru.Tests.DatabaseTests
             }
         }
 
-        [Fact]
-        public void GetFilteredUserAnimeList_CallsCorrectFilters()
-        {
-            using (var mock = AutoMock.GetLoose())
-            {
-                // Arrange
-                var mockContext = new Mock<IMiruDbContext>();
-                var mockWrapper = new Mock<IMiruAnimeModelExtensionsWrapper>();
-                var data = new List<MiruAnimeModel>
-                {
-                    new MiruAnimeModel {Title = "1" },
-                    new MiruAnimeModel {Title = "2" },
-                    new MiruAnimeModel {Title = "3" },
-                }.AsQueryable();
-                var cls = SetupMiruDbServiceMock(mockContext, mock, miruAnimeModelDbSetData: data, miruDbContext: out IMiruDbContext db, mockWrapper: mockWrapper.Object);
-
-                // Act
-                cls.GetFilteredUserAnimeList(db, It.IsAny<MiruLibrary.AnimeType>(), It.IsAny<string>(), It.IsAny<TimeZoneInfo>());
-
-                // Assert
-                mockWrapper.Verify(x => x.FilterByTitle(It.IsAny<List<MiruAnimeModel>>(), It.IsAny<string>()), Times.Once);
-                mockWrapper.Verify(x => x.FilterByBroadcastType(It.IsAny<List<MiruAnimeModel>>(), It.IsAny<MiruLibrary.AnimeType>()), Times.Once);
-                mockWrapper.Verify(x => x.ConvertJstBroadcastTimeToSelectedTimeZone(It.IsAny<MiruAnimeModel>(), It.IsAny<TimeZoneInfo>()), Times.Exactly(data.Count()));
-            }
-        }
-
-        public static IEnumerable<object[]> GetMiruAnimeModelData()
-        {
-            yield return new object[] { AnimeType.TV, "tako", TimeZoneInfo.FindSystemTimeZoneById("Central European Standard Time") };
-            yield return new object[] { AnimeType.ONA, "tako", TimeZoneInfo.FindSystemTimeZoneById("Central European Standard Time") };
-            yield return new object[] { AnimeType.ONA, "gura", TimeZoneInfo.FindSystemTimeZoneById("Central European Standard Time") };
-        }
-
-        [Theory]
-        [MemberData(nameof(GetMiruAnimeModelData))]
-        public void GetFilteredUserAnimeList_FiltersWorkCorrectly(AnimeType broadcastType, string title, TimeZoneInfo timeZone)
-        {
-            using (var mock = AutoMock.GetLoose())
-            {
-                // Arrange
-                var mockContext = new Mock<IMiruDbContext>();
-                var mockWrapper = mock.Create<MiruAnimeModelExtensionsWrapper>();
-                var data = new List<MiruAnimeModel>
-                {
-                    new MiruAnimeModel {Title = "tako", Type = "TV",  JSTBroadcastTime = new DateTime(2022, 2, 1, 18, 0, 0)},
-                    new MiruAnimeModel {Title = "tako", Type = "ONA" },
-                    new MiruAnimeModel {Title = "3", Type = "TV" },
-                    new MiruAnimeModel {Title = "gura", Type = "ONA" },
-                }.AsQueryable();
-                var cls = SetupMiruDbServiceMock(mockContext, mock, miruAnimeModelDbSetData: data, miruDbContext: out IMiruDbContext db, mockWrapper: mockWrapper);
-
-                // Act
-                 var result = cls.GetFilteredUserAnimeList(db, broadcastType, title, timeZone);
-
-                // Assert
-                Assert.True(result.Count == 1);
-                Assert.Contains(result.First(x => x.Title == title && x.Type == broadcastType.ToString()), result);
-            }
-        }
 
         public static IEnumerable<object[]> GetTimeZoneData() // Tokyo Standard Time = UTC+9
         {
@@ -275,7 +212,6 @@ namespace Miru.Tests.DatabaseTests
             {
                 // Arrange
                 var mockContext = new Mock<IMiruDbContext>();
-                var mockWrapper = mock.Create<MiruAnimeModelExtensionsWrapper>();
                 var data = new List<MiruAnimeModel>
                 {
                     new MiruAnimeModel {Title = "10", Type = "TV",  JSTBroadcastTime = new DateTime(2022, 2, 1, 10, 0, 0)},
@@ -283,7 +219,7 @@ namespace Miru.Tests.DatabaseTests
                     new MiruAnimeModel {Title = "15", Type = "TV",  JSTBroadcastTime = new DateTime(2022, 2, 1, 15, 0, 0)},
                     new MiruAnimeModel {Title = "0", Type = "TV",  JSTBroadcastTime = new DateTime(2022, 2, 1, 0, 0, 0)},
                 }.AsQueryable();
-                var cls = SetupMiruDbServiceMock(mockContext, mock, miruAnimeModelDbSetData: data, miruDbContext: out IMiruDbContext db, mockWrapper: mockWrapper);
+                var cls = SetupMiruDbServiceMock(mockContext, mock, miruAnimeModelDbSetData: data, miruDbContext: out IMiruDbContext db);
 
                 // Act
                 var result = cls.GetFilteredUserAnimeList(db, It.IsAny<AnimeType>(), It.IsAny<string>(), timeZone);
@@ -303,7 +239,6 @@ namespace Miru.Tests.DatabaseTests
             {
                 // Arrange
                 var mockContext = new Mock<IMiruDbContext>();
-                var mockWrapper = mock.Create<MiruAnimeModelExtensionsWrapper>();
                 var data = new List<MiruAnimeModel>
                 {
                     new MiruAnimeModel {Title = "tako", Type = "TV"},
@@ -314,7 +249,7 @@ namespace Miru.Tests.DatabaseTests
                     new MiruAnimeModel {Title = "guraxxx", Type = "TV"},
                     new MiruAnimeModel {Title = "gura123", Type = "TV"},
                 }.AsQueryable();
-                var cls = SetupMiruDbServiceMock(mockContext, mock, miruAnimeModelDbSetData: data, miruDbContext: out IMiruDbContext db, mockWrapper: mockWrapper);
+                var cls = SetupMiruDbServiceMock(mockContext, mock, miruAnimeModelDbSetData: data, miruDbContext: out IMiruDbContext db);
 
                 // Act
                 var result = cls.GetFilteredUserAnimeList(db, AnimeType.TV, title, It.IsAny<TimeZoneInfo>());
@@ -335,7 +270,6 @@ namespace Miru.Tests.DatabaseTests
             {
                 // Arrange
                 var mockContext = new Mock<IMiruDbContext>();
-                var mockWrapper = mock.Create<MiruAnimeModelExtensionsWrapper>();
                 var data = new List<MiruAnimeModel>
                 {
                     new MiruAnimeModel {Title = "tako", Type = "TV"},
@@ -346,7 +280,7 @@ namespace Miru.Tests.DatabaseTests
                     new MiruAnimeModel {Title = "tako", Type = "ONA"},
                     new MiruAnimeModel {Title = "tako", Type = "ONA"},
                 }.AsQueryable();
-                var cls = SetupMiruDbServiceMock(mockContext, mock, miruAnimeModelDbSetData: data, miruDbContext: out IMiruDbContext db, mockWrapper: mockWrapper);
+                var cls = SetupMiruDbServiceMock(mockContext, mock, miruAnimeModelDbSetData: data, miruDbContext: out IMiruDbContext db);
 
                 var converter = new EnumDescriptionTypeConverter(typeof(AnimeType));
                 var animeBroadcastTypeDescription = converter.ConvertToString(broadcastType);

@@ -84,10 +84,8 @@
     <Compile Include="Constants.cs" />
     <Compile Include="Converters\EnumDescriptionTypeConverter.cs" />
     <Compile Include="Enums.cs" />
-    <Compile Include="Models\IMiruAnimeModelExtensionsWrapper.cs" />
     <Compile Include="Models\Interfaces\ISyncedMyAnimeListUser.cs" />
     <Compile Include="Models\MiruAnimeModelExtensions.cs" />
-    <Compile Include="Models\MiruAnimeModelExtensionsWrapper.cs" />
     <Compile Include="Services\FileSystemService.cs" />
     <Compile Include="Services\IFileSystemService.cs" />
     <Compile Include="Settings\ISettingsWriter.cs" />
