@@ -293,5 +293,33 @@ namespace Miru.Tests.DatabaseTests
                 Assert.Equal(expectedFilteredListSize, result.Count());
             }
         }
+
+
+        public static IEnumerable<object[]> TruncateCalledTimesData => new List<object[]>
+        {
+            new object[] { Times.Once(), new List<SyncedMyAnimeListUser> // not empty list => truncate called 1 time
+                                         {
+                                             new SyncedMyAnimeListUser { Username = It.IsAny<string>(), SyncTime = It.IsAny<DateTime>()},
+                                         }.AsQueryable() },
+            new object[] { Times.Never(), new List<SyncedMyAnimeListUser>().AsQueryable() } // empty list => truncate never called
+        };
+
+        [Theory]
+        [MemberData(nameof(TruncateCalledTimesData))]
+        public void SaveSyncedUserData_GivenSyncedUsersListNotEmpty_ShouldTruncateTable(Times truncateTimesExecuted, IQueryable<SyncedMyAnimeListUser> usersData)
+        {
+            using (var mock = AutoMock.GetLoose())
+            {
+                // Arrange
+                var mockContext = new Mock<IMiruDbContext>();
+                var cls = SetupMiruDbServiceMock(mockContext, mock, userDbSetData: usersData, miruDbContext: out IMiruDbContext db);
+
+                // Act
+                cls.SaveSyncedUserData(It.IsAny<string>()).Wait();
+
+                // Assert
+                mockContext.Verify(x => x.ExecuteSqlCommand("TRUNCATE TABLE [SyncedMyAnimeListUsers]"), truncateTimesExecuted);
+            }
+        }
     }
 }

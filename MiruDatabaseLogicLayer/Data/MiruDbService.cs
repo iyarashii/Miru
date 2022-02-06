@@ -167,7 +167,7 @@ namespace MiruDatabaseLogicLayer
                 // if SyncedMyAnimeListUsers table is not empty then delete all rows
                 if (db.SyncedMyAnimeListUsers.Any())
                 {
-                    db.Database.ExecuteSqlCommand("TRUNCATE TABLE [SyncedMyAnimeListUsers]");
+                    db.ExecuteSqlCommand("TRUNCATE TABLE [SyncedMyAnimeListUsers]");
                 }
 
                 // store the current user's username and sync date to the SyncedMyAnimeListUsers table
