@@ -331,7 +331,7 @@ namespace Miru.Tests.DatabaseTests
                 // Arrange
                 var mockContext = new Mock<IMiruDbContext>();
                 var usersData = new List<SyncedMyAnimeListUser>().AsQueryable();
-                var cls = SetupMiruDbServiceMock(mockContext, mock, userDbSetData: usersData, miruDbContext: out IMiruDbContext db);
+                var cls = SetupMiruDbServiceMock(mockContext, mock, userDbSetData: usersData);
                 var testUsername = "UwU";
 
                 // Act
