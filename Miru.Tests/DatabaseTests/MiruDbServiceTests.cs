@@ -62,7 +62,8 @@ namespace Miru.Tests.DatabaseTests
 
             Func<IMiruDbContext> mockFunc = () => { return mockContext.Object; };
 
-            var cls = mock.Create<MiruDbService>(new NamedParameter("createMiruDbContext", mockFunc));
+            var syncedMyAnimeListUser = Mock.Of<SyncedMyAnimeListUser>();
+            var cls = mock.Create<MiruDbService>(new NamedParameter("createMiruDbContext", mockFunc), new NamedParameter("syncedMyAnimeListUser", syncedMyAnimeListUser));
 
             miruDbContext = mockContext.Object;
 
@@ -312,13 +313,32 @@ namespace Miru.Tests.DatabaseTests
             {
                 // Arrange
                 var mockContext = new Mock<IMiruDbContext>();
-                var cls = SetupMiruDbServiceMock(mockContext, mock, userDbSetData: usersData, miruDbContext: out IMiruDbContext db);
+                var cls = SetupMiruDbServiceMock(mockContext, mock, userDbSetData: usersData);
 
                 // Act
                 cls.SaveSyncedUserData(It.IsAny<string>()).Wait();
 
                 // Assert
                 mockContext.Verify(x => x.ExecuteSqlCommand("TRUNCATE TABLE [SyncedMyAnimeListUsers]"), truncateTimesExecuted);
+            }
+        }
+
+        [Fact]
+        public void SaveSyncedUserData_ShouldAddSyncedUser()
+        {
+            using (var mock = AutoMock.GetLoose())
+            {
+                // Arrange
+                var mockContext = new Mock<IMiruDbContext>();
+                var usersData = new List<SyncedMyAnimeListUser>().AsQueryable();
+                var cls = SetupMiruDbServiceMock(mockContext, mock, userDbSetData: usersData, miruDbContext: out IMiruDbContext db);
+                var testUsername = "UwU";
+
+                // Act
+                cls.SaveSyncedUserData(testUsername).Wait();
+
+                // Assert
+                mockContext.Verify(x => x.SyncedMyAnimeListUsers.Add(It.Is<SyncedMyAnimeListUser>(y => y.Username == testUsername && y.SyncTime == cls.SyncDateData)), Times.Once());
             }
         }
     }
