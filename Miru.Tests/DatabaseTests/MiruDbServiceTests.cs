@@ -23,12 +23,14 @@ namespace Miru.Tests.DatabaseTests
     {
         private IMiruDbService SetupMiruDbServiceMock(Mock<IMiruDbContext> mockContext, AutoMock mock,
                                                      [Optional] IQueryable<SyncedMyAnimeListUser> userDbSetData,
+                                                     [Optional] bool currentUserAnimeListEmpty,
                                                      [Optional] IQueryable<MiruAnimeModel> miruAnimeModelDbSetData)
         {
-            return SetupMiruDbServiceMock(mockContext, mock, userDbSetData, miruAnimeModelDbSetData, out _);
+            return SetupMiruDbServiceMock(mockContext, mock, userDbSetData, currentUserAnimeListEmpty, miruAnimeModelDbSetData, out _);
         }
         private IMiruDbService SetupMiruDbServiceMock(Mock<IMiruDbContext> mockContext, AutoMock mock,
                                                      [Optional] IQueryable<SyncedMyAnimeListUser> userDbSetData, 
+                                                     [Optional] bool currentUserAnimeListEmpty, 
                                                      [Optional] IQueryable<MiruAnimeModel> miruAnimeModelDbSetData,                                                     
                                                      out IMiruDbContext miruDbContext)
         {
@@ -61,9 +63,27 @@ namespace Miru.Tests.DatabaseTests
             var mockUsernameEventHandler = new Mock<EventHandler<string>>();
 
             Func<IMiruDbContext> mockFunc = () => { return mockContext.Object; };
+            Func<IWebClientWrapper> mockWebClientFunc = () => { return Mock.Of<IWebClientWrapper>(); };
 
             var syncedMyAnimeListUser = Mock.Of<SyncedMyAnimeListUser>();
-            var cls = mock.Create<MiruDbService>(new NamedParameter("createMiruDbContext", mockFunc), new NamedParameter("syncedMyAnimeListUser", syncedMyAnimeListUser));
+
+            var webServiceMock = new Mock<IWebService>();
+            webServiceMock.Setup(x => x.CreateWebClient).Returns(mockWebClientFunc);
+            webServiceMock.Setup(x => x.TryToGetAnimeInfo(It.IsAny<long>(), It.IsAny<int>(), It.IsAny<IJikan>())).Throws(new NoInternetConnectionException());
+            var webService = webServiceMock.Object;
+
+            var currentUserAnimeListMock = new Mock<ICurrentUserAnimeListModel>();
+            if (currentUserAnimeListEmpty)
+            {
+                currentUserAnimeListMock.Setup(x => x.UserAnimeListData);
+            }
+            else
+            {
+                currentUserAnimeListMock.Setup(x => x.UserAnimeListData).Returns(new UserAnimeList() { Anime = new List<AnimeListEntry>() });
+            }
+            var currentUserAnimeList = currentUserAnimeListMock.Object;
+
+            var cls = mock.Create<MiruDbService>(new NamedParameter("currentUserAnimeListModel", currentUserAnimeList), new NamedParameter("createMiruDbContext", mockFunc), new NamedParameter("syncedMyAnimeListUser", syncedMyAnimeListUser), new NamedParameter("webService", webService));
 
             miruDbContext = mockContext.Object;
 
@@ -174,7 +194,7 @@ namespace Miru.Tests.DatabaseTests
         }
 
         [Fact]
-        public void ChangeDisplayedAnimeList_Fires_UpdateAnimeListEntriesUI_Event()
+        public void ChangeDisplayedAnimeList_ShouldFire_UpdateAnimeListEntriesUI_Event()
         {
             using (var mock = AutoMock.GetLoose())
             {
@@ -339,6 +359,35 @@ namespace Miru.Tests.DatabaseTests
 
                 // Assert
                 mockContext.Verify(x => x.SyncedMyAnimeListUsers.Add(It.Is<SyncedMyAnimeListUser>(y => y.Username == testUsername && y.SyncTime == cls.SyncDateData)), Times.Once());
+                mockContext.Verify(x => x.SaveChangesAsync(), Times.Once());
+            }
+        }
+
+        [Theory]
+        [InlineData(false, 1)]
+        [InlineData(true, 2)]
+        public void SaveDetailedAnimeListData_GivenConnectionIssues_ReturnFalse(bool expectedResult, int expectedTimesEventFired)
+        {
+            using (var mock = AutoMock.GetLoose())
+            {
+                // Arrange
+                var mockContext = new Mock<IMiruDbContext>();
+                var data = new List<MiruAnimeModel>
+                {
+                }.AsQueryable();
+                var cls = SetupMiruDbServiceMock(mockContext, mock, miruAnimeModelDbSetData: data, currentUserAnimeListEmpty: !expectedResult);
+                int eventExecutedTimes = 0;
+                cls.UpdateAppStatusUI += (x, y) => ++eventExecutedTimes;
+                var timesCalled = expectedResult ? Times.Once() : Times.Never();
+
+                // Act
+                var result = cls.SaveDetailedAnimeListData(It.IsAny<bool>()).Result;
+
+                // Assert
+                Assert.Equal(expectedTimesEventFired, eventExecutedTimes);
+                mockContext.Verify(x => x.ExecuteSqlCommand("TRUNCATE TABLE [MiruAnimeModels]"), timesCalled);
+                mockContext.Verify(x => x.MiruAnimeModels.AddRange(It.IsAny<List<MiruAnimeModel>>()), timesCalled);
+                mockContext.Verify(x => x.SaveChangesAsync(), timesCalled);
             }
         }
     }

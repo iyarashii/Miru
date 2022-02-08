@@ -192,7 +192,7 @@ namespace MiruDatabaseLogicLayer
                 UpdateAppStatusUI(MiruAppStatus.Busy, "Getting detailed user anime list data...");
 
                 // get user anime list with the detailed info
-                detailedAnimeList = await GetDetailedUserAnimeList(db, CurrentUserAnimeList.UserAnimeListData.Anime, seasonSyncOn);
+                detailedAnimeList = await GetDetailedUserAnimeList(db, CurrentUserAnimeList?.UserAnimeListData?.Anime, seasonSyncOn);
 
                 // if the user anime list is empty there were internet connection problems return false
                 if (detailedAnimeList == null)
@@ -206,7 +206,7 @@ namespace MiruDatabaseLogicLayer
                 detailedAnimeList.ParseTimeFromBroadcast(FileSystemService.Value);
 
                 // clear MiruAnimeModels table from any data
-                db.Database.ExecuteSqlCommand("TRUNCATE TABLE [MiruAnimeModels]");
+                db.ExecuteSqlCommand("TRUNCATE TABLE [MiruAnimeModels]");
 
                 // add miruAnimeModelsList to the MiruAnimeModels table
                 db.MiruAnimeModels.AddRange(detailedAnimeList);
@@ -226,6 +226,8 @@ namespace MiruDatabaseLogicLayer
         /// <returns></returns>
         public async Task<List<MiruAnimeModel>> GetDetailedUserAnimeList(IMiruDbContext db, ICollection<AnimeListEntry> currentUserAnimeListEntries, bool seasonSyncOn)
         {
+            if (currentUserAnimeListEntries == null)
+                return null;
             // get anime data from the db
             var detailedUserAnimeList = db.MiruAnimeModels.ToList();
 

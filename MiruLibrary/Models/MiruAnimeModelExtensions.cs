@@ -60,6 +60,8 @@ namespace MiruLibrary.Models
         /// <returns>List of airing animes with parsed data saved in LocalBroadcastTime properties.</returns>
         public static void ParseTimeFromBroadcast(this List<MiruAnimeModel> detailedAnimeList, IFileSystemService fileSystemService)
         {
+            if (fileSystemService == null || detailedAnimeList.Count == 0)
+                return;
             // local variables
             string dayOfTheWeek;
             string[] broadcastWords;
