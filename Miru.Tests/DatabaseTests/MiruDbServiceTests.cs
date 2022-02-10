@@ -9,6 +9,7 @@ using MyInternetConnectionLibrary;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.IO.Abstractions;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -69,21 +70,47 @@ namespace Miru.Tests.DatabaseTests
 
             var webServiceMock = new Mock<IWebService>();
             webServiceMock.Setup(x => x.CreateWebClient).Returns(mockWebClientFunc);
-            webServiceMock.Setup(x => x.TryToGetAnimeInfo(It.IsAny<long>(), It.IsAny<int>(), It.IsAny<IJikan>())).Throws(new NoInternetConnectionException());
-            var webService = webServiceMock.Object;
 
             var currentUserAnimeListMock = new Mock<ICurrentUserAnimeListModel>();
             if (currentUserAnimeListEmpty)
             {
                 currentUserAnimeListMock.Setup(x => x.UserAnimeListData);
+                webServiceMock.Setup(x => x.TryToGetAnimeInfo(It.IsAny<long>(), It.IsAny<int>(), It.IsAny<IJikan>())).Throws(new NoInternetConnectionException());
             }
             else
             {
-                currentUserAnimeListMock.Setup(x => x.UserAnimeListData).Returns(new UserAnimeList() { Anime = new List<AnimeListEntry>() });
-            }
-            var currentUserAnimeList = currentUserAnimeListMock.Object;
+                webServiceMock.Setup(x => x.TryToGetAnimeInfo(It.IsAny<long>(), It.IsAny<int>(), It.IsAny<IJikan>())).ReturnsAsync(new Anime() 
+                { Title = "10", Type = "TV", MalId = 1, Broadcast = "Sundays at 10:00 (JST)", ImageURL = "dydo",});
 
-            var cls = mock.Create<MiruDbService>(new NamedParameter("currentUserAnimeListModel", currentUserAnimeList), new NamedParameter("createMiruDbContext", mockFunc), new NamedParameter("syncedMyAnimeListUser", syncedMyAnimeListUser), new NamedParameter("webService", webService));
+                currentUserAnimeListMock.Setup(x => x.UserAnimeListData).Returns(new UserAnimeList() { Anime = new List<AnimeListEntry>()
+                { 
+                    new AnimeListEntry() { MalId = 1,  AiringStatus = AiringStatus.Airing, WatchedEpisodes = 5, TotalEpisodes = 10} 
+                } });
+            }
+
+            var fileServiceMockActual = new Mock<IFileSystemService>();
+            fileServiceMockActual.Setup(x => x.DownloadFile(It.IsAny<IWebClientWrapper>(), It.IsAny<string>(), It.IsAny<string>()));
+            var iFile = new Mock<IFile>();
+            var fileSystemMock = new Mock<IFileSystem>();
+            iFile.Setup(z => z.ReadAllText(It.IsAny<string>())).Returns(@"{
+  ""Items"": [
+    {
+                ""MALID"": 40507,
+      ""airdate"": ""13/1/2022 23:30""
+    }
+ ]
+}");
+            fileSystemMock.Setup(y => y.File).Returns(iFile.Object);
+            fileServiceMockActual.Setup(x => x.FileSystem).Returns(fileSystemMock.Object);
+            var fileServiceMock = new Lazy<IFileSystemService>(() => fileServiceMockActual.Object);
+            var currentUserAnimeList = currentUserAnimeListMock.Object;
+            var webService = webServiceMock.Object;
+            var fileSystemService = fileServiceMock;
+            var cls = mock.Create<MiruDbService>(new NamedParameter("currentUserAnimeListModel", currentUserAnimeList), 
+                                                new NamedParameter("createMiruDbContext", mockFunc), 
+                                                new NamedParameter("syncedMyAnimeListUser", syncedMyAnimeListUser), 
+                                                new NamedParameter("fileSystemService", fileSystemService), 
+                                                new NamedParameter("webService", webService));
 
             miruDbContext = mockContext.Object;
 
@@ -388,6 +415,31 @@ namespace Miru.Tests.DatabaseTests
                 mockContext.Verify(x => x.ExecuteSqlCommand("TRUNCATE TABLE [MiruAnimeModels]"), timesCalled);
                 mockContext.Verify(x => x.MiruAnimeModels.AddRange(It.IsAny<List<MiruAnimeModel>>()), timesCalled);
                 mockContext.Verify(x => x.SaveChangesAsync(), timesCalled);
+            }
+        }
+
+        [Fact]
+        public void SaveDetailedAnimeListData_ParseTimeFromBroadcast_SetsCorrectBroadcastTimes()
+        {
+            using (var mock = AutoMock.GetLoose())
+            {
+                // Arrange
+                var mockContext = new Mock<IMiruDbContext>();
+                var data = new List<MiruAnimeModel>
+                {
+                    new MiruAnimeModel {Title = "10", Type = "TV", MalId = 1, Broadcast = "Sundays at 10:00 (JST)",},
+                }.AsQueryable();
+                var cls = SetupMiruDbServiceMock(mockContext, mock, miruAnimeModelDbSetData: data, currentUserAnimeListEmpty: false);
+                var date = new DateTime(2020, 01, 26, 10, 0, 0);
+                cls.UpdateAppStatusUI += (x, y) => x.ToString();
+                var testModel = new MiruAnimeModel { Title = "10", Type = "TV", MalId = 1, Broadcast = "Sundays at 10:00 (JST)", JSTBroadcastTime = date };
+
+                // Act
+                cls.SaveDetailedAnimeListData(It.IsAny<bool>()).Wait();
+                testModel.ConvertJstBroadcastTimeToSelectedTimeZone(TimeZoneInfo.Local);
+
+                // Assert
+                mockContext.Verify(x => x.MiruAnimeModels.AddRange(It.Is<List<MiruAnimeModel>>(y => y.Select(z => z.JSTBroadcastTime == date && z.LocalBroadcastTime == testModel.LocalBroadcastTime).ToList().Any())), Times.Once());
             }
         }
     }

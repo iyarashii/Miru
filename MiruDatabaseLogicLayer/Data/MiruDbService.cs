@@ -277,7 +277,7 @@ namespace MiruDatabaseLogicLayer
                         localImagePath = animeModel.LocalImagePath;
                     }
 
-                    FileSystemService.Value.DownloadFile(client, localImagePath, animeInfo.ImageURL);
+                    FileSystemService?.Value?.DownloadFile(client, localImagePath, animeInfo.ImageURL);
                 }
 
                 if (seasonSyncOn)

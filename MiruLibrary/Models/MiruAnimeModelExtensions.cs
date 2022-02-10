@@ -72,7 +72,7 @@ namespace MiruLibrary.Models
             string[] formats = { "dd/MM/yyyy HH:mm", "d/MM/yyyy HH:mm" };
 
             // deserialize data from senpai as a backup source of anime broadcast time
-            var senpaiEntries = JsonConvert.DeserializeObject<SenpaiEntryModel>(fileSystemService.FileSystem.File.ReadAllText(Constants.SenpaiFilePath));
+            var senpaiEntries = JsonConvert.DeserializeObject<SenpaiEntryModel>(fileSystemService?.FileSystem?.File?.ReadAllText(Constants.SenpaiFilePath));
             var senpaiIDs = senpaiEntries.Items.Select(x => x.MALID).ToArray();
 
             // for each airingAnime parse time and day of the week from the broadcast string
