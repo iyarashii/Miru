@@ -223,11 +223,12 @@ namespace MiruDatabaseLogicLayer
         /// </summary>
         /// <param name="db">Context of the database that is going to be updated.</param>
         /// <param name="currentUserAnimeListEntries">Collection of AnimeListEntries that are going to receive broadcast time data.</param>
-        /// <returns></returns>
+        /// <returns>List of Anime models with all details required for further operations.</returns>
         public async Task<List<MiruAnimeModel>> GetDetailedUserAnimeList(IMiruDbContext db, ICollection<AnimeListEntry> currentUserAnimeListEntries, bool seasonSyncOn)
         {
             if (currentUserAnimeListEntries == null)
                 return null;
+
             // get anime data from the db
             var detailedUserAnimeList = db.MiruAnimeModels.ToList();
 

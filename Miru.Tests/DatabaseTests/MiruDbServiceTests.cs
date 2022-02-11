@@ -442,5 +442,22 @@ namespace Miru.Tests.DatabaseTests
                 mockContext.Verify(x => x.MiruAnimeModels.AddRange(It.Is<List<MiruAnimeModel>>(y => y.Select(z => z.JSTBroadcastTime == date && z.LocalBroadcastTime == testModel.LocalBroadcastTime).ToList().Any())), Times.Once());
             }
         }
+
+        [Fact]
+        public void GetDetailedUserAnimeList_GivenNullUserAnimeListEntries_ReturnsNull()
+        {
+            using (var mock = AutoMock.GetLoose())
+            {
+                // Arrange
+                var mockContext = new Mock<IMiruDbContext>();
+                var cls = SetupMiruDbServiceMock(mockContext, mock, miruDbContext: out IMiruDbContext db);
+
+                // Act
+                var result = cls.GetDetailedUserAnimeList(db, null, It.IsAny<bool>()).Result;
+
+                // Assert
+                Assert.Null(result);
+            }
+        }
     }
 }
