@@ -459,5 +459,39 @@ namespace Miru.Tests.DatabaseTests
                 Assert.Null(result);
             }
         }
+
+        // TODO: maybe change this to theory
+        [Fact]
+        public void GetDetailedUserAnimeList_GivenNotNullUserAnimeListEntries_ReturnsDetailedList()
+        {
+            using (var mock = AutoMock.GetLoose())
+            {
+                // Arrange
+                var mockContext = new Mock<IMiruDbContext>();
+                var date = new DateTime(2020, 01, 26, 10, 0, 0);
+                var testModel = new MiruAnimeModel { Title = "10", Type = "TV", MalId = 1, Broadcast = "Sundays at 10:00 (JST)", JSTBroadcastTime = date, 
+                    IsOnWatchingList = false, WatchedEpisodes = 0, TotalEpisodes = 20, CurrentlyAiring = false };
+                var data = new List<MiruAnimeModel>
+                {
+                    testModel,
+                }.AsQueryable();
+
+                var cls = SetupMiruDbServiceMock(mockContext, mock, miruDbContext: out IMiruDbContext db, currentUserAnimeListEmpty: false, miruAnimeModelDbSetData: data);
+
+                // Act
+                var result = cls.GetDetailedUserAnimeList(db, cls.CurrentUserAnimeList.UserAnimeListData.Anime, It.IsAny<bool>()).Result;
+                var resultEntry = result.Where(x => x == testModel).First();
+
+                // Assert
+
+                // we mock api to give us the result of 5/10 episodes currently airing and isonwatchinglist true
+                Assert.Contains(result, x => x == testModel);
+                Assert.True(resultEntry.IsOnWatchingList);
+                Assert.True(resultEntry.CurrentlyAiring);
+                Assert.Equal(5, resultEntry.WatchedEpisodes);
+                Assert.Equal(10, resultEntry.TotalEpisodes);
+                //Assert.Equal("dydo", resultEntry.LocalImagePath); -- investigate
+            }
+        }
     }
 }
