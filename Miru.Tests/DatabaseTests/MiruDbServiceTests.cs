@@ -26,13 +26,16 @@ namespace Miru.Tests.DatabaseTests
         private IMiruDbService SetupMiruDbServiceMock(Mock<IMiruDbContext> mockContext, AutoMock mock,
                                                      [Optional] IQueryable<SyncedMyAnimeListUser> userDbSetData,
                                                      [Optional] List<AnimeListEntry> currentUserAnimeEntryList,
+                                                     [Optional] List<AnimeSubEntry> currentSeasonList,
                                                      [Optional] IQueryable<MiruAnimeModel> miruAnimeModelDbSetData)
         {
-            return SetupMiruDbServiceMock(mockContext, mock, userDbSetData, currentUserAnimeEntryList, miruAnimeModelDbSetData, out _);
+            return SetupMiruDbServiceMock(mockContext, mock, userDbSetData, 
+                currentUserAnimeEntryList, currentSeasonList, miruAnimeModelDbSetData, out _);
         }
         private IMiruDbService SetupMiruDbServiceMock(Mock<IMiruDbContext> mockContext, AutoMock mock,
                                                      [Optional] IQueryable<SyncedMyAnimeListUser> userDbSetData, 
-                                                     [Optional] List<AnimeListEntry> currentUserAnimeEntryList, 
+                                                     [Optional] List<AnimeListEntry> currentUserAnimeEntryList,
+                                                     [Optional] List<AnimeSubEntry> currentSeasonList,
                                                      [Optional] IQueryable<MiruAnimeModel> miruAnimeModelDbSetData,                                                     
                                                      out IMiruDbContext miruDbContext)
         {
@@ -73,10 +76,21 @@ namespace Miru.Tests.DatabaseTests
             webServiceMock.Setup(x => x.CreateWebClient).Returns(mockWebClientFunc);
 
             var currentUserAnimeListMock = new Mock<ICurrentUserAnimeListModel>();
-            if (currentUserAnimeEntryList == null)
+            var currentSeasonListMock = new Mock<ICurrentSeasonModel>();
+            if (currentUserAnimeEntryList == null && currentSeasonList == null)
             {
                 currentUserAnimeListMock.Setup(x => x.UserAnimeListData);
                 webServiceMock.Setup(x => x.TryToGetAnimeInfo(It.IsAny<long>(), It.IsAny<int>(), It.IsAny<IJikan>())).Throws(new NoInternetConnectionException());
+            }
+            else if (currentSeasonList != null)
+            {
+                foreach (var animeEntry in currentSeasonList)
+                {
+                    webServiceMock.Setup(x => x.TryToGetAnimeInfo(animeEntry.MalId, It.IsAny<int>(), It.IsAny<IJikan>())).ReturnsAsync(new Anime()
+                    { Title = animeEntry.Title, Type = animeEntry.Type, MalId = animeEntry.MalId, Broadcast = "Sundays at 10:00 (JST)", ImageURL = "\\dydo", });
+                }
+
+                currentSeasonListMock.Setup(x => x.GetFilteredSeasonList()).Returns(currentSeasonList);
             }
             else
             {
@@ -105,9 +119,11 @@ namespace Miru.Tests.DatabaseTests
             fileServiceMockActual.Setup(x => x.FileSystem).Returns(fileSystemMock.Object);
             var fileServiceMock = new Lazy<IFileSystemService>(() => fileServiceMockActual.Object);
             var currentUserAnimeList = currentUserAnimeListMock.Object;
+            var currentSeasonModel = currentSeasonListMock.Object;
             var webService = webServiceMock.Object;
             var fileSystemService = fileServiceMock;
             var cls = mock.Create<MiruDbService>(new NamedParameter("currentUserAnimeListModel", currentUserAnimeList), 
+                                                new NamedParameter("currentSeasonModel", currentSeasonModel), 
                                                 new NamedParameter("createMiruDbContext", mockFunc), 
                                                 new NamedParameter("syncedMyAnimeListUser", syncedMyAnimeListUser), 
                                                 new NamedParameter("fileSystemService", fileSystemService), 
@@ -544,6 +560,80 @@ namespace Miru.Tests.DatabaseTests
                 Assert.True(resultNewEntry.IsOnWatchingList);
                 Assert.Equal(expectedAiringStatusOfNewEntry == AiringStatus.Airing, resultNewEntry.CurrentlyAiring);
                 Assert.Equal(typeOfNewEntry, resultNewEntry.Type);
+            }
+        }
+
+        [Fact]
+        public void GetDetailedSeasonAnimeListInfo_GivenAnimeList_ReturnsUpdatedList()
+        {
+            using (var mock = AutoMock.GetLoose())
+            {
+                // Arrange
+                var mockContext = new Mock<IMiruDbContext>();
+                var date = new DateTime(2020, 01, 26, 10, 0, 0);
+                var testModel = new MiruAnimeModel
+                {
+                    Title = "initial title",
+                    Type = "TV",
+                    MalId = 1L,
+                    Broadcast = "Sundays at 10:00 (JST)",
+                    JSTBroadcastTime = date,
+                    IsOnWatchingList = false,
+                    WatchedEpisodes = 0,
+                    TotalEpisodes = 20,
+                    CurrentlyAiring = false,
+                    ImageURL = "stays the same",
+                    URL = "same",
+                    LocalImagePath = "\\same"
+                };
+                var data = new List<MiruAnimeModel>
+                {
+                    testModel,
+                }.AsQueryable();
+
+                var seasonAnimeEntryList = new List<AnimeSubEntry>()
+                {
+                    new AnimeSubEntry() { MalId = 1, Title = "old entry", Type = "ONA", URL = "only value from seasonEntry" },
+                    new AnimeSubEntry() { MalId = 39, Title = "new season entry", Type = "TV", URL = "only value from seasonEntry" }
+                };
+
+                var animeEntryList = new List<AnimeListEntry>()
+                {
+                    
+                };
+
+                var cls = SetupMiruDbServiceMock(mockContext, mock, miruDbContext: out IMiruDbContext db, currentUserAnimeEntryList: animeEntryList, 
+                    currentSeasonList: seasonAnimeEntryList, miruAnimeModelDbSetData: data);
+
+                // Act
+                var result = cls.GetDetailedUserAnimeList(db, animeEntryList, true).Result;
+
+                var resultNewEntry = result.First(x => x != testModel);
+                var resultUpdatedEntry = result.First(x => x == testModel);
+
+                // Assert
+                Assert.True(resultUpdatedEntry.CurrentlyAiring);
+
+                // check if rest of the values for updated entry stay the same
+                Assert.False(resultUpdatedEntry.IsOnWatchingList);
+                Assert.Equal(1L, resultUpdatedEntry.MalId);
+                Assert.Equal("Sundays at 10:00 (JST)", resultUpdatedEntry.Broadcast);
+                Assert.Equal("initial title", resultUpdatedEntry.Title);
+                Assert.Equal("stays the same", resultUpdatedEntry.ImageURL);
+                Assert.Equal("\\same", resultUpdatedEntry.LocalImagePath);
+                Assert.Equal("same", resultUpdatedEntry.URL);
+                Assert.Equal("TV", resultUpdatedEntry.Type);
+
+                // check new entry
+                Assert.Equal(39, resultNewEntry.MalId);
+                Assert.Equal("Sundays at 10:00 (JST)", resultNewEntry.Broadcast); // it is set in webServiceMock
+                Assert.Equal("new season entry", resultNewEntry.Title);
+                Assert.Equal("\\dydo", resultNewEntry.ImageURL); // it is set in webServiceMock
+                Assert.Equal(Path.Combine(Constants.ImageCacheFolderPath, $"{ 39 }.jpg"), resultNewEntry.LocalImagePath);
+                Assert.Equal("only value from seasonEntry", resultNewEntry.URL);
+                Assert.False(resultNewEntry.IsOnWatchingList);
+                Assert.True(resultNewEntry.CurrentlyAiring);
+                Assert.Equal("TV", resultNewEntry.Type);
             }
         }
     }
