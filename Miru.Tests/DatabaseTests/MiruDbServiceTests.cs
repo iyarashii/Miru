@@ -27,15 +27,17 @@ namespace Miru.Tests.DatabaseTests
                                                      [Optional] IQueryable<SyncedMyAnimeListUser> userDbSetData,
                                                      [Optional] List<AnimeListEntry> currentUserAnimeEntryList,
                                                      [Optional] List<AnimeSubEntry> currentSeasonList,
+                                                     [Optional] bool fakeConnectionIssues,
                                                      [Optional] IQueryable<MiruAnimeModel> miruAnimeModelDbSetData)
         {
             return SetupMiruDbServiceMock(mockContext, mock, userDbSetData, 
-                currentUserAnimeEntryList, currentSeasonList, miruAnimeModelDbSetData, out _);
+                currentUserAnimeEntryList, currentSeasonList, fakeConnectionIssues, miruAnimeModelDbSetData, out _);
         }
         private IMiruDbService SetupMiruDbServiceMock(Mock<IMiruDbContext> mockContext, AutoMock mock,
                                                      [Optional] IQueryable<SyncedMyAnimeListUser> userDbSetData, 
                                                      [Optional] List<AnimeListEntry> currentUserAnimeEntryList,
                                                      [Optional] List<AnimeSubEntry> currentSeasonList,
+                                                     [Optional] bool fakeConnectionIssues,
                                                      [Optional] IQueryable<MiruAnimeModel> miruAnimeModelDbSetData,                                                     
                                                      out IMiruDbContext miruDbContext)
         {
@@ -101,6 +103,11 @@ namespace Miru.Tests.DatabaseTests
                 }
 
                 currentUserAnimeListMock.Setup(x => x.UserAnimeListData).Returns(new UserAnimeList() { Anime = currentUserAnimeEntryList });
+            }
+
+            if (fakeConnectionIssues)
+            {
+                webServiceMock.Setup(x => x.TryToGetAnimeInfo(39, It.IsAny<int>(), It.IsAny<IJikan>())).Throws(new NoInternetConnectionException());
             }
 
             var fileServiceMockActual = new Mock<IFileSystemService>();
@@ -636,5 +643,55 @@ namespace Miru.Tests.DatabaseTests
                 Assert.Equal("TV", resultNewEntry.Type);
             }
         }
-    }
+
+        [Fact]
+        public void GetDetailedSeasonAnimeListInfo_GivenConnectionIssuesWithGettingAnimeInfo_ReturnsNull()
+        {
+            using (var mock = AutoMock.GetLoose())
+            {
+                // Arrange
+                var mockContext = new Mock<IMiruDbContext>();
+                var date = new DateTime(2020, 01, 26, 10, 0, 0);
+                var testModel = new MiruAnimeModel
+                {
+                    Title = "initial title",
+                    Type = "TV",
+                    MalId = 1L,
+                    Broadcast = "Sundays at 10:00 (JST)",
+                    JSTBroadcastTime = date,
+                    IsOnWatchingList = false,
+                    WatchedEpisodes = 0,
+                    TotalEpisodes = 20,
+                    CurrentlyAiring = false,
+                    ImageURL = "stays the same",
+                    URL = "same",
+                    LocalImagePath = "\\same"
+                };
+                var data = new List<MiruAnimeModel>
+                {
+                    testModel,
+                }.AsQueryable();
+
+                var seasonAnimeEntryList = new List<AnimeSubEntry>()
+                {
+                    new AnimeSubEntry() { MalId = 39, Title = "new season entry", Type = "TV", URL = "only value from seasonEntry" }
+                };
+
+                var animeEntryList = new List<AnimeListEntry>()
+                {
+
+                };
+
+                var cls = SetupMiruDbServiceMock(mockContext, mock, miruDbContext: out IMiruDbContext db, currentUserAnimeEntryList: animeEntryList,
+                    currentSeasonList: seasonAnimeEntryList, miruAnimeModelDbSetData: data, fakeConnectionIssues: true);
+
+                // Act
+                var result = cls.GetDetailedUserAnimeList(db, animeEntryList, true).Result;
+
+                // Assert
+                Assert.Null(result);
+            }
+        }
+
+   }
 }
