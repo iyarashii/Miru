@@ -414,14 +414,10 @@ namespace Miru.Tests.DatabaseTests
             }
         }
 
-        public static IEnumerable<object[]> GetAnimeListEntryData() 
-        {
-            yield return new object[] { null, 1 }; 
-            yield return new object[] { new List<AnimeListEntry>(), 2 }; 
-        }
         [Theory]
-        [MemberData(nameof(GetAnimeListEntryData))]
-        public void SaveDetailedAnimeListData_GivenConnectionIssues_ReturnFalse(List<AnimeListEntry> expectedResult, int expectedTimesEventFired)
+        [InlineData(true, 1)]
+        [InlineData(false, 2)]
+        public void SaveDetailedAnimeListData_GivenConnectionIssues_ReturnFalse(bool connectionIssues, int expectedTimesEventFired)
         {
             using (var mock = AutoMock.GetLoose())
             {
@@ -430,10 +426,11 @@ namespace Miru.Tests.DatabaseTests
                 var data = new List<MiruAnimeModel>
                 {
                 }.AsQueryable();
-                var cls = SetupMiruDbServiceMock(mockContext, mock, miruAnimeModelDbSetData: data, currentUserAnimeEntryList: expectedResult);
+                var entryList = new List<AnimeListEntry>() { new AnimeListEntry() { MalId = 39, AiringStatus = AiringStatus.Airing, WatchedEpisodes = 5, TotalEpisodes = 10, Type = "TV", Title = "10", } };
+                var cls = SetupMiruDbServiceMock(mockContext, mock, miruAnimeModelDbSetData: data, currentUserAnimeEntryList: entryList, fakeConnectionIssues: connectionIssues);
                 int eventExecutedTimes = 0;
                 cls.UpdateAppStatusUI += (x, y) => ++eventExecutedTimes;
-                var timesCalled = expectedResult != null ? Times.Once() : Times.Never();
+                var timesCalled = connectionIssues ? Times.Never() : Times.Once();
 
                 // Act
                 var result = cls.SaveDetailedAnimeListData(It.IsAny<bool>()).Result;
@@ -443,6 +440,7 @@ namespace Miru.Tests.DatabaseTests
                 mockContext.Verify(x => x.ExecuteSqlCommand("TRUNCATE TABLE [MiruAnimeModels]"), timesCalled);
                 mockContext.Verify(x => x.MiruAnimeModels.AddRange(It.IsAny<List<MiruAnimeModel>>()), timesCalled);
                 mockContext.Verify(x => x.SaveChangesAsync(), timesCalled);
+                Assert.Equal(!connectionIssues, result);
             }
         }
 
@@ -474,23 +472,6 @@ namespace Miru.Tests.DatabaseTests
 
                 // Assert
                 mockContext.Verify(x => x.MiruAnimeModels.AddRange(It.Is<List<MiruAnimeModel>>(y => y.Select(z => z.JSTBroadcastTime == date && z.LocalBroadcastTime == testModel.LocalBroadcastTime).ToList().Any())), Times.Once());
-            }
-        }
-
-        [Fact]
-        public void GetDetailedUserAnimeList_GivenNullUserAnimeListEntries_ReturnsNull()
-        {
-            using (var mock = AutoMock.GetLoose())
-            {
-                // Arrange
-                var mockContext = new Mock<IMiruDbContext>();
-                var cls = SetupMiruDbServiceMock(mockContext, mock, miruDbContext: out IMiruDbContext db);
-
-                // Act
-                var result = cls.GetDetailedUserAnimeList(db, null, It.IsAny<bool>()).Result;
-
-                // Assert
-                Assert.Null(result);
             }
         }
 

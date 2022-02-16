@@ -226,9 +226,6 @@ namespace MiruDatabaseLogicLayer
         /// <returns>List of Anime models with all details required for further operations.</returns>
         public async Task<List<MiruAnimeModel>> GetDetailedUserAnimeList(IMiruDbContext db, ICollection<AnimeListEntry> currentUserAnimeListEntries, bool seasonSyncOn)
         {
-            if (currentUserAnimeListEntries == null)
-                return null;
-
             // get anime data from the db
             var detailedUserAnimeList = db.MiruAnimeModels.ToList();
 
