@@ -1,12 +1,13 @@
 # Miru
-Miru is a WPF app used to display data from the jikan MyAnimeList API.  
+Miru is a WPF app used to display data from the jikan MyAnimeList API.
+![App main view](https://i.imgur.com/dUGda9N.png)
 Idea for the app is based on [senpai](http://www.senpai.moe/) a great site that shows airing anime in a neat way.  
 It lets you display airing animes from the user's MAL watching list. Also it can display list of TV animes from the current season.
 This app displays airing animes for each day of the week in the specified timezone.  
 It uses EF6 and SQL Server's LocalDB to store the data.
 # Building
 Build the solution with Visual Studio 2019 or newer.
-# Installation guide
+# Installation guide for SQL Server LocalDB
 ### Follow these steps to install on Windows 10:
 
 1.  **Check if you have LocalDB installed on your PC:**
@@ -26,23 +27,28 @@ Build the solution with Visual Studio 2019 or newer.
     5. Click `Download` and wait for the download to complete.
     6. Run downloaded `SqlLocalDB.msi` installer.
 
-3.  **Install the app:**
-    1. Download the newest `Miru.zip` from the [releases](https://github.com/iyarashii/Miru/releases).
-    2. Extract the archive and run `setup.exe`.
-    3. After installation is complete wait for the app window to show.
+3.  **Run the app using Miru.exe.**
+    
 # Usage
-After starting the application (or after app installation), you should see an app window that looks like image below.
+After starting the application, you should see an app window that looks like image below.
 Theme and time zone should be the same as your system's by the default.
-![Image of the app window after 1st run](https://i.imgur.com/U4mGtym.png)
-Enter your username in the textbox and click `Sync` button or hit `Enter` key.
-Wait for synchronization, after it you should see something like this:
-![Image of synchronized app window](https://i.imgur.com/LzlEwHo.png)
-You can click on the anime image to go to the MAL site associated with that anime and you can click on the
+![Image of the app window after 1st run](https://i.imgur.com/wCwJ8Z9.png)
+Enter any MAL username in the `MAL Username` textbox (you can use `CTRL`+`M` shortcut to instantly focus this field and start typing) and click `Sync` button or hit `Enter` key.
+Wait for synchronization, after it you should see shows from the MAL list of the typed in user if their list is `public` for example:
+![Image of synchronized app window](https://i.imgur.com/qkolVWj.png)
+You can click on the username hyperlink (`iyarashii777's` on the image above) to go to the user's animelist page on MAL.
+
+`Get Shows From The Current Season` button works like `Sync` button but it also gets all the animes from the current season even if the user is not watching them.  
+`List Type`, `Broadcast Type` and `Time Zone` drop-downs can be used to customize anime list display.  
+`Clear Cache` button clears data from database and local cache (local cache is located on the desktop in `MiruCache` folder).  
+`Update Senpai Data` gets data from the senpai.moe site and stores it as JSON file in the local cache.  
+`Filter Titles` lets you filter animes by name. It takes effect immediately as you are typing, you can use `CTRL`+`F` shortcut to instantly focus this field and start typing.  
+You can set size of the images using `Art Size` field, size you selected will be saved if you close the app and loaded on the next app launch.  
+To reset to default you can delete your value and focus other element.  
+You can click on the anime image to go to the MAL page associated with that anime and you can click on the
 anime name next to the image to copy it to your clipboard.  
-If anime list does not fit on the screen, you can scroll it up and down using a mouse scroll on each day anime list.   
-You can use the `Time zone` drop-down to change the time zone in which the anime list is displayed.
+If anime list does not fit on the screen, you can scroll it up and down using a mouse scroll on each day anime list.
 
-
-`Displayed anime list` drop-down is used to change displayed list between the current season list, user's watching anime list and the user's watching airing anime list.  
-You can get a list of all TV & ONA animes in the current season by clicking `Get current season list` button:
+IMPORTANT currently season anime is not working due to API issues.
+You can get a list of all TV & ONA animes in the current season by clicking `Get Shows From The Current Season` button:
 ![Image of the current season](https://i.imgur.com/IiwY3Ju.png)
