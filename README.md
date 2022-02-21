@@ -49,6 +49,5 @@ You can click on the anime image to go to the MAL page associated with that anim
 anime name next to the image to copy it to your clipboard.  
 If anime list does not fit on the screen, you can scroll it up and down using a mouse scroll on each day anime list.
 
-IMPORTANT currently season anime is not working due to API issues.
 You can get a list of all TV & ONA animes in the current season by clicking `Get Shows From The Current Season` button:
-![Image of the current season](https://i.imgur.com/IiwY3Ju.png)
+![Image of the current season](https://i.imgur.com/OJFWLDo.png)
