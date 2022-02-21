@@ -5,8 +5,6 @@ VisualStudioVersion = 16.0.29709.97
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Miru", "Miru\Miru.csproj", "{F2BD9029-7A34-4552-85B8-94C82FA0F4FA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Miru.Tests", "Miru.Tests\Miru.Tests.csproj", "{F1CF2949-984B-4BC0-A97E-F7DBC5454802}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyInternetConnectionLibrary", "MyInternetConnectionLibrary\MyInternetConnectionLibrary.csproj", "{7B98DA78-4B15-42D0-8E04-F947C1AA8BDA}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiruLibrary", "MiruLibrary\MiruLibrary.csproj", "{C56FA863-80E1-4CB1-B5C3-9806D40A05FB}"
@@ -15,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiruLibrary", "MiruLibrary\
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiruDatabaseLogicLayer", "MiruDatabaseLogicLayer\MiruDatabaseLogicLayer.csproj", "{5827CAB4-B769-4296-88F6-78358B52AAC0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Miru.Tests", "Miru.Tests\Miru.Tests.csproj", "{A4299171-F33E-4790-975C-574F6917E874}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -32,14 +32,6 @@ Global
 		{F2BD9029-7A34-4552-85B8-94C82FA0F4FA}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F2BD9029-7A34-4552-85B8-94C82FA0F4FA}.Release|x64.ActiveCfg = Release|x64
 		{F2BD9029-7A34-4552-85B8-94C82FA0F4FA}.Release|x64.Build.0 = Release|x64
-		{F1CF2949-984B-4BC0-A97E-F7DBC5454802}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F1CF2949-984B-4BC0-A97E-F7DBC5454802}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F1CF2949-984B-4BC0-A97E-F7DBC5454802}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{F1CF2949-984B-4BC0-A97E-F7DBC5454802}.Debug|x64.Build.0 = Debug|Any CPU
-		{F1CF2949-984B-4BC0-A97E-F7DBC5454802}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F1CF2949-984B-4BC0-A97E-F7DBC5454802}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F1CF2949-984B-4BC0-A97E-F7DBC5454802}.Release|x64.ActiveCfg = Release|Any CPU
-		{F1CF2949-984B-4BC0-A97E-F7DBC5454802}.Release|x64.Build.0 = Release|Any CPU
 		{7B98DA78-4B15-42D0-8E04-F947C1AA8BDA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{7B98DA78-4B15-42D0-8E04-F947C1AA8BDA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7B98DA78-4B15-42D0-8E04-F947C1AA8BDA}.Debug|x64.ActiveCfg = Debug|x64
@@ -64,6 +56,14 @@ Global
 		{5827CAB4-B769-4296-88F6-78358B52AAC0}.Release|Any CPU.Build.0 = Release|Any CPU
 		{5827CAB4-B769-4296-88F6-78358B52AAC0}.Release|x64.ActiveCfg = Release|Any CPU
 		{5827CAB4-B769-4296-88F6-78358B52AAC0}.Release|x64.Build.0 = Release|Any CPU
+		{A4299171-F33E-4790-975C-574F6917E874}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A4299171-F33E-4790-975C-574F6917E874}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A4299171-F33E-4790-975C-574F6917E874}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{A4299171-F33E-4790-975C-574F6917E874}.Debug|x64.Build.0 = Debug|Any CPU
+		{A4299171-F33E-4790-975C-574F6917E874}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A4299171-F33E-4790-975C-574F6917E874}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A4299171-F33E-4790-975C-574F6917E874}.Release|x64.ActiveCfg = Release|Any CPU
+		{A4299171-F33E-4790-975C-574F6917E874}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
