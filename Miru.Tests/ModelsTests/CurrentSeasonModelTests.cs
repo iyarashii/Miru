@@ -30,5 +30,22 @@ namespace Miru.Tests.ModelsTests
                 Assert.False(result);
             }
         }
+
+        [Fact]
+        public async void GetCurrentSeasonList_OnSeasonDataGet_ReturnsTrue()
+        {
+            using (var mock = AutoMock.GetLoose())
+            {
+                // Arrange
+                mock.Mock<IJikan>().Setup(x => x.GetSeason()).ReturnsAsync(new Season());
+                var sut = mock.Create<CurrentSeasonModel>();
+
+                // Act
+                var result = await sut.GetCurrentSeasonList(It.IsAny<int>());
+
+                // Assert
+                Assert.True(result);
+            }
+        }
     }
 }
