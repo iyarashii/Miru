@@ -1,9 +1,11 @@
 ﻿using Autofac.Extras.Moq;
 using JikanDotNet;
+using JikanDotNet.Exceptions;
 using MiruLibrary.Models;
 using Moq;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
@@ -45,6 +47,36 @@ namespace Miru.Tests.ModelsTests
 
                 // Assert
                 Assert.True(result);
+            }
+        }
+
+        [Fact]
+        public async void GetCurrentSeasonList_OnJikanRequestException_TriplesExecutionDelay()
+        {
+            using (var mock = AutoMock.GetLoose())
+            {
+                // Arrange
+                mock.Mock<IJikan>().SetupSequence(x => x.GetSeason())
+                    .ThrowsAsync(new JikanRequestException())
+                    .ReturnsAsync(new Season())
+                    .ReturnsAsync(new Season());
+
+                var sut = mock.Create<CurrentSeasonModel>();
+                int testDelayInMs = 50;
+                var timerForTripleDelay = new Stopwatch();
+                var timerForSingleDelay = new Stopwatch();
+
+                // Act
+                timerForTripleDelay.Start();
+                await sut.GetCurrentSeasonList(testDelayInMs);
+                timerForTripleDelay.Stop();
+
+                timerForSingleDelay.Start();
+                await sut.GetCurrentSeasonList(testDelayInMs);
+                timerForSingleDelay.Stop();
+
+                // Assert
+                Assert.True(timerForTripleDelay.ElapsedMilliseconds > timerForSingleDelay.ElapsedMilliseconds * 3);
             }
         }
     }
