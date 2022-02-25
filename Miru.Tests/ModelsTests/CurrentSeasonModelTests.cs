@@ -1,4 +1,5 @@
-﻿using Autofac.Extras.Moq;
+﻿using Autofac;
+using Autofac.Extras.Moq;
 using JikanDotNet;
 using JikanDotNet.Exceptions;
 using MiruLibrary.Models;
@@ -77,6 +78,41 @@ namespace Miru.Tests.ModelsTests
 
                 // Assert
                 Assert.True(timerForTripleDelay.ElapsedMilliseconds > timerForSingleDelay.ElapsedMilliseconds * 3);
+            }
+        }
+
+        [Fact]
+        public void GetFilteredSeasonList_ReturnsSeasonListWithoutAnimeForKids()
+        {
+            using (var mock = AutoMock.GetLoose())
+            {
+                // Arrange
+                var testSeasonData = new Season
+                {
+                    SeasonEntries = new List<AnimeSubEntry>()
+                    {
+                        new AnimeSubEntry() {Kids = true},
+                        new AnimeSubEntry() {Kids = false},
+                        new AnimeSubEntry() {Kids = null},
+                        new AnimeSubEntry() {Kids = true},
+                        new AnimeSubEntry() {Kids = false},
+                        new AnimeSubEntry() {Kids = null},
+                    }
+                };
+
+                mock.Mock<IJikan>().Setup(x => x.GetSeason()).ReturnsAsync(testSeasonData);
+                var sut = mock.Create<CurrentSeasonModel>();
+                sut.GetCurrentSeasonList(0).Wait();
+
+                var expectedResult = testSeasonData.SeasonEntries.ToList();
+                expectedResult.RemoveAll(x => x.Kids == true);
+
+                // Act
+                var result = sut.GetFilteredSeasonList();
+
+                // Assert
+                Assert.True(result.Count == 4);
+                Assert.Equal(expectedResult, result);
             }
         }
     }
