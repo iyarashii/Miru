@@ -63,7 +63,7 @@ namespace Miru.Tests.ModelsTests
                     .ReturnsAsync(new Season());
 
                 var sut = mock.Create<CurrentSeasonModel>();
-                int testDelayInMs = 50;
+                int testDelayInMs = 100;
                 var timerForTripleDelay = new Stopwatch();
                 var timerForSingleDelay = new Stopwatch();
 
