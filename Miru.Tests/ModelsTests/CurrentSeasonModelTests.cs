@@ -10,6 +10,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -63,9 +64,12 @@ namespace Miru.Tests.ModelsTests
                     .ReturnsAsync(new Season());
 
                 var sut = mock.Create<CurrentSeasonModel>();
-                int testDelayInMs = 100;
+                int testDelayInMs = 50;
                 var timerForTripleDelay = new Stopwatch();
                 var timerForSingleDelay = new Stopwatch();
+                Process.GetCurrentProcess().ProcessorAffinity = new IntPtr(2); // Uses the second Core or Processor for the Test
+                Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.High; // Prevents "Normal" processes from interrupting Threads
+                Thread.CurrentThread.Priority = ThreadPriority.Highest; // Prevents "Normal" Threads from interrupting this thread
 
                 // Act
                 timerForTripleDelay.Start();
