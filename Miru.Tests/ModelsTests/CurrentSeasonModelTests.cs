@@ -85,8 +85,11 @@ namespace Miru.Tests.ModelsTests
             }
         }
 
-        [Fact]
-        public void GetFilteredSeasonList_ReturnsSeasonListWithoutAnimeForKids()
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        [InlineData(null)]
+        public void GetFilteredSeasonList_ReturnsSeasonListWithoutAnimeForKids(bool? forKids)
         {
             using (var mock = AutoMock.GetLoose())
             {
@@ -95,10 +98,10 @@ namespace Miru.Tests.ModelsTests
                 {
                     SeasonEntries = new List<AnimeSubEntry>()
                     {
-                        new AnimeSubEntry() {Kids = true},
+                        new AnimeSubEntry() {Kids = forKids},
                         new AnimeSubEntry() {Kids = false},
                         new AnimeSubEntry() {Kids = null},
-                        new AnimeSubEntry() {Kids = true},
+                        new AnimeSubEntry() {Kids = forKids},
                         new AnimeSubEntry() {Kids = false},
                         new AnimeSubEntry() {Kids = null},
                     }
@@ -115,7 +118,7 @@ namespace Miru.Tests.ModelsTests
                 var result = sut.GetFilteredSeasonList();
 
                 // Assert
-                Assert.True(result.Count == 4);
+                Assert.True(result.Count == expectedResult.Count);
                 Assert.Equal(expectedResult, result);
             }
         }
