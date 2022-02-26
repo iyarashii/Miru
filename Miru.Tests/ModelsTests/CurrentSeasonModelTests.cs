@@ -53,7 +53,7 @@ namespace Miru.Tests.ModelsTests
         }
 
         [Fact]
-        public async void GetCurrentSeasonList_OnJikanRequestException_TriplesExecutionDelay()
+        public void GetCurrentSeasonList_OnJikanRequestException_TriplesExecutionDelay()
         {
             using (var mock = AutoMock.GetLoose())
             {
@@ -73,11 +73,11 @@ namespace Miru.Tests.ModelsTests
 
                 // Act
                 timerForTripleDelay.Start();
-                await sut.GetCurrentSeasonList(testDelayInMs);
+                sut.GetCurrentSeasonList(testDelayInMs).Wait();
                 timerForTripleDelay.Stop();
 
                 timerForSingleDelay.Start();
-                await sut.GetCurrentSeasonList(testDelayInMs);
+                sut.GetCurrentSeasonList(testDelayInMs).Wait();
                 timerForSingleDelay.Stop();
 
                 // Assert
