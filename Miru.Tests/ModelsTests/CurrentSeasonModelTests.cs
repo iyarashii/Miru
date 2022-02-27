@@ -81,7 +81,7 @@ namespace Miru.Tests.ModelsTests
                 timerForSingleDelay.Stop();
 
                 // Assert
-                Assert.True(timerForTripleDelay.ElapsedMilliseconds > timerForSingleDelay.ElapsedMilliseconds * 3);
+                Assert.True(timerForTripleDelay.ElapsedMilliseconds >= timerForSingleDelay.ElapsedMilliseconds * 3);
             }
         }
 
