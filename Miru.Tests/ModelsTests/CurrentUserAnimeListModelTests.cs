@@ -38,5 +38,26 @@ namespace Miru.Tests.ModelsTests
                 Assert.Equal(expectedErrorMessage, errorMessage);
             }
         }
+
+        [Fact]
+        public async void GetCurrentUserAnimeList_OnJikanRequestException_ReturnsFalseAndExpectedErrorMessage()
+        {
+            using (var mock = AutoMock.GetLoose())
+            {
+                // Arrange
+                mock.Mock<IJikan>()
+                    .Setup(x => x.GetUserAnimeList(It.IsAny<string>(), UserAnimeListExtension.Watching))
+                    .ThrowsAsync(new JikanRequestException());
+                var expectedErrorMessage = $"Could not find the user \"{ It.IsAny<string>() }\". Please make sure you typed in the name correctly.";
+                var sut = mock.Create<CurrentUserAnimeListModel>();
+
+                // Act
+                var (result, errorMessage) = await sut.GetCurrentUserAnimeList(It.IsAny<string>());
+
+                // Assert
+                Assert.False(result);
+                Assert.Equal(expectedErrorMessage, errorMessage);
+            }
+        }
     }
 }
