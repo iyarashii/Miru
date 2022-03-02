@@ -59,5 +59,26 @@ namespace Miru.Tests.ModelsTests
                 Assert.Equal(expectedErrorMessage, errorMessage);
             }
         }
+
+        [Fact]
+        public async void GetCurrentUserAnimeList_OnNoExceptions_ReturnsTrueAndEmptyErrorMessage()
+        {
+            using (var mock = AutoMock.GetLoose())
+            {
+                // Arrange
+                mock.Mock<IJikan>()
+                    .Setup(x => x.GetUserAnimeList(It.IsAny<string>(), UserAnimeListExtension.Watching))
+                    .ReturnsAsync(new UserAnimeList());
+                var expectedErrorMessage = string.Empty;
+                var sut = mock.Create<CurrentUserAnimeListModel>();
+
+                // Act
+                var (result, errorMessage) = await sut.GetCurrentUserAnimeList(It.IsAny<string>());
+
+                // Assert
+                Assert.True(result);
+                Assert.Equal(expectedErrorMessage, errorMessage);
+            }
+        }
     }
 }
