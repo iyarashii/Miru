@@ -46,24 +46,6 @@ namespace Miru.Tests.ModelsTests
             }
         }
 
-        //public static string TestFilePath = Path.Combine(Constants.ImageCacheFolderPath, "test.jpg");
-
-        //public static IEnumerable<object[]> GetLocalImageSourceTestData()
-        //{
-        //    var source = new BitmapImage();
-        //    source.BeginInit();
-        //    source.UriSource = new Uri(TestFilePath, UriKind.RelativeOrAbsolute);
-        //    source.CacheOption = BitmapCacheOption.OnLoad;
-        //    source.EndInit();
-        //    yield return new object[] { TestFilePath, source};
-        //}
-
-        //if (!File.Exists(TestFilePath))
-        //{
-        //    var testImage = new Bitmap(1, 1);
-        //    testImage.Save(TestFilePath, ImageFormat.Jpeg);
-        //}
-
         [Fact]
         public void LocalImageSource_GivenIncorrectLocalImagePath_ReturnsNull()
         {
@@ -77,6 +59,35 @@ namespace Miru.Tests.ModelsTests
 
                 // Assert
                 Assert.Null(sut.LocalImageSource);
+            }
+        }
+
+        [Fact]
+        public void LocalImageSource_GivenValidLocalImagePath_ReturnsBitmapImage()
+        {
+            string testFilePath = Path.Combine(Constants.ImageCacheFolderPath, "test.jpg");
+            if (!File.Exists(testFilePath))
+            {
+                var testImage = new Bitmap(1, 1);
+                testImage.Save(testFilePath, ImageFormat.Jpeg);
+            }
+
+            using (var mock = AutoMock.GetLoose())
+            {
+                // Arrange
+                var sut = mock.Create<MiruAnimeModel>();
+                var source = new BitmapImage();
+                source.BeginInit();
+                source.UriSource = new Uri(testFilePath, UriKind.RelativeOrAbsolute);
+                source.CacheOption = BitmapCacheOption.OnLoad;
+                source.EndInit();
+
+                // Act
+                sut.LocalImagePath = testFilePath;
+
+                // Assert
+                Assert.Equal(source.UriSource, sut.LocalImageSource.UriSource);
+                Assert.Equal(source.CacheOption, sut.LocalImageSource.CacheOption);
             }
         }
     }
