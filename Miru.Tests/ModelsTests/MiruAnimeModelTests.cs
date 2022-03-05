@@ -76,18 +76,18 @@ namespace Miru.Tests.ModelsTests
             {
                 // Arrange
                 var sut = mock.Create<MiruAnimeModel>();
-                var source = new BitmapImage();
-                source.BeginInit();
-                source.UriSource = new Uri(testFilePath, UriKind.RelativeOrAbsolute);
-                source.CacheOption = BitmapCacheOption.OnLoad;
-                source.EndInit();
+                var expectedResult = new BitmapImage();
+                expectedResult.BeginInit();
+                expectedResult.UriSource = new Uri(testFilePath, UriKind.RelativeOrAbsolute);
+                expectedResult.CacheOption = BitmapCacheOption.OnLoad;
+                expectedResult.EndInit();
 
                 // Act
                 sut.LocalImagePath = testFilePath;
 
                 // Assert
-                Assert.Equal(source.UriSource, sut.LocalImageSource.UriSource);
-                Assert.Equal(source.CacheOption, sut.LocalImageSource.CacheOption);
+                Assert.Equal(expectedResult.UriSource, sut.LocalImageSource.UriSource);
+                Assert.Equal(expectedResult.CacheOption, sut.LocalImageSource.CacheOption);
             }
         }
     }
