@@ -90,5 +90,21 @@ namespace Miru.Tests.ModelsTests
                 Assert.Equal(expectedResult.CacheOption, sut.LocalImageSource.CacheOption);
             }
         }
+
+        [Fact]
+        public void TotalEpisodes_SetToZero_ReturnsNull()
+        {
+            using (var mock = AutoMock.GetLoose())
+            {
+                // Arrange
+                var sut = mock.Create<MiruAnimeModel>();
+
+                // Act
+                sut.TotalEpisodes = 0;
+
+                // Assert
+                Assert.Null(sut.TotalEpisodes);
+            }
+        }
     }
 }
