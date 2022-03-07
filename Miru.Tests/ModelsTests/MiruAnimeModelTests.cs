@@ -106,5 +106,24 @@ namespace Miru.Tests.ModelsTests
                 Assert.Null(sut.TotalEpisodes);
             }
         }
+
+        [Theory]
+        [InlineData(1)]
+        [InlineData(1337)]
+        [InlineData(-777)]
+        public void TotalEpisodes_SetToNonZeroNumber_ReturnsThatNumber(int? nonZeroNumber)
+        {
+            using (var mock = AutoMock.GetLoose())
+            {
+                // Arrange
+                var sut = mock.Create<MiruAnimeModel>();
+
+                // Act
+                sut.TotalEpisodes = nonZeroNumber;
+
+                // Assert
+                Assert.Equal(nonZeroNumber, sut.TotalEpisodes);
+            }
+        }
     }
 }
