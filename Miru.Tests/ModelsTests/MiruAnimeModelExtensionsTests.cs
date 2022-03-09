@@ -29,5 +29,40 @@ namespace Miru.Tests.ModelsTests
                 Assert.Equal(animeListExpected, animeList);
             }
         }
+
+        [Theory]
+        [InlineData("dydo", 2)]
+        [InlineData("d", 4)]
+        [InlineData("pog", 3)]
+        [InlineData("a", 2)]
+        [InlineData("X", 0)]
+        public void FilterByTitle_GivenNotEmptyString_FiltersAnimeList(string titleToFilterBy, int expectedCountOfTitlesMatching)
+        {
+            using (var mock = AutoMock.GetLoose())
+            {
+                // Arrange
+                var animeList = new List<MiruAnimeModel> 
+                { 
+                    new MiruAnimeModel() { Title = "DYDO" }, 
+                    new MiruAnimeModel() { Title = "dydo" },
+                    new MiruAnimeModel() { Title = "dd" },
+                    new MiruAnimeModel() { Title = "dank" },
+                    new MiruAnimeModel() { Title = "poggers" },
+                    new MiruAnimeModel() { Title = "pog" },
+                    new MiruAnimeModel() { Title = "pogchamp" },
+                    
+                };
+                var animeListExpected = animeList
+                    .Where(x => x.Title.IndexOf(titleToFilterBy, StringComparison.OrdinalIgnoreCase) >= 0)
+                    .ToList();
+
+                // Act
+                MiruAnimeModelExtensions.FilterByTitle(animeList, titleToFilterBy);
+
+                // Assert
+                Assert.Equal(expectedCountOfTitlesMatching, animeList.Count);
+                Assert.Equal(animeListExpected, animeList);
+            }
+        }
     }
 }
