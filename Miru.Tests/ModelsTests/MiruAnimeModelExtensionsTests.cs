@@ -64,5 +64,38 @@ namespace Miru.Tests.ModelsTests
                 Assert.Equal(animeListExpected, animeList);
             }
         }
+
+        [Theory]
+        [InlineData(AnimeType.Both, 3)]
+        [InlineData(AnimeType.ONA, 2)]
+        [InlineData(AnimeType.TV, 1)]
+        public void FilterByBroadcastType_GivenBroadcastType_ShouldFilterAnimeList(AnimeType broadcastType, int expectedListCount)
+        {
+            using (var mock = AutoMock.GetLoose())
+            {
+                // Arrange
+                var animeList = new List<MiruAnimeModel>
+                {
+                    new MiruAnimeModel() { Type = "TV"},
+                    new MiruAnimeModel() { Type = "ONA"},
+                    new MiruAnimeModel() { Type = "ONA"},
+                    new MiruAnimeModel() { Type = string.Empty},
+                };
+
+                var animeListExpected = animeList
+                    .Where(x => 
+                    broadcastType == AnimeType.Both ? 
+                    x.Type == "TV" || x.Type == "ONA" :
+                    x.Type == broadcastType.ToString())
+                    .ToList();
+
+                // Act
+                animeList.FilterByBroadcastType(broadcastType);
+
+                // Assert
+                Assert.Equal(expectedListCount, animeList.Count);
+                Assert.Equal(animeListExpected, animeList);
+            }
+        }
     }
 }
