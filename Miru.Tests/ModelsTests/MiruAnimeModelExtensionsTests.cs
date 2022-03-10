@@ -22,7 +22,7 @@ namespace Miru.Tests.ModelsTests
                 var animeListExpected = animeList.ToList(); // create new list instance instead of copying reference
 
                 // Act
-                MiruAnimeModelExtensions.FilterByTitle(animeList, string.Empty);
+                animeList.FilterByTitle(string.Empty);
 
                 // Assert
                 Assert.NotSame(animeListExpected, animeList);
@@ -57,7 +57,7 @@ namespace Miru.Tests.ModelsTests
                     .ToList();
 
                 // Act
-                MiruAnimeModelExtensions.FilterByTitle(animeList, titleToFilterBy);
+                animeList.FilterByTitle(titleToFilterBy);
 
                 // Assert
                 Assert.Equal(expectedCountOfTitlesMatching, animeList.Count);
