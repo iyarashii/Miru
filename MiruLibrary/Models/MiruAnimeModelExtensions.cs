@@ -36,7 +36,8 @@ namespace MiruLibrary.Models
             }
         }
 
-        public static void ConvertJstBroadcastTimeToSelectedTimeZone(this MiruAnimeModel anime, TimeZoneInfo selectedTimeZone)
+        public static void ConvertJstBroadcastTimeToSelectedTimeZone(this MiruAnimeModel anime, 
+            TimeZoneInfo selectedTimeZone)
         {
             if (!anime.JSTBroadcastTime.HasValue)
             {
@@ -44,7 +45,8 @@ namespace MiruLibrary.Models
                 return;
             }
             // covert JST to UTC
-            var broadcastTimeInSelectedTimeZone = TimeZoneInfo.ConvertTimeToUtc(anime.JSTBroadcastTime.Value, TimeZoneInfo.FindSystemTimeZoneById("Tokyo Standard Time"));
+            var broadcastTimeInSelectedTimeZone = TimeZoneInfo.ConvertTimeToUtc(anime.JSTBroadcastTime.Value, 
+                TimeZoneInfo.FindSystemTimeZoneById("Tokyo Standard Time"));
 
             // get the UTC offset for the selected time zone
             var utcOffset = selectedTimeZone.GetUtcOffset(DateTime.UtcNow);
