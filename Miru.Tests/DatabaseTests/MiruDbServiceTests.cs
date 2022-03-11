@@ -277,7 +277,7 @@ namespace Miru.Tests.DatabaseTests
         }
 
         [Theory]
-        [MemberData(nameof(GetTimeZoneData))]
+        [MemberData(nameof(GetTimeZoneData))] // TODO: maybe remove this test as test in miru anime model extensions is better
         public void GetFilteredUserAnimeList_ConvertJstBroadcastTimeToSelectedTimeZone_WorksCorrectly(TimeZoneInfo timeZone, TimeSpan utcOffset)
         {
             using (var mock = AutoMock.GetLoose())
@@ -305,7 +305,7 @@ namespace Miru.Tests.DatabaseTests
         [InlineData("tako", 3)]
         [InlineData("gura", 4)]
         [InlineData("YMD", 0)]
-        public void GetFilteredUserAnimeList_FilterByTitle_WorksCorrectly(string title, int expectedFilteredListSize)
+        public void GetFilteredUserAnimeList_FilterByTitle_WorksCorrectly(string title, int expectedFilteredListSize) // TODO: maybe remove this test as test in miru anime model extensions is better
         {
             using (var mock = AutoMock.GetLoose())
             {
@@ -336,7 +336,7 @@ namespace Miru.Tests.DatabaseTests
         [InlineData(AnimeType.TV, 3)]
         [InlineData(AnimeType.ONA, 4)]
         [InlineData(AnimeType.Both, 7)]
-        public void GetFilteredUserAnimeList_FilterByBroadcastType_WorksCorrectly(AnimeType broadcastType, int expectedFilteredListSize)
+        public void GetFilteredUserAnimeList_FilterByBroadcastType_WorksCorrectly(AnimeType broadcastType, int expectedFilteredListSize) // TODO: maybe remove this test as test in miru anime model extensions is better
         {
             using (var mock = AutoMock.GetLoose())
             {
