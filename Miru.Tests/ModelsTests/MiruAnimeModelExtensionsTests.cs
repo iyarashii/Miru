@@ -7,6 +7,7 @@ using Xunit;
 using MiruLibrary.Models;
 using MiruLibrary;
 using Autofac.Extras.Moq;
+using Moq;
 
 namespace Miru.Tests.ModelsTests
 {
@@ -96,6 +97,57 @@ namespace Miru.Tests.ModelsTests
                 Assert.Equal(expectedListCount, animeList.Count);
                 Assert.Equal(animeListExpected, animeList);
             }
+        }
+
+        public static IEnumerable<object[]> GetTimeZoneData() // Tokyo Standard Time = UTC+9
+        {
+            yield return new object[] { TimeZoneInfo.FindSystemTimeZoneById("Central European Standard Time"),
+                TimeZoneInfo.FindSystemTimeZoneById("Central European Standard Time").BaseUtcOffset }; // UTC+1
+
+            yield return new object[] { TimeZoneInfo.FindSystemTimeZoneById("Eastern Standard Time"),
+                TimeZoneInfo.FindSystemTimeZoneById("Eastern Standard Time").BaseUtcOffset }; // UTC-5
+
+            yield return new object[] { TimeZoneInfo.FindSystemTimeZoneById("AUS Eastern Standard Time"),
+                TimeZoneInfo.FindSystemTimeZoneById("AUS Eastern Standard Time").GetUtcOffset(DateTime.UtcNow) }; // UTC+10
+
+            yield return new object[] { TimeZoneInfo.FindSystemTimeZoneById("Alaskan Standard Time"),
+                TimeZoneInfo.FindSystemTimeZoneById("Alaskan Standard Time").BaseUtcOffset }; // UTC-9
+        }
+
+        [Theory]
+        [MemberData(nameof(GetTimeZoneData))]
+        public void ConvertJstBroadcastTimeToSelectedTimeZone_GivenAnimeModelsWithJstBroadcastTimePresent_WorksCorrectly(TimeZoneInfo timeZone, TimeSpan utcOffset)
+        {
+            using (var mock = AutoMock.GetLoose())
+            {
+                // Arrange
+                var data = new List<MiruAnimeModel>
+                {
+                    new MiruAnimeModel { JSTBroadcastTime = new DateTime(2022, 2, 1, 10, 0, 0)},
+                    new MiruAnimeModel { JSTBroadcastTime = new DateTime(2022, 2, 1, 20, 0, 0)},
+                    new MiruAnimeModel { JSTBroadcastTime = new DateTime(2022, 2, 1, 15, 0, 0)},
+                    new MiruAnimeModel { JSTBroadcastTime = new DateTime(2022, 2, 1, 0, 0, 0)},
+                };
+
+                // Act
+                data.ForEach(x => x.ConvertJstBroadcastTimeToSelectedTimeZone(timeZone));
+
+                // Assert
+                Assert.All(data, x => Assert.Equal(x.JSTBroadcastTime.Value.AddHours(-9.0).Add(utcOffset).Hour, x.LocalBroadcastTime.Value.Hour));
+            }
+        }
+
+        [Fact]
+        public void ConvertJstBroadcastTimeToSelectedTimeZone_GivenEmptyJstBroadcastTime_SetLocalBroadcastTimeForToday()        
+        {
+            // Arrange
+            var sut = new MiruAnimeModel { JSTBroadcastTime = null };
+
+            // Act
+            sut.ConvertJstBroadcastTimeToSelectedTimeZone(It.IsAny<TimeZoneInfo>());
+
+            // Assert
+            Assert.True(sut.LocalBroadcastTime == DateTime.Today);
         }
     }
 }
