@@ -83,19 +83,15 @@ namespace Miru.Tests.ModelsTests
                     new MiruAnimeModel() { Type = string.Empty},
                 };
 
-                var animeListExpected = animeList
-                    .Where(x => 
-                    broadcastType == AnimeType.Both ? 
-                    x.Type == "TV" || x.Type == "ONA" :
-                    x.Type == broadcastType.ToString())
-                    .ToList();
+                var converter = new EnumDescriptionTypeConverter(typeof(AnimeType));
+                var animeBroadcastTypeDescription = converter.ConvertToString(broadcastType);
 
                 // Act
                 animeList.FilterByBroadcastType(broadcastType);
 
                 // Assert
-                Assert.Equal(expectedListCount, animeList.Count);
-                Assert.Equal(animeListExpected, animeList);
+                Assert.All(animeList, x => Assert.Contains(x.Type, animeBroadcastTypeDescription));
+                Assert.Equal(expectedListCount, animeList.Count());
             }
         }
 
