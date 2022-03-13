@@ -268,10 +268,15 @@ namespace Miru.Tests.DatabaseTests
         }
 
         [Theory]
-        [InlineData("tako", 3)]
-        [InlineData("gura", 4)]
-        [InlineData("YMD", 0)]
-        public void GetFilteredUserAnimeList_FilterByTitle_WorksCorrectly(string title, int expectedFilteredListSize) // TODO: maybe remove this test as test in miru anime model extensions is better
+        [InlineData("tako", 2, AnimeType.TV)]
+        [InlineData("tako", 3, AnimeType.Both)]
+        [InlineData("tako", 1, AnimeType.ONA)]
+        [InlineData("gura", 4, AnimeType.Both)]
+        [InlineData("gura", 2, AnimeType.TV)]
+        [InlineData("gura", 2, AnimeType.ONA)]
+        [InlineData("YMD", 0, AnimeType.Both)]
+        public void GetFilteredUserAnimeList_AllFilters_WorkCorrectly(string title, 
+            int expectedFilteredListSize, AnimeType broadcastType)
         {
             using (var mock = AutoMock.GetLoose())
             {
@@ -279,22 +284,26 @@ namespace Miru.Tests.DatabaseTests
                 var mockContext = new Mock<IMiruDbContext>();
                 var data = new List<MiruAnimeModel>
                 {
-                    new MiruAnimeModel {Title = "tako", Type = "TV"},
-                    new MiruAnimeModel {Title = "tako", Type = "TV"},
-                    new MiruAnimeModel {Title = "takodachi", Type = "TV"},
-                    new MiruAnimeModel {Title = "gura", Type = "TV"},
-                    new MiruAnimeModel {Title = "gura", Type = "TV"},
-                    new MiruAnimeModel {Title = "guraxxx", Type = "TV"},
-                    new MiruAnimeModel {Title = "gura123", Type = "TV"},
+                    new MiruAnimeModel { JSTBroadcastTime = null, Title = "tako", Type = "TV"},
+                    new MiruAnimeModel { JSTBroadcastTime = null, Title = "takodachi", Type = "TV"},
+                    new MiruAnimeModel { JSTBroadcastTime = null, Title = "gura", Type = "ONA"},
+                    new MiruAnimeModel { JSTBroadcastTime = null, Title = "gura", Type = "TV"},
+                    new MiruAnimeModel { JSTBroadcastTime = null, Title = "guraxxx", Type = "TV"},
+                    new MiruAnimeModel { JSTBroadcastTime = null, Title = "gura123", Type = "ONA"},
+                    new MiruAnimeModel { JSTBroadcastTime = null, Title = "tako", Type = "ONA"},
                 }.AsQueryable();
                 var cls = SetupMiruDbServiceMock(mockContext, mock, miruAnimeModelDbSetData: data, miruDbContext: out IMiruDbContext db);
+                var converter = new EnumDescriptionTypeConverter(typeof(AnimeType));
+                var animeBroadcastTypeDescription = converter.ConvertToString(broadcastType);
 
                 // Act
-                var result = cls.GetFilteredUserAnimeList(db, AnimeType.TV, title, It.IsAny<TimeZoneInfo>());
+                var result = cls.GetFilteredUserAnimeList(db, broadcastType, title, It.IsAny<TimeZoneInfo>());
 
                 // Assert
                 Assert.All(result, x => Assert.Contains(title, x.Title));
-                Assert.Equal(expectedFilteredListSize, result.Count());
+                Assert.All(result, x => Assert.Contains(x.Type, animeBroadcastTypeDescription));
+                Assert.All(result, x => Assert.Equal(DateTime.Today, x.LocalBroadcastTime));
+                Assert.Equal(expectedFilteredListSize, result.Count);
             }
         }
 
