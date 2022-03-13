@@ -267,40 +267,6 @@ namespace Miru.Tests.DatabaseTests
             }
         }
 
-
-        public static IEnumerable<object[]> GetTimeZoneData() // Tokyo Standard Time = UTC+9
-        {
-            yield return new object[] { TimeZoneInfo.FindSystemTimeZoneById("Central European Standard Time"), TimeZoneInfo.FindSystemTimeZoneById("Central European Standard Time").BaseUtcOffset }; // UTC+1
-            yield return new object[] { TimeZoneInfo.FindSystemTimeZoneById("Eastern Standard Time"), TimeZoneInfo.FindSystemTimeZoneById("Eastern Standard Time").BaseUtcOffset }; // UTC-5
-            yield return new object[] { TimeZoneInfo.FindSystemTimeZoneById("AUS Eastern Standard Time"), TimeZoneInfo.FindSystemTimeZoneById("AUS Eastern Standard Time").GetUtcOffset(DateTime.UtcNow) }; // UTC+10
-            yield return new object[] { TimeZoneInfo.FindSystemTimeZoneById("Alaskan Standard Time"), TimeZoneInfo.FindSystemTimeZoneById("Alaskan Standard Time").BaseUtcOffset }; // UTC-9
-        }
-
-        [Theory]
-        [MemberData(nameof(GetTimeZoneData))] // TODO: maybe remove this test as test in miru anime model extensions is better
-        public void GetFilteredUserAnimeList_ConvertJstBroadcastTimeToSelectedTimeZone_WorksCorrectly(TimeZoneInfo timeZone, TimeSpan utcOffset)
-        {
-            using (var mock = AutoMock.GetLoose())
-            {
-                // Arrange
-                var mockContext = new Mock<IMiruDbContext>();
-                var data = new List<MiruAnimeModel>
-                {
-                    new MiruAnimeModel {Title = "10", Type = "TV",  JSTBroadcastTime = new DateTime(2022, 2, 1, 10, 0, 0)},
-                    new MiruAnimeModel {Title = "20", Type = "TV",  JSTBroadcastTime = new DateTime(2022, 2, 1, 20, 0, 0)},
-                    new MiruAnimeModel {Title = "15", Type = "TV",  JSTBroadcastTime = new DateTime(2022, 2, 1, 15, 0, 0)},
-                    new MiruAnimeModel {Title = "0", Type = "TV",  JSTBroadcastTime = new DateTime(2022, 2, 1, 0, 0, 0)},
-                }.AsQueryable();
-                var cls = SetupMiruDbServiceMock(mockContext, mock, miruAnimeModelDbSetData: data, miruDbContext: out IMiruDbContext db);
-
-                // Act
-                var result = cls.GetFilteredUserAnimeList(db, It.IsAny<AnimeType>(), It.IsAny<string>(), timeZone);
-
-                // Assert
-                Assert.All(result, x => Assert.Equal(x.JSTBroadcastTime.Value.AddHours(-9.0).Add(utcOffset).Hour, x.LocalBroadcastTime.Value.Hour));
-            }
-        }
-
         [Theory]
         [InlineData("tako", 3)]
         [InlineData("gura", 4)]
@@ -331,9 +297,6 @@ namespace Miru.Tests.DatabaseTests
                 Assert.Equal(expectedFilteredListSize, result.Count());
             }
         }
-
-        
-
 
         public static IEnumerable<object[]> TruncateCalledTimesData => new List<object[]>
         {
