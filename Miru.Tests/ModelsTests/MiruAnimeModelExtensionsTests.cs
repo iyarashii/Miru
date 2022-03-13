@@ -63,6 +63,7 @@ namespace Miru.Tests.ModelsTests
                 // Assert
                 Assert.Equal(expectedCountOfTitlesMatching, animeList.Count);
                 Assert.Equal(animeListExpected, animeList);
+                Assert.All(animeList, x => Assert.Contains(titleToFilterBy, x.Title, StringComparison.OrdinalIgnoreCase));
             }
         }
 
