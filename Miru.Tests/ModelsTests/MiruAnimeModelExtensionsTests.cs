@@ -98,16 +98,16 @@ namespace Miru.Tests.ModelsTests
         public static IEnumerable<object[]> GetTimeZoneData() // Tokyo Standard Time = UTC+9
         {
             yield return new object[] { TimeZoneInfo.FindSystemTimeZoneById("Central European Standard Time"),
-                TimeZoneInfo.FindSystemTimeZoneById("Central European Standard Time").BaseUtcOffset }; // UTC+1
+                TimeZoneInfo.FindSystemTimeZoneById("Central European Standard Time").GetUtcOffset(DateTime.UtcNow) }; // UTC+1
 
             yield return new object[] { TimeZoneInfo.FindSystemTimeZoneById("Eastern Standard Time"),
-                TimeZoneInfo.FindSystemTimeZoneById("Eastern Standard Time").BaseUtcOffset }; // UTC-5
+                TimeZoneInfo.FindSystemTimeZoneById("Eastern Standard Time").GetUtcOffset(DateTime.UtcNow) }; // UTC-5/-4 depending on daylight saving time
 
             yield return new object[] { TimeZoneInfo.FindSystemTimeZoneById("AUS Eastern Standard Time"),
                 TimeZoneInfo.FindSystemTimeZoneById("AUS Eastern Standard Time").GetUtcOffset(DateTime.UtcNow) }; // UTC+10
 
             yield return new object[] { TimeZoneInfo.FindSystemTimeZoneById("Alaskan Standard Time"),
-                TimeZoneInfo.FindSystemTimeZoneById("Alaskan Standard Time").BaseUtcOffset }; // UTC-9
+                TimeZoneInfo.FindSystemTimeZoneById("Alaskan Standard Time").GetUtcOffset(DateTime.UtcNow) }; // UTC-9
         }
 
         [Theory]
