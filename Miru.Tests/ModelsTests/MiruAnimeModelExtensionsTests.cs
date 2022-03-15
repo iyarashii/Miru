@@ -118,23 +118,20 @@ namespace Miru.Tests.ModelsTests
         [MemberData(nameof(GetTimeZoneData))]
         public void ConvertJstBroadcastTimeToSelectedTimeZone_GivenAnimeModelsWithJstBroadcastTimePresent_WorksCorrectly(TimeZoneInfo timeZone, TimeSpan utcOffset)
         {
-            using (var mock = AutoMock.GetLoose())
+            // Arrange
+            var data = new List<MiruAnimeModel>
             {
-                // Arrange
-                var data = new List<MiruAnimeModel>
-                {
-                    new MiruAnimeModel { JSTBroadcastTime = new DateTime(2022, 2, 1, 10, 0, 0)},
-                    new MiruAnimeModel { JSTBroadcastTime = new DateTime(2022, 2, 1, 20, 0, 0)},
-                    new MiruAnimeModel { JSTBroadcastTime = new DateTime(2022, 2, 1, 15, 0, 0)},
-                    new MiruAnimeModel { JSTBroadcastTime = new DateTime(2022, 2, 1, 0, 0, 0)},
-                };
+                new MiruAnimeModel { JSTBroadcastTime = new DateTime(2022, 2, 1, 10, 0, 0)},
+                new MiruAnimeModel { JSTBroadcastTime = new DateTime(2022, 2, 1, 20, 0, 0)},
+                new MiruAnimeModel { JSTBroadcastTime = new DateTime(2022, 2, 1, 15, 0, 0)},
+                new MiruAnimeModel { JSTBroadcastTime = new DateTime(2022, 2, 1, 0, 0, 0)},
+            };
 
-                // Act
-                data.ForEach(x => x.ConvertJstBroadcastTimeToSelectedTimeZone(timeZone));
+            // Act
+            data.ForEach(x => x.ConvertJstBroadcastTimeToSelectedTimeZone(timeZone));
 
-                // Assert
-                Assert.All(data, x => Assert.Equal(x.JSTBroadcastTime.Value.AddHours(-9.0).Add(utcOffset).Hour, x.LocalBroadcastTime.Value.Hour));
-            }
+            // Assert
+            Assert.All(data, x => Assert.Equal(x.JSTBroadcastTime.Value.AddHours(-9.0).Add(utcOffset).Hour, x.LocalBroadcastTime.Value.Hour));
         }
 
         [Fact]
