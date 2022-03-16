@@ -147,6 +147,14 @@ namespace Miru.Tests.ModelsTests
             Assert.True(sut.LocalBroadcastTime == DateTime.Today);
         }
 
+        const string TITLE = "takodachis adventure";
+        const int MAL_ID = 1337;
+        const string IMAGE_URL = "KEKW";
+        const string TYPE = "TV";
+        const int TOTAL_EPISODES = 777;
+        const string URL = "🐙";
+        const int WATCHED_EPISODES = 39;
+
         [Theory]
         [InlineData(AiringStatus.Airing, "not null")]
         [InlineData(AiringStatus.Completed, null)]
@@ -154,28 +162,21 @@ namespace Miru.Tests.ModelsTests
         {
             // Arrange
             var sut = new MiruAnimeModel();
-            const string title = "takodachis adventure";
-            const int malId = 1337;
-            const string imageUrl = "KEKW";
-            const string type = "TV";
             DateTime airedFromDate = new DateTime(2022, 3, 14);
             var animeInfo = new Anime()
             {
-                MalId = malId,
+                MalId = MAL_ID,
                 Broadcast = broadcast,
-                Title = title,
-                ImageURL = imageUrl,
-                Type = type,
+                Title = TITLE,
+                ImageURL = IMAGE_URL,
+                Type = TYPE,
                 Aired = new TimePeriod() { From = airedFromDate }
             };
-            const int totalEpisodes = 777;
-            const string url = "🐙";
-            const int watchedEpisodes = 39;
             var animeListEntry = new AnimeListEntry()
             {
-                TotalEpisodes = totalEpisodes,
-                URL = url,
-                WatchedEpisodes = watchedEpisodes,
+                TotalEpisodes = TOTAL_EPISODES,
+                URL = URL,
+                WatchedEpisodes = WATCHED_EPISODES,
                 AiringStatus = airingStatus
             };
 
@@ -183,16 +184,53 @@ namespace Miru.Tests.ModelsTests
             sut.SetAiringAnimeModelData(animeInfo, animeListEntry);
 
             // Assert
-            Assert.Equal(malId, sut.MalId);
-            Assert.Equal(title, sut.Title);
-            Assert.Equal(imageUrl, sut.ImageURL);
-            Assert.Equal(totalEpisodes, sut.TotalEpisodes);
-            Assert.Equal(url, sut.URL);
-            Assert.Equal(watchedEpisodes, sut.WatchedEpisodes);
-            Assert.Equal(type, sut.Type);
+            Assert.Equal(MAL_ID, sut.MalId);
+            Assert.Equal(TITLE, sut.Title);
+            Assert.Equal(IMAGE_URL, sut.ImageURL);
+            Assert.Equal(TOTAL_EPISODES, sut.TotalEpisodes);
+            Assert.Equal(URL, sut.URL);
+            Assert.Equal(WATCHED_EPISODES, sut.WatchedEpisodes);
+            Assert.Equal(TYPE, sut.Type);
             Assert.True(sut.IsOnWatchingList);
-            Assert.Equal(Path.Combine(Constants.ImageCacheFolderPath, $"{ malId }.jpg"), sut.LocalImagePath);
+            Assert.Equal(Path.Combine(Constants.ImageCacheFolderPath, $"{ MAL_ID }.jpg"), sut.LocalImagePath);
             Assert.Equal(airingStatus == AiringStatus.Airing, sut.CurrentlyAiring);
+            Assert.Equal(broadcast ?? airedFromDate.ToString(), sut.Broadcast);
+        }
+
+        [Theory]
+        [InlineData("not null")]
+        [InlineData(null)]
+        public void SetSeasonalAnimeModelData_ValidInput_SetsDataCorrectly(string broadcast)
+        {
+            // Arrange
+            var sut = new MiruAnimeModel();
+            DateTime airedFromDate = new DateTime(2022, 3, 14);
+            var animeInfo = new Anime()
+            {
+                MalId = MAL_ID,
+                Broadcast = broadcast,
+                Title = TITLE,
+                ImageURL = IMAGE_URL,
+                Type = TYPE,
+                Aired = new TimePeriod() { From = airedFromDate }
+            };
+            var animeSubEntry = new AnimeSubEntry()
+            {
+                URL = URL,
+            };
+
+            // Act
+            sut.SetSeasonalAnimeModelData(animeInfo, animeSubEntry);
+
+            // Assert
+            Assert.Equal(MAL_ID, sut.MalId);
+            Assert.Equal(TITLE, sut.Title);
+            Assert.Equal(IMAGE_URL, sut.ImageURL);
+            Assert.Equal(URL, sut.URL);
+            Assert.Equal(TYPE, sut.Type);
+            Assert.False(sut.IsOnWatchingList);
+            Assert.Equal(Path.Combine(Constants.ImageCacheFolderPath, $"{ MAL_ID }.jpg"), sut.LocalImagePath);
+            Assert.True(sut.CurrentlyAiring);
             Assert.Equal(broadcast ?? airedFromDate.ToString(), sut.Broadcast);
         }
     }
