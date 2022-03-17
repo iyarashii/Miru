@@ -62,16 +62,14 @@ namespace MiruLibrary.Models
         /// <returns>List of airing animes with parsed data saved in LocalBroadcastTime properties.</returns>
         public static void ParseTimeFromBroadcast(this List<MiruAnimeModel> detailedAnimeList, IFileSystemService fileSystemService)
         {
-            if (fileSystemService == null || detailedAnimeList.Count == 0)
-                return;
             // local variables
             string dayOfTheWeek;
             string[] broadcastWords;
             DateTime broadcastTime = default;
             DateTime time;
 
-            var jp = CultureInfo.GetCultureInfo("ja-JP");
-            string[] formats = { "dd/MM/yyyy HH:mm", "d/MM/yyyy HH:mm" };
+            var jpCultureInfo = CultureInfo.GetCultureInfo("ja-JP");
+            string[] formats = { "dd/MM/yyyy HH:mm", "d/MM/yyyy HH:mm", "dd/M/yyyy HH:mm", "d/M/yyyy HH:mm" };
 
             // deserialize data from senpai as a backup source of anime broadcast time
             var senpaiEntries = JsonConvert.DeserializeObject<SenpaiEntryModel>(fileSystemService?.FileSystem?.File?.ReadAllText(Constants.SenpaiFilePath));
@@ -85,7 +83,7 @@ namespace MiruLibrary.Models
                 {
                     airingAnime.IsOnSenpai = true;
                     var airDateAndTime = senpaiEntries.Items.First(x => x.MALID == airingAnime.MalId).airdate;
-                    parsed = DateTime.TryParseExact(airDateAndTime, formats, jp, DateTimeStyles.None, out DateTime parsedSenpaiBroadcast);
+                    parsed = DateTime.TryParseExact(airDateAndTime, formats, jpCultureInfo, DateTimeStyles.None, out DateTime parsedSenpaiBroadcast);
                     if (parsed)
                     {
                         airingAnime.Broadcast = airDateAndTime;
@@ -97,7 +95,7 @@ namespace MiruLibrary.Models
                     airingAnime.IsOnSenpai = false;
                 }
 
-                if (!parsed && DateTime.TryParseExact(airingAnime.Broadcast, formats, jp, DateTimeStyles.None, out DateTime parsedBroadcast))
+                if (!parsed && DateTime.TryParseExact(airingAnime.Broadcast, formats, jpCultureInfo, DateTimeStyles.None, out DateTime parsedBroadcast))
                 {
                     broadcastTime = parsedBroadcast;
                 }
