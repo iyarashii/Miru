@@ -11,6 +11,8 @@ using Moq;
 using JikanDotNet;
 using System.IO;
 using AnimeType = MiruLibrary.AnimeType;
+using Newtonsoft.Json;
+using System.Globalization;
 
 namespace Miru.Tests.ModelsTests
 {
@@ -232,6 +234,45 @@ namespace Miru.Tests.ModelsTests
             Assert.Equal(Path.Combine(Constants.ImageCacheFolderPath, $"{ MAL_ID }.jpg"), sut.LocalImagePath);
             Assert.True(sut.CurrentlyAiring);
             Assert.Equal(broadcast ?? airedFromDate.ToString(), sut.Broadcast);
+        }
+
+        [Fact]
+        public void ParseTimeFromBroadcast_AnimeIsInSenpaiEntriesAndAirdateParseIsSuccessful_SetsCorrectBroadcastTimes()
+        {
+            using (var mock = AutoMock.GetLoose())
+            {
+                // Arrange
+                var senpaiEntry = @"{
+                                    ""Items"": [
+                                                {
+                                                    ""MALID"": 40507,
+                                                    ""airdate"": ""13/1/2022 23:30""
+                                                }
+                                               ]
+                                    }";
+                var jpCultureInfo = CultureInfo.GetCultureInfo("ja-JP");
+                string[] formats = { "dd/MM/yyyy HH:mm", "d/MM/yyyy HH:mm", "dd/M/yyyy HH:mm", "d/M/yyyy HH:mm" };
+                var deserializedSenpaiEntry = JsonConvert.DeserializeObject<SenpaiEntryModel>(senpaiEntry);
+                mock.Mock<IFileSystemService>().Setup(x => x.FileSystem.File.ReadAllText(It.IsAny<string>())).Returns(senpaiEntry);
+
+                var mockFileSystemService = mock.Create<IFileSystemService>();
+                var sut = new List<MiruAnimeModel>
+                {
+                    new MiruAnimeModel {Title = "10", Type = "TV", MalId = 40507, Broadcast = "",},
+                };
+
+                // Act
+                sut.ParseTimeFromBroadcast(mockFileSystemService);
+                var parsed = DateTime.TryParseExact(deserializedSenpaiEntry.Items.First().airdate, formats, jpCultureInfo, DateTimeStyles.None, out DateTime parsedSenpaiBroadcast);
+                var compareLocalBroadcastAnime = new MiruAnimeModel() { JSTBroadcastTime = parsedSenpaiBroadcast };
+                compareLocalBroadcastAnime.ConvertJstBroadcastTimeToSelectedTimeZone(TimeZoneInfo.Local);
+
+                // Assert
+                Assert.True(sut.First().IsOnSenpai);
+                Assert.Equal(deserializedSenpaiEntry.Items.First().airdate, sut.First().Broadcast);
+                Assert.Equal(parsedSenpaiBroadcast, sut.First().JSTBroadcastTime);
+                Assert.Equal(compareLocalBroadcastAnime.LocalBroadcastTime, sut.First().LocalBroadcastTime);
+            }
         }
     }
 }
