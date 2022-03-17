@@ -411,7 +411,11 @@ namespace Miru.Tests.DatabaseTests
                 testModel.ConvertJstBroadcastTimeToSelectedTimeZone(TimeZoneInfo.Local);
 
                 // Assert
-                mockContext.Verify(x => x.MiruAnimeModels.AddRange(It.Is<List<MiruAnimeModel>>(y => y.Select(z => z.JSTBroadcastTime == date && z.LocalBroadcastTime == testModel.LocalBroadcastTime).ToList().Any())), Times.Once());
+                mockContext.Verify(x => x.MiruAnimeModels
+                .AddRange(It.Is<List<MiruAnimeModel>>(
+                    y => y.Select(z => z.JSTBroadcastTime == date 
+                    && z.LocalBroadcastTime == testModel.LocalBroadcastTime)
+                    .ToList().Any())), Times.Once());
             }
         }
 
