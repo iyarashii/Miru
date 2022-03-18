@@ -274,5 +274,43 @@ namespace Miru.Tests.ModelsTests
                 Assert.Equal(compareLocalBroadcastAnime.LocalBroadcastTime, sut.First().LocalBroadcastTime);
             }
         }
+
+        [Fact]
+        public void ParseTimeFromBroadcast_AnimeIsNotInSenpaiEntriesAndAirdateParseIsSuccessful_SetsCorrectBroadcastTimes()
+        {
+            using (var mock = AutoMock.GetLoose())
+            {
+                // Arrange
+                var senpaiEntry = @"{
+                                    ""Items"": [
+                                                {
+                                                    ""MALID"": 40507,
+                                                    ""airdate"": ""13/1/2022 23:30""
+                                                }
+                                               ]
+                                    }";
+                var jpCultureInfo = CultureInfo.GetCultureInfo("ja-JP");
+                string[] formats = { "dd/MM/yyyy HH:mm", "d/MM/yyyy HH:mm", "dd/M/yyyy HH:mm", "d/M/yyyy HH:mm" };
+                mock.Mock<IFileSystemService>().Setup(x => x.FileSystem.File.ReadAllText(It.IsAny<string>())).Returns(senpaiEntry);
+
+                var mockFileSystemService = mock.Create<IFileSystemService>();
+                var sut = new List<MiruAnimeModel>
+                {
+                    new MiruAnimeModel {Title = "10", Type = "TV", MalId = 1, Broadcast = "21/10/2022 23:30",},
+                };
+
+                // Act
+                sut.ParseTimeFromBroadcast(mockFileSystemService);
+                var parsed = DateTime.TryParseExact("21/10/2022 23:30", formats, jpCultureInfo, DateTimeStyles.None, out DateTime parsedBroadcast);
+                var compareLocalBroadcastAnime = new MiruAnimeModel() { JSTBroadcastTime = parsedBroadcast };
+                compareLocalBroadcastAnime.ConvertJstBroadcastTimeToSelectedTimeZone(TimeZoneInfo.Local);
+
+                // Assert
+                Assert.False(sut.First().IsOnSenpai);
+                Assert.Equal("21/10/2022 23:30", sut.First().Broadcast);
+                Assert.Equal(parsedBroadcast, sut.First().JSTBroadcastTime);
+                Assert.Equal(compareLocalBroadcastAnime.LocalBroadcastTime, sut.First().LocalBroadcastTime);
+            }
+        }
     }
 }
