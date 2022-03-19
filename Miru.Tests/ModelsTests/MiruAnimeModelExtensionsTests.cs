@@ -312,5 +312,44 @@ namespace Miru.Tests.ModelsTests
                 Assert.Equal(compareLocalBroadcastAnime.LocalBroadcastTime, sut.First().LocalBroadcastTime);
             }
         }
+
+        [Fact]
+        public void ParseTimeFromBroadcast_AnimeIsInSenpaiEntriesAndAirdateParseFailsOnce_SetsCorrectBroadcastTimes()
+        {
+            using (var mock = AutoMock.GetLoose())
+            {
+                // Arrange
+                var senpaiEntry = @"{
+                                    ""Items"": [
+                                                {
+                                                    ""MALID"": 40507,
+                                                    ""airdate"": ""1337/1/2022 23:30""
+                                                }
+                                               ]
+                                    }";
+                var jpCultureInfo = CultureInfo.GetCultureInfo("ja-JP");
+                string[] formats = { "dd/MM/yyyy HH:mm", "d/MM/yyyy HH:mm", "dd/M/yyyy HH:mm", "d/M/yyyy HH:mm" };
+                var deserializedSenpaiEntry = JsonConvert.DeserializeObject<SenpaiEntryModel>(senpaiEntry);
+                mock.Mock<IFileSystemService>().Setup(x => x.FileSystem.File.ReadAllText(It.IsAny<string>())).Returns(senpaiEntry);
+                string airingAnimeBroadcastInCorrectFormat = "09/04/2000 18:00";
+                var mockFileSystemService = mock.Create<IFileSystemService>();
+                var sut = new List<MiruAnimeModel>
+                {
+                    new MiruAnimeModel {Title = "10", Type = "TV", MalId = 40507, Broadcast = airingAnimeBroadcastInCorrectFormat,},
+                };
+
+                // Act
+                sut.ParseTimeFromBroadcast(mockFileSystemService);
+                var parsed = DateTime.TryParseExact(airingAnimeBroadcastInCorrectFormat, formats, jpCultureInfo, DateTimeStyles.None, out DateTime parsedSenpaiBroadcast);
+                var expectedLocalBroadcastAnime = new MiruAnimeModel() { JSTBroadcastTime = parsedSenpaiBroadcast };
+                expectedLocalBroadcastAnime.ConvertJstBroadcastTimeToSelectedTimeZone(TimeZoneInfo.Local);
+
+                // Assert
+                Assert.True(sut.First().IsOnSenpai);
+                Assert.Equal(airingAnimeBroadcastInCorrectFormat, sut.First().Broadcast);
+                Assert.Equal(parsedSenpaiBroadcast, sut.First().JSTBroadcastTime);
+                Assert.Equal(expectedLocalBroadcastAnime.LocalBroadcastTime, sut.First().LocalBroadcastTime);
+            }
+        }
     }
 }
