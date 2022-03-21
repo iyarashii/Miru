@@ -73,7 +73,7 @@ namespace MiruLibrary.Models
 
             // deserialize data from senpai as a backup source of anime broadcast time
             var senpaiEntries = JsonConvert.DeserializeObject<SenpaiEntryModel>(fileSystemService?.FileSystem?.File?.ReadAllText(Constants.SenpaiFilePath));
-            var senpaiIDs = senpaiEntries.Items.Select(x => x.MALID).ToArray();
+            var senpaiIDs = senpaiEntries.Items.Select(x => x.MalId).ToArray();
 
             // for each airingAnime parse time and day of the week from the broadcast string
             foreach (var airingAnime in detailedAnimeList)
@@ -82,7 +82,7 @@ namespace MiruLibrary.Models
                 if (senpaiIDs.Contains(airingAnime.MalId))
                 {
                     airingAnime.IsOnSenpai = true;
-                    var airDateAndTime = senpaiEntries.Items.First(x => x.MALID == airingAnime.MalId).airdate;
+                    var airDateAndTime = senpaiEntries.Items.First(x => x.MalId == airingAnime.MalId).Airdate;
                     parsed = DateTime.TryParseExact(airDateAndTime, formats, jpCultureInfo, DateTimeStyles.None, out DateTime parsedSenpaiBroadcast);
                     if (parsed)
                     {

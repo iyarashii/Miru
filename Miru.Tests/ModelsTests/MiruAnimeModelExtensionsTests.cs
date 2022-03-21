@@ -263,13 +263,13 @@ namespace Miru.Tests.ModelsTests
 
                 // Act
                 sut.ParseTimeFromBroadcast(mockFileSystemService);
-                var parsed = DateTime.TryParseExact(deserializedSenpaiEntry.Items.First().airdate, formats, jpCultureInfo, DateTimeStyles.None, out DateTime parsedSenpaiBroadcast);
+                var parsed = DateTime.TryParseExact(deserializedSenpaiEntry.Items.First().Airdate, formats, jpCultureInfo, DateTimeStyles.None, out DateTime parsedSenpaiBroadcast);
                 var compareLocalBroadcastAnime = new MiruAnimeModel() { JSTBroadcastTime = parsedSenpaiBroadcast };
                 compareLocalBroadcastAnime.ConvertJstBroadcastTimeToSelectedTimeZone(TimeZoneInfo.Local);
 
                 // Assert
                 Assert.True(sut.First().IsOnSenpai);
-                Assert.Equal(deserializedSenpaiEntry.Items.First().airdate, sut.First().Broadcast);
+                Assert.Equal(deserializedSenpaiEntry.Items.First().Airdate, sut.First().Broadcast);
                 Assert.Equal(parsedSenpaiBroadcast, sut.First().JSTBroadcastTime);
                 Assert.Equal(compareLocalBroadcastAnime.LocalBroadcastTime, sut.First().LocalBroadcastTime);
             }

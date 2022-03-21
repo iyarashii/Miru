@@ -9,8 +9,8 @@ namespace MiruLibrary.Models
 
         public class Item
         {
-            public long MALID { get; set; }
-            public string airdate { get; set; }
+            public long MalId { get; set; }
+            public string Airdate { get; set; }
         }
     }
 }
