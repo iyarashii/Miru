@@ -3,6 +3,7 @@ using Autofac.Extras.Moq;
 using JikanDotNet;
 using JikanDotNet.Exceptions;
 using MiruLibrary.Models;
+using MiruLibrary.Services;
 using Moq;
 using System;
 using System.Collections.Generic;
@@ -60,28 +61,17 @@ namespace Miru.Tests.ModelsTests
                 // Arrange
                 mock.Mock<IJikan>().SetupSequence(x => x.GetSeason())
                     .ThrowsAsync(new JikanRequestException())
-                    .ReturnsAsync(new Season())
                     .ReturnsAsync(new Season());
+                mock.Mock<ITimerService>().Setup(x => x.DelayTask(It.IsAny<int>())).Returns(Task.CompletedTask);
 
                 var sut = mock.Create<CurrentSeasonModel>();
-                int testDelayInMs = 50;
-                var timerForTripleDelay = new Stopwatch();
-                var timerForSingleDelay = new Stopwatch();
-                Process.GetCurrentProcess().ProcessorAffinity = new IntPtr(2); // Uses the second Core or Processor for the Test
-                Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.High; // Prevents "Normal" processes from interrupting Threads
-                Thread.CurrentThread.Priority = ThreadPriority.Highest; // Prevents "Normal" Threads from interrupting this thread
+                int testDelayInMs = 1;
 
                 // Act
-                timerForTripleDelay.Start();
                 sut.GetCurrentSeasonList(testDelayInMs).Wait();
-                timerForTripleDelay.Stop();
-
-                timerForSingleDelay.Start();
-                sut.GetCurrentSeasonList(testDelayInMs).Wait();
-                timerForSingleDelay.Stop();
 
                 // Assert
-                Assert.True(timerForTripleDelay.ElapsedMilliseconds >= timerForSingleDelay.ElapsedMilliseconds * 3);
+                mock.Mock<ITimerService>().Verify(x => x.DelayTask(testDelayInMs), Times.Exactly(3));
             }
         }
 

@@ -1,4 +1,5 @@
 ﻿using JikanDotNet;
+using MiruLibrary.Services;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -7,12 +8,14 @@ namespace MiruLibrary.Models
 {
     public class CurrentSeasonModel : ICurrentSeasonModel
     {
-        public CurrentSeasonModel(IJikan jikanWrapper)
+        public CurrentSeasonModel(IJikan jikanWrapper, ITimerService timerService)
         {
             JikanWrapper = jikanWrapper;
+            TimerService = timerService;
         }
 
         private IJikan JikanWrapper { get; }
+        private ITimerService TimerService { get; }
 
         // stores data model of the current anime season
         public Season SeasonData { get; private set; }
@@ -36,11 +39,11 @@ namespace MiruLibrary.Models
                 }
                 catch (JikanDotNet.Exceptions.JikanRequestException)
                 {
-                    await Task.Delay(requestRetryDelayInMs);
+                    await TimerService.DelayTask(requestRetryDelayInMs);
                 }
                 finally
                 {
-                    await Task.Delay(requestRetryDelayInMs);
+                    await TimerService.DelayTask(requestRetryDelayInMs);
                 }
             }
             return true;

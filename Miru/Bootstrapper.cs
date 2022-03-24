@@ -10,6 +10,7 @@ using MiruLibrary.Settings;
 using MiruLibrary;
 using System.IO.Abstractions;
 using MyInternetConnectionLibrary;
+using MiruLibrary.Services;
 
 namespace Miru
 {
@@ -51,6 +52,7 @@ namespace Miru
             builder.RegisterType<WebClientWrapper>().As<IWebClientWrapper>();
             builder.RegisterType<WebService>().As<IWebService>();
             builder.RegisterType<MiruAnimeModel>();
+            builder.RegisterType<TimerService>().As<ITimerService>();
             // path to the config file is passed here
             builder.RegisterModule(new SettingsModule(Constants.SettingsPath));
         }
