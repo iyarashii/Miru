@@ -1,21 +1,11 @@
-﻿using Autofac;
-using Autofac.Extras.Moq;
-using JikanDotNet;
-using JikanDotNet.Exceptions;
+﻿using Autofac.Extras.Moq;
 using MiruLibrary;
 using MiruLibrary.Models;
-using Moq;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
-using System.Linq;
-using System.Net.Http;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 using Xunit;
 
