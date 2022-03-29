@@ -85,5 +85,39 @@ namespace Miru.Tests.ModelsTests
                 mock.Mock<IDirectoryInfo>().Verify(x => x.Create(), Times.Exactly(timesCreateIsCalled));
             }
         }
+
+        [Theory]
+        [InlineData(1, true)]
+        [InlineData(0, false)]
+        public void UpdateSenpaiData_GivenSenpaiDataPresent_DeleteCurrentData(int timesSenpaiDataDeleteCalled, bool senpaiDataPresent)
+        {
+            using (var autoMock = AutoMock.GetLoose())
+            {
+                // Arrange
+                autoMock.Mock<IDirectoryInfo>()
+                    .Setup(x => x.Exists)
+                    .Returns(true);
+
+                var fakeCacheDirectoryInfo = autoMock.Create<IDirectoryInfo>();
+
+                autoMock.Mock<IFileSystem>()
+                    .Setup(x => x.DirectoryInfo.FromDirectoryName(It.IsAny<string>()))
+                    .Returns(fakeCacheDirectoryInfo);
+
+                autoMock.Mock<IFileSystem>()
+                    .SetupSequence(x => x.File.Exists(It.IsAny<string>()))
+                    .Returns(true)
+                    .Returns(senpaiDataPresent)
+                    .Returns(true);
+
+                var sut = autoMock.Create<FileSystemService>();
+
+                // Act
+                sut.UpdateSenpaiData();
+
+                // Assert
+                autoMock.Mock<IFileSystem>().Verify(x => x.File.Delete(Constants.SenpaiFilePath), Times.Exactly(timesSenpaiDataDeleteCalled));
+            }
+        }
     }
 }

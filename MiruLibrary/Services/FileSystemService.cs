@@ -43,12 +43,8 @@ namespace MiruLibrary
             if (FileSystem.File.Exists(Constants.SenpaiFilePath))
             {
                 FileSystem.File.Delete(Constants.SenpaiFilePath);
-                GetSenpaiData();
             }
-            else
-            {
-                GetSenpaiData();
-            }
+            GetSenpaiData();
         }
 
         // gets the data from senpai.moe in a JSON form
