@@ -119,5 +119,35 @@ namespace Miru.Tests.ModelsTests
                 autoMock.Mock<IFileSystem>().Verify(x => x.File.Delete(Constants.SenpaiFilePath), Times.Exactly(timesSenpaiDataDeleteCalled));
             }
         }
+
+        [Fact]
+        public void GetSenpaiData_GivenSenpaiDataPresent_DoNotGetNewSenpaiData()
+        {
+            using (var autoMock = AutoMock.GetLoose())
+            {
+                // Arrange
+                autoMock.Mock<IDirectoryInfo>()
+                    .Setup(x => x.Exists)
+                    .Returns(true);
+
+                var fakeCacheDirectoryInfo = autoMock.Create<IDirectoryInfo>();
+
+                autoMock.Mock<IFileSystem>()
+                    .Setup(x => x.DirectoryInfo.FromDirectoryName(It.IsAny<string>()))
+                    .Returns(fakeCacheDirectoryInfo);
+
+                autoMock.Mock<IFileSystem>()
+                    .Setup(x => x.File.Exists(It.IsAny<string>()))
+                    .Returns(true);
+
+                var sut = autoMock.Create<FileSystemService>();
+
+                // Act
+                sut.GetSenpaiData();
+
+                // Assert
+                autoMock.Mock<IFileSystem>().Verify(x => x.File.CreateText(Constants.SenpaiFilePath), Times.Never);
+            }
+        }
     }
 }
