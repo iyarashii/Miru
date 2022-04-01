@@ -10,6 +10,7 @@ using Autofac.Extras.Moq;
 using MiruLibrary;
 using MiruLibrary.Models;
 using Moq;
+using MyInternetConnectionLibrary;
 using Xunit;
 
 namespace Miru.Tests.ModelsTests
@@ -182,6 +183,44 @@ namespace Miru.Tests.ModelsTests
 
                 // Assert
                 autoMock.Mock<IFileSystem>().Verify(x => x.File.CreateText(Constants.SenpaiFilePath), Times.Once);
+            }
+        }
+
+        [Theory]
+        [InlineData(1, false)]
+        [InlineData(0, true)]
+        public void DownloadFile_DependingIfFileIsPresent_Download(int downloadFileTimesCalled, bool filePresent)
+        {
+            using (var autoMock = AutoMock.GetLoose())
+            {
+                // Arrange
+                autoMock.Mock<IDirectoryInfo>()
+                    .Setup(x => x.Exists)
+                    .Returns(true);
+
+                var fakeCacheDirectoryInfo = autoMock.Create<IDirectoryInfo>();
+
+                autoMock.Mock<IFileSystem>()
+                    .Setup(x => x.DirectoryInfo.FromDirectoryName(It.IsAny<string>()))
+                    .Returns(fakeCacheDirectoryInfo);
+
+                autoMock.Mock<IFileSystem>()
+                    .SetupSequence(x => x.File.Exists(It.IsAny<string>()))
+                    .Returns(true)
+                    .Returns(filePresent);
+
+                var sut = autoMock.Create<FileSystemService>();
+
+                autoMock.Mock<IWebClientWrapper>();
+                var fakeWebClient = autoMock.Create<IWebClientWrapper>();
+
+                // Act
+                sut.DownloadFile(fakeWebClient, It.IsAny<string>(), It.IsAny<string>());
+
+                // Assert
+                autoMock.Mock<IWebClientWrapper>()
+                    .Verify(x => x.DownloadFile(It.IsAny<string>(), It.IsAny<string>()), 
+                    Times.Exactly(downloadFileTimesCalled));
             }
         }
     }
