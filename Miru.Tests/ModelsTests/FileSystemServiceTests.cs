@@ -62,28 +62,28 @@ namespace Miru.Tests.ModelsTests
         [InlineData(true, 0)]
         public void FileSystemService_Constructor_WhenNoCacheFolder_CreatesImageCacheFolder(bool cacheFolderPresent, int timesCreateIsCalled)
         {
-            using (var mock = AutoMock.GetLoose())
+            using (var autoMock = AutoMock.GetLoose())
             {
                 // Arrange
-                mock.Mock<IDirectoryInfo>()
+                autoMock.Mock<IDirectoryInfo>()
                     .Setup(x => x.Exists)
                     .Returns(cacheFolderPresent);
 
-                var fakeCacheDirectoryInfo = mock.Create<IDirectoryInfo>();
+                var fakeCacheDirectoryInfo = autoMock.Create<IDirectoryInfo>();
 
-                mock.Mock<IFileSystem>()
+                autoMock.Mock<IFileSystem>()
                     .Setup(x => x.DirectoryInfo.FromDirectoryName(It.IsAny<string>()))
                     .Returns(fakeCacheDirectoryInfo);
 
-                mock.Mock<IFileSystem>()
+                autoMock.Mock<IFileSystem>()
                     .Setup(x => x.File.Exists(It.IsAny<string>()))
                     .Returns(true);
 
                 // Act
-                var sut = mock.Create<FileSystemService>();
+                var sut = new FileSystemService(autoMock.Create<IFileSystem>());
 
                 // Assert
-                mock.Mock<IDirectoryInfo>().Verify(x => x.Create(), Times.Exactly(timesCreateIsCalled));
+                autoMock.Mock<IDirectoryInfo>().Verify(x => x.Create(), Times.Exactly(timesCreateIsCalled));
             }
         }
 
