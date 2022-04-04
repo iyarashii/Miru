@@ -28,5 +28,18 @@ namespace Miru.Tests.ModelsTests
                 Assert.Throws<NotSupportedException>(() => sut.ConvertTo(default, default, testData, typeof(int)));
             }
         }
+
+        [Fact]
+        public void ConvertTo_GivenDestinationTypeStringAndValueNull_ReturnsEmptyString()
+        {
+            // Arrange
+            var sut = new EnumDescriptionTypeConverter(typeof(AnimeType));
+
+            // Act
+            var result = sut.ConvertTo(default, default, null, typeof(string));
+
+            // Assert
+            Assert.Equal(string.Empty, result);
+        }
     }
 }
