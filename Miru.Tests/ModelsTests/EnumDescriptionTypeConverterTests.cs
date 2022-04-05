@@ -41,5 +41,19 @@ namespace Miru.Tests.ModelsTests
             // Assert
             Assert.Equal(string.Empty, result);
         }
+
+        [Fact]
+        public void ConvertTo_GivenDestinationTypeStringAndFieldInfoNull_ReturnsEmptyString()
+        {
+            // Arrange
+            var sut = new EnumDescriptionTypeConverter(typeof(AnimeType));
+            int testValue = 0;
+
+            // Act
+            var result = sut.ConvertTo(default, default, testValue, typeof(string));
+
+            // Assert
+            Assert.Equal(string.Empty, result);
+        }
     }
 }
