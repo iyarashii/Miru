@@ -55,5 +55,28 @@ namespace Miru.Tests.ModelsTests
             // Assert
             Assert.Equal(string.Empty, result);
         }
+
+        [Theory]
+        [InlineData(AnimeType.Both, "TV & ONA", typeof(AnimeType))]
+        [InlineData(AnimeType.TV, "TV", typeof(AnimeType))]
+        [InlineData(AnimeType.ONA, "ONA", typeof(AnimeType))]
+        [InlineData(AnimeListType.AiringAndWatching, "Airing & Watching", typeof(AnimeListType))]
+        [InlineData(AnimeListType.Watching, "Watching", typeof(AnimeListType))]
+        [InlineData(AnimeListType.Season, "Current Season", typeof(AnimeListType))]
+        [InlineData(AnimeListType.Senpai, "Senpai - Current Season", typeof(AnimeListType))]
+        public void ConvertTo_GivenDestinationTypeStringAndFieldInfoNotNullAndDescriptionAttributePresent_ReturnsDescription(
+            object testValue, string expectedDescription, Type enumType)
+        {
+            // Arrange
+            var sut = new EnumDescriptionTypeConverter(enumType);
+
+            // Act
+            var result = sut.ConvertTo(default, default, testValue, typeof(string));
+
+            // Assert
+            Assert.Equal(expectedDescription, result);
+        }
+
+        // TODO: add case for no attribute present
     }
 }
