@@ -77,6 +77,21 @@ namespace Miru.Tests.ModelsTests
             Assert.Equal(expectedDescription, result);
         }
 
-        // TODO: add case for no attribute present
+        [Theory]
+        [InlineData(MiruAppStatus.Busy, nameof(MiruAppStatus.Busy), typeof(MiruAppStatus))]
+        [InlineData(MiruAppStatus.Idle, nameof(MiruAppStatus.Idle), typeof(MiruAppStatus))]
+        [InlineData(MiruAppStatus.InternetConnectionProblems, nameof(MiruAppStatus.InternetConnectionProblems), typeof(MiruAppStatus))]
+        public void ConvertTo_GivenDestinationTypeStringAndFieldInfoNotNullAndNoAttributePresent_ReturnsEnumName(
+            object testValue, string expectedDescription, Type enumType)
+        {
+            // Arrange
+            var sut = new EnumDescriptionTypeConverter(enumType);
+
+            // Act
+            var result = sut.ConvertTo(default, default, testValue, typeof(string));
+
+            // Assert
+            Assert.Equal(expectedDescription, result);
+        }
     }
 }
