@@ -14,7 +14,7 @@ namespace Miru.Tests.ModelsTests
     public class EnumDescriptionTypeConverterTests
     {
         [Fact]
-        public void ConvertTo_GivenDestinationTypeNotString_ReturnsBaseCall()
+        public void ConvertTo_GivenNotStringDestinationType_ReturnsBaseCall()
         {
             using (var mock = AutoMock.GetLoose())
             {
@@ -30,7 +30,7 @@ namespace Miru.Tests.ModelsTests
         }
 
         [Fact]
-        public void ConvertTo_GivenDestinationTypeStringAndValueNull_ReturnsEmptyString()
+        public void ConvertTo_GivenNullValue_ReturnsEmptyString()
         {
             // Arrange
             var sut = new EnumDescriptionTypeConverter(typeof(AnimeType));
@@ -43,7 +43,7 @@ namespace Miru.Tests.ModelsTests
         }
 
         [Fact]
-        public void ConvertTo_GivenDestinationTypeStringAndFieldInfoNull_ReturnsEmptyString()
+        public void ConvertTo_GivenNullFieldInfo_ReturnsEmptyString()
         {
             // Arrange
             var sut = new EnumDescriptionTypeConverter(typeof(AnimeType));
@@ -64,7 +64,7 @@ namespace Miru.Tests.ModelsTests
         [InlineData(AnimeListType.Watching, "Watching", typeof(AnimeListType))]
         [InlineData(AnimeListType.Season, "Current Season", typeof(AnimeListType))]
         [InlineData(AnimeListType.Senpai, "Senpai - Current Season", typeof(AnimeListType))]
-        public void ConvertTo_GivenDestinationTypeStringAndFieldInfoNotNullAndDescriptionAttributePresent_ReturnsDescription(
+        public void ConvertTo_GivenDescriptionAttribute_ReturnsDescription(
             object testValue, string expectedDescription, Type enumType)
         {
             // Arrange
@@ -81,7 +81,7 @@ namespace Miru.Tests.ModelsTests
         [InlineData(MiruAppStatus.Busy, nameof(MiruAppStatus.Busy), typeof(MiruAppStatus))]
         [InlineData(MiruAppStatus.Idle, nameof(MiruAppStatus.Idle), typeof(MiruAppStatus))]
         [InlineData(MiruAppStatus.InternetConnectionProblems, nameof(MiruAppStatus.InternetConnectionProblems), typeof(MiruAppStatus))]
-        public void ConvertTo_GivenDestinationTypeStringAndFieldInfoNotNullAndNoAttributePresent_ReturnsEnumName(
+        public void ConvertTo_GivenNoDescriptionAttribute_ReturnsEnumName(
             object testValue, string expectedDescription, Type enumType)
         {
             // Arrange
