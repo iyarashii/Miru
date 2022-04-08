@@ -19,21 +19,19 @@ namespace MiruLibrary
             {
                 if (value != null)
                 {
-                    FieldInfo fi = value.GetType().GetField(value.ToString());
-                    if (fi != null)
+                    FieldInfo fieldInfo = value.GetType().GetField(value.ToString());
+                    if (fieldInfo != null)
                     {
-                        var attributes = (DescriptionAttribute[])fi
+                        var attributes = (DescriptionAttribute[])fieldInfo
                             .GetCustomAttributes(typeof(DescriptionAttribute), false);
+
                         return ((attributes.Length > 0) && 
-                            (!string.IsNullOrEmpty(attributes[0].Description))) ? 
-                            attributes[0].Description : 
-                            value.ToString();
+                            (!string.IsNullOrEmpty(attributes[0].Description))) 
+                            ? attributes[0].Description : value.ToString();
                     }
                 }
-
                 return string.Empty;
             }
-
             return base.ConvertTo(context, culture, value, destinationType);
         }
     }
