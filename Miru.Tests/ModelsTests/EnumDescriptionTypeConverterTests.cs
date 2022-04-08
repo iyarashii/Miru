@@ -14,12 +14,12 @@ namespace Miru.Tests.ModelsTests
     public class EnumDescriptionTypeConverterTests
     {
         [Fact]
-        public void ConvertTo_GivenNotStringDestinationType_ReturnsBaseCall()
+        public void ConvertTo_GivenNotStringDestinationType_ThrowsNotSupportedException()
         {
             using (var mock = AutoMock.GetLoose())
             {
                 // Arrange
-                var testData = "Busy";
+                var testData = AnimeType.Both;
                 var baseEnumConverter = new EnumConverter(typeof(AnimeType));
                 var sut = new EnumDescriptionTypeConverter(typeof(AnimeType));
 
