@@ -93,5 +93,29 @@ namespace Miru.Tests.ModelsTests
             // Assert
             Assert.Equal(expectedDescription, result);
         }
+        enum TestEnum
+        {
+            [Description("")]
+            TestEmptyDescription,
+
+            [Description(null)]
+            NullDescription
+        }
+
+        [Theory]
+        [InlineData(TestEnum.TestEmptyDescription, nameof(TestEnum.TestEmptyDescription), typeof(TestEnum))]
+        [InlineData(TestEnum.NullDescription, nameof(TestEnum.NullDescription), typeof(TestEnum))]
+        public void ConvertTo_GivenEmptyDescriptionAttribute_ReturnsEnumName(
+            object testValue, string expectedDescription, Type enumType)
+        {
+            // Arrange
+            var sut = new EnumDescriptionTypeConverter(enumType);
+
+            // Act
+            var result = sut.ConvertTo(default, default, testValue, typeof(string));
+
+            // Assert
+            Assert.Equal(expectedDescription, result);
+        }
     }
 }
