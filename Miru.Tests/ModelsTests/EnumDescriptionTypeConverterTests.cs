@@ -1,13 +1,8 @@
 ﻿using Autofac.Extras.Moq;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Xunit;
 using MiruLibrary;
-using System.Globalization;
 
 namespace Miru.Tests.ModelsTests
 {
