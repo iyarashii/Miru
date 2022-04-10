@@ -14,6 +14,7 @@ namespace MiruLibrary.Settings
     {
         private readonly string _configurationFilePath;
         private readonly string _sectionNameSuffix;
+        private readonly IFileSystemService _fileSystemService;
 
         private static readonly JsonSerializerSettings JsonSerializerSettings = new JsonSerializerSettings
         {
@@ -22,8 +23,10 @@ namespace MiruLibrary.Settings
             ReferenceLoopHandling = ReferenceLoopHandling.Ignore
         };
 
-        public SettingsReader(string configurationFilePath, string sectionNameSuffix = "Settings")
+        public SettingsReader(IFileSystemService fileSystemService,
+            string configurationFilePath, string sectionNameSuffix = "Settings")
         {
+            _fileSystemService = fileSystemService;
             _configurationFilePath = configurationFilePath;
             _sectionNameSuffix = sectionNameSuffix;
         }
@@ -34,10 +37,10 @@ namespace MiruLibrary.Settings
 
         public object Load(Type type)
         {
-            if (!File.Exists(_configurationFilePath))
+            if (!_fileSystemService.FileSystem.File.Exists(_configurationFilePath))
                 return Activator.CreateInstance(type);
 
-            var jsonFile = File.ReadAllText(_configurationFilePath);
+            var jsonFile = _fileSystemService.FileSystem.File.ReadAllText(_configurationFilePath);
 
             return JsonConvert.DeserializeObject(jsonFile, type, JsonSerializerSettings);
         }

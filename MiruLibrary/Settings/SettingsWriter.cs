@@ -13,6 +13,7 @@ namespace MiruLibrary.Settings
     public class SettingsWriter : ISettingsWriter
     {
         private readonly string _configurationFilePath;
+        private readonly IFileSystemService _fileSystemService;
 
         private static readonly JsonSerializerSettings JsonSerializerSettings = new JsonSerializerSettings
         {
@@ -21,15 +22,16 @@ namespace MiruLibrary.Settings
             ReferenceLoopHandling = ReferenceLoopHandling.Ignore
         };
 
-        public SettingsWriter(string configurationFilePath)
+        public SettingsWriter(IFileSystemService fileSystemService, string configurationFilePath)
         {
+            _fileSystemService = fileSystemService;
             _configurationFilePath = configurationFilePath;
         }
 
         public void Write(object settingsData)
         {
             var jsonString = JsonConvert.SerializeObject(settingsData, Formatting.Indented, JsonSerializerSettings);
-            File.WriteAllText(_configurationFilePath, jsonString);
+            _fileSystemService.FileSystem.File.WriteAllText(_configurationFilePath, jsonString);
         }
 
         private class SettingsReaderContractResolver : DefaultContractResolver
