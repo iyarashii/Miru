@@ -1,4 +1,5 @@
 ﻿using Autofac;
+using MiruLibrary;
 using MiruLibrary.Settings;
 using System;
 using System.Linq;
@@ -8,23 +9,22 @@ namespace Miru
 {
     public class SettingsModule : Autofac.Module
     {
-        private readonly string _configurationFilePath;
         private readonly string _sectionNameSuffix;
-
-        public SettingsModule(string configurationFilePath, string sectionNameSuffix = "Settings")
+        public SettingsModule(string sectionNameSuffix = "Settings")
         {
-            _configurationFilePath = configurationFilePath;
             _sectionNameSuffix = sectionNameSuffix;
         }
 
         protected override void Load(ContainerBuilder builder)
         {
-            builder.RegisterInstance(new SettingsReader(_configurationFilePath, _sectionNameSuffix))
+            builder.RegisterType<SettingsReader>()
                 .As<ISettingsReader>()
+                .WithParameter("configurationFilePath", Constants.SettingsPath)
                 .SingleInstance();
 
-            builder.RegisterInstance(new SettingsWriter(_configurationFilePath))
+            builder.RegisterType<SettingsWriter>()
                 .As<ISettingsWriter>()
+                .WithParameter("configurationFilePath", Constants.SettingsPath)
                 .SingleInstance();
 
             var settings = Assembly.GetAssembly(typeof(MiruLibrary.Models.UserSettings))

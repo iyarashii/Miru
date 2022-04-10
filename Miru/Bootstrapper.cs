@@ -54,7 +54,7 @@ namespace Miru
             builder.RegisterType<MiruAnimeModel>();
             builder.RegisterType<TimerService>().As<ITimerService>();
             // path to the config file is passed here
-            builder.RegisterModule(new SettingsModule(Constants.SettingsPath));
+            builder.RegisterModule(new SettingsModule());
         }
 
         protected override void ConfigureBootstrapper()
