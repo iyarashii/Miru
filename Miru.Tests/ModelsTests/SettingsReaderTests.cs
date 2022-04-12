@@ -39,5 +39,49 @@ namespace Miru.Tests.ModelsTests
                 Assert.Equal(expectedData.DisplayedAnimeType, result.DisplayedAnimeType);
             }
         }
+
+        [Theory]
+        [InlineData(21.37, AnimeListType.Senpai, AnimeType.Both)]
+        [InlineData(13.37, AnimeListType.Watching, AnimeType.TV)]
+        [InlineData(420.69, AnimeListType.Season, AnimeType.ONA)]
+        public void Load_GivenConfigFilePresent_ReturnsUserSettings(double imageSize, AnimeListType listType, AnimeType animeType)
+        {
+            using (var mock = AutoMock.GetLoose())
+            {
+                // Arrange
+                string testJson = $@"
+                                {{
+                                  ""animeImageSize"": {imageSize},
+                                  ""displayedAnimeListType"": {(int)listType},
+                                  ""displayedAnimeType"": {(int)animeType}
+                                }}";
+
+                mock.Mock<IFileSystemService>()
+                    .Setup(x => x.FileSystem.File.Exists(Constants.SettingsPath))
+                    .Returns(true);
+                mock.Mock<IFileSystemService>()
+                    .Setup(x => x.FileSystem.File.ReadAllText(Constants.SettingsPath))
+                    .Returns(testJson);
+                var sut = mock.Create<SettingsReader>(
+                    new NamedParameter("fileSystemService", mock.Create<IFileSystemService>()),
+                    new NamedParameter("configurationFilePath", Constants.SettingsPath),
+                    new NamedParameter("sectionNameSuffix", "Settings"));
+
+                var expectedData = new UserSettings() 
+                { 
+                    AnimeImageSize = imageSize, 
+                    DisplayedAnimeListType = listType, 
+                    DisplayedAnimeType = animeType
+                };
+
+                // Act
+                var result = (UserSettings)sut.Load(typeof(UserSettings));
+
+                // Assert
+                Assert.Equal(expectedData.AnimeImageSize, result.AnimeImageSize);
+                Assert.Equal(expectedData.DisplayedAnimeListType, result.DisplayedAnimeListType);
+                Assert.Equal(expectedData.DisplayedAnimeType, result.DisplayedAnimeType);
+            }
+        }
     }
 }
