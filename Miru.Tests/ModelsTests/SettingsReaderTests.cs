@@ -31,7 +31,7 @@ namespace Miru.Tests.ModelsTests
                 var expectedData = new UserSettings();
 
                 // Act
-                var result = (UserSettings)sut.Load(typeof(UserSettings));
+                var result = sut.Load<UserSettings>();
 
                 // Assert
                 Assert.Equal(expectedData.AnimeImageSize, result.AnimeImageSize);
@@ -75,7 +75,7 @@ namespace Miru.Tests.ModelsTests
                 };
 
                 // Act
-                var result = (UserSettings)sut.Load(typeof(UserSettings));
+                var result = sut.Load<UserSettings>();
 
                 // Assert
                 Assert.Equal(expectedData.AnimeImageSize, result.AnimeImageSize);
