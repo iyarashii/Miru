@@ -14,9 +14,10 @@ namespace MiruLibrary
 {
     public class FileSystemService : IFileSystemService
     {
-        public FileSystemService(IFileSystem fileSystem)
+        public FileSystemService(IFileSystem fileSystem, IWebService webService)
         {
             FileSystem = fileSystem;
+            WebService = webService;
             ImageCacheFolder = FileSystem.DirectoryInfo.FromDirectoryName(Constants.ImageCacheFolderPath);
 
             if (!ImageCacheFolder.Exists)
@@ -28,6 +29,7 @@ namespace MiruLibrary
         }
         public IFileSystem FileSystem { get; }
         public IDirectoryInfo ImageCacheFolder { get; }
+        public IWebService WebService { get; }
 
         public void ClearImageCache()
         {
@@ -59,7 +61,7 @@ namespace MiruLibrary
             using (StreamWriter file = FileSystem.File.CreateText(Constants.SenpaiFilePath))
             {
                 // get only MALID and airing_date json properties
-                var deserializedSenpaiData = JsonConvert.DeserializeObject<SenpaiEntryModel>(InternetConnection.client.GetStringAsync(Constants.SenpaiDataSourceURL).Result);
+                var deserializedSenpaiData = JsonConvert.DeserializeObject<SenpaiEntryModel>(WebService.Client.GetStringAsync(Constants.SenpaiDataSourceURL).Result);
                 file.Write(JsonConvert.SerializeObject(deserializedSenpaiData, Formatting.Indented));
             }
         }

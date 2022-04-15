@@ -79,8 +79,11 @@ namespace Miru.Tests.ModelsTests
                     .Setup(x => x.File.Exists(It.IsAny<string>()))
                     .Returns(true);
 
+                Func<IWebClientWrapper> mockWebClientFunc = () => { return Mock.Of<IWebClientWrapper>(); };
+                autoMock.Mock<IWebService>().Setup(x => x.CreateWebClient).Returns(mockWebClientFunc);
+
                 // Act
-                var sut = new FileSystemService(autoMock.Create<IFileSystem>());
+                var sut = new FileSystemService(autoMock.Create<IFileSystem>(), autoMock.Create<IWebService>());
 
                 // Assert
                 autoMock.Mock<IDirectoryInfo>().Verify(x => x.Create(), Times.Exactly(timesCreateIsCalled));
@@ -175,6 +178,8 @@ namespace Miru.Tests.ModelsTests
                     .SetupSequence(x => x.File.Exists(It.IsAny<string>()))
                     .Returns(true)
                     .Returns(false);
+
+                autoMock.Mock<IWebService>().Setup(x => x.Client).Returns(new System.Net.Http.HttpClient());
 
                 var sut = autoMock.Create<FileSystemService>();
 

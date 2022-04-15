@@ -9,7 +9,7 @@ namespace MyInternetConnectionLibrary
     public static class InternetConnection
     {
         // initializing a read-only instance of HttpClient to give the app access to HTTP GET requests
-        public static readonly HttpClient client = new HttpClient();
+        public static readonly HttpClient Client = new HttpClient();
 
         public static string GoogleURL { get; } = @"http://www.google.com/";
 

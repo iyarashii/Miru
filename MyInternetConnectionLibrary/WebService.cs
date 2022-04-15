@@ -1,6 +1,7 @@
 ﻿using JikanDotNet;
 using System;
 using System.Collections.Generic;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -8,6 +9,9 @@ namespace MyInternetConnectionLibrary
 {
     public class WebService : IWebService
     {
+        // initializing a read-only instance of HttpClient to give the app access to HTTP GET requests
+        public HttpClient Client { get; } = new HttpClient();
+
         public WebService(Func<IWebClientWrapper> createWebClient)
         {
             CreateWebClient = createWebClient;
