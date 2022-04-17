@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.IO;
 using System.IO.Abstractions;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using MiruLibrary;
 using MiruLibrary.Models;
 using MyInternetConnectionLibrary;
 using Newtonsoft.Json;
@@ -61,7 +55,8 @@ namespace MiruLibrary
             using (StreamWriter file = FileSystem.File.CreateText(Constants.SenpaiFilePath))
             {
                 // get only MALID and airing_date json properties
-                var deserializedSenpaiData = JsonConvert.DeserializeObject<SenpaiEntryModel>(WebService.Client.GetStringAsync(Constants.SenpaiDataSourceURL).Result);
+                var deserializedSenpaiData = JsonConvert
+                    .DeserializeObject<SenpaiEntryModel>(WebService.Client.GetStringAsync(Constants.SenpaiDataSourceURL).Result);
                 file.Write(JsonConvert.SerializeObject(deserializedSenpaiData, Formatting.Indented));
             }
         }
