@@ -127,7 +127,6 @@ namespace Miru.ViewModels
                 if (double.IsNaN(value))
                 {
                     double defaultSize = 134;
-                    // TODO: Add config file that will save such values on app exit and load them on app start
                     _animeImageSizeInPixels = defaultSize;
                 }
                 else
