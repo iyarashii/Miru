@@ -30,7 +30,7 @@ namespace MyInternetConnectionLibrary
                     // get detailed anime info from the jikan API
                     output = await jikanWrapper.GetAnime(malId);
                 }
-                catch (System.Net.Http.HttpRequestException)
+                catch (HttpRequestException)
                 {
                     throw new NoInternetConnectionException("No internet connection");
                 }
