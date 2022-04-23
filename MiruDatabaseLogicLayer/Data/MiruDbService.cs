@@ -1,16 +1,12 @@
 ﻿using JikanDotNet;
 using MiruLibrary.Models;
 using MyInternetConnectionLibrary;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Net;
 using System.Threading.Tasks;
 using MiruLibrary;
 using AnimeType = MiruLibrary.AnimeType;
-using System.Data.Entity;
 
 namespace MiruDatabaseLogicLayer
 {
