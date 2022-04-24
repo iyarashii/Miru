@@ -20,7 +20,7 @@ namespace Miru.Tests.ModelsTests
     public class CurrentSeasonModelTests
     {
         [Fact]
-        public async void GetCurrentSeasonList_OnHttpRequestException_ReturnsFalse()
+        public async Task GetCurrentSeasonList_OnHttpRequestException_ReturnsFalse()
         {
             using (var mock = AutoMock.GetLoose())
             {
@@ -37,7 +37,7 @@ namespace Miru.Tests.ModelsTests
         }
 
         [Fact]
-        public async void GetCurrentSeasonList_OnSeasonDataGet_ReturnsTrue()
+        public async Task GetCurrentSeasonList_OnSeasonDataGet_ReturnsTrue()
         {
             using (var mock = AutoMock.GetLoose())
             {
