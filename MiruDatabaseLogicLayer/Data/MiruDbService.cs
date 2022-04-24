@@ -289,7 +289,6 @@ namespace MiruDatabaseLogicLayer
         /// <returns></returns>
         private async Task<List<MiruAnimeModel>> GetDetailedSeasonAnimeListInfo(List<MiruAnimeModel> detailedUserAnimeList, IWebClientWrapper client)
         {
-            // TODO: Added something to delete animes from the previous season that are no longer on your watching list and season ended -- check if good
             // set airing flag to false for whole list to remove anime that already ended
             detailedUserAnimeList.ForEach(x => x.CurrentlyAiring = false);
 
