@@ -20,7 +20,7 @@ using System.Threading;
 using MiruLibrary;
 // CODE COVERAGE commands used for .NET Framework
 // command for code coverage generation - run in Package Manager Console inside Test.csproj directory
-// dotnet test --no-build --collect: "XPlat Code Coverage" 
+// dotnet test --no-build --collect:"XPlat Code Coverage" 
 // command for coverage report generation
 // G:\NuGetPackages\reportgenerator\5.0.4\tools\net47\ReportGenerator.exe "-reports:G:\repos\Miru\Miru.Tests\TestResults\091fcb43-46cf-4638-bbe6-dc5ab617672a\coverage.cobertura.xml" "-targetdir:G:\repos\Miru\coveragereport" -reporttypes:Html
 namespace Miru.Tests
