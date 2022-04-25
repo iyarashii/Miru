@@ -344,3 +344,4 @@ healthchecksdb
 /XUnitResults.xml
 /Miru/signtool.exe
 /coveragereport
+/Miru.Tests/coverage.opencover.xml
