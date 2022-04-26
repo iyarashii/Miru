@@ -8,8 +8,8 @@ namespace MiruLibrary
         public static string SenpaiFilePath { get; } = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), @"MiruCache\senpai-data.json");
 
         public static string ImageCacheFolderPath { get; } = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), "MiruCache");
-
-        public static string SenpaiDataSourceURL { get; } = @"http://www.senpai.moe/export.php?type=json&src=raw";
+        
+        public static string SenpaiDataSourceURL { get; } = @"https://www.senpai.moe/export.php?type=json&src=raw";
         public static string SettingsPath { get; } = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), @"MiruCache\config.json");
     }
 }
