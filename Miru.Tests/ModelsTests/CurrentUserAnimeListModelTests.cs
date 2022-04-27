@@ -1,16 +1,10 @@
-﻿using Autofac;
-using Autofac.Extras.Moq;
+﻿using Autofac.Extras.Moq;
 using JikanDotNet;
 using JikanDotNet.Exceptions;
 using MiruLibrary.Models;
 using Moq;
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
 using System.Net.Http;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -19,7 +13,7 @@ namespace Miru.Tests.ModelsTests
     public class CurrentUserAnimeListModelTests
     {
         [Fact]
-        public async void GetCurrentUserAnimeList_OnHttpRequestException_ReturnsFalseAndExpectedErrorMessage()
+        public async Task GetCurrentUserAnimeList_OnHttpRequestException_ReturnsFalseAndExpectedErrorMessage()
         {
             using (var mock = AutoMock.GetLoose())
             {
@@ -40,7 +34,7 @@ namespace Miru.Tests.ModelsTests
         }
 
         [Fact]
-        public async void GetCurrentUserAnimeList_OnJikanRequestException_ReturnsFalseAndExpectedErrorMessage()
+        public async Task GetCurrentUserAnimeList_OnJikanRequestException_ReturnsFalseAndExpectedErrorMessage()
         {
             using (var mock = AutoMock.GetLoose())
             {
@@ -61,7 +55,7 @@ namespace Miru.Tests.ModelsTests
         }
 
         [Fact]
-        public async void GetCurrentUserAnimeList_OnNoExceptions_ReturnsTrueAndEmptyErrorMessage()
+        public async Task GetCurrentUserAnimeList_OnNoExceptions_ReturnsTrueAndEmptyErrorMessage()
         {
             using (var mock = AutoMock.GetLoose())
             {
