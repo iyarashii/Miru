@@ -5,6 +5,7 @@ using Moq;
 using MyInternetConnectionLibrary;
 using System;
 using System.Net.Http;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace Miru.Tests.MyInternetConnectionLibraryTests
@@ -12,7 +13,7 @@ namespace Miru.Tests.MyInternetConnectionLibraryTests
     public class WebServiceTests
     {
         [Fact]
-        public async void TryToGetAnimeInfo_GivenValidMalId_ReturnsAnime()
+        public async Task TryToGetAnimeInfo_GivenValidMalId_ReturnsAnime()
         {
             using (var mock = AutoMock.GetLoose())
             {
@@ -29,7 +30,7 @@ namespace Miru.Tests.MyInternetConnectionLibraryTests
         }
 
         [Fact]
-        public async void TryToGetAnimeInfo_GivenJikanRequestException_RetryAndReturnAnime()
+        public async Task TryToGetAnimeInfo_GivenJikanRequestException_RetryAndReturnAnime()
         {
             using (var mock = AutoMock.GetLoose())
             {
@@ -52,7 +53,7 @@ namespace Miru.Tests.MyInternetConnectionLibraryTests
         }
 
         [Fact]
-        public async void TryToGetAnimeInfo_GivenHttpRequestException_ThrowsNoInternetConnectionException()
+        public async Task TryToGetAnimeInfo_GivenHttpRequestException_ThrowsNoInternetConnectionException()
         {
             using (var mock = AutoMock.GetLoose())
             {
