@@ -290,7 +290,6 @@ namespace Miru.ViewModels
             set
             {
                 _typedInUsername = value;
-                //DbService.CurrentUsername = value;
                 NotifyOfPropertyChange(() => TypedInUsername);
             }
         }
@@ -466,10 +465,7 @@ namespace Miru.ViewModels
             if (!await GetUserAnimeList()) return;
 
             // get current season
-            if (seasonSyncOn)
-            {
-                if (!await GetCurrentSeason()) return;
-            }
+            if (seasonSyncOn && !await GetCurrentSeason()) return;
 
             // save user data to the db
             await SaveUserInfo(typedInUsername);
