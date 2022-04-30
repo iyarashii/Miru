@@ -18,20 +18,17 @@ namespace Miru.Views
             public event EventHandler CanExecuteChanged;
             public MvvmCommand(Action<object> execute, Func<object, bool> canExecute = null)
             {
-                if (execute == null) throw new ArgumentNullException("command");
-                _canExecute = canExecute == null ? parmeter => MvvmCommand.AlwaysCanExecute() : canExecute;
+                if (execute == null) throw new ArgumentNullException("execute");
+                _canExecute = canExecute == null ? parmeter => AlwaysCanExecute : canExecute;
                 _execute = execute;
             }
             public object Tag
             {
-                get { return (object)GetValue(TagProperty); }
+                get { return GetValue(TagProperty); }
                 set { SetValue(TagProperty, value); }
             }
             public static readonly DependencyProperty TagProperty = DependencyProperty.Register("Tag", typeof(object), typeof(MvvmCommand), new PropertyMetadata(null));
-            static bool AlwaysCanExecute()
-            {
-                return true;
-            }
+            const bool AlwaysCanExecute = true;
             public void EvaluateCanExecute()
             {
                 EventHandler temp = CanExecuteChanged;
@@ -44,7 +41,7 @@ namespace Miru.Views
             }
             public virtual bool CanExecute(object parameter)
             {
-                return _canExecute == null ? true : _canExecute(parameter);
+                return _canExecute == null || _canExecute(parameter);
             }
         }
 
