@@ -13,7 +13,7 @@ namespace MiruLibrary.Models
         {
             if (!string.IsNullOrWhiteSpace(title))
             {
-                animeList.RemoveAll(x => !(x.Title.IndexOf(title, StringComparison.OrdinalIgnoreCase) >= 0));
+                animeList.RemoveAll(x => x.Title.IndexOf(title, StringComparison.OrdinalIgnoreCase) < 0);
             }
         }
 
