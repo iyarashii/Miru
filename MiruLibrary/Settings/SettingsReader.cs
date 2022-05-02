@@ -13,7 +13,6 @@ namespace MiruLibrary.Settings
     public class SettingsReader : ISettingsReader
     {
         private readonly string _configurationFilePath;
-        private readonly string _sectionNameSuffix;
         private readonly IFileSystemService _fileSystemService;
 
         private static readonly JsonSerializerSettings JsonSerializerSettings = new JsonSerializerSettings
@@ -22,12 +21,10 @@ namespace MiruLibrary.Settings
             ReferenceLoopHandling = ReferenceLoopHandling.Ignore
         };
 
-        public SettingsReader(IFileSystemService fileSystemService,
-            string configurationFilePath, string sectionNameSuffix = "Settings")
+        public SettingsReader(IFileSystemService fileSystemService, string configurationFilePath)
         {
             _fileSystemService = fileSystemService;
             _configurationFilePath = configurationFilePath;
-            _sectionNameSuffix = sectionNameSuffix;
         }
 
         public T Load<T>() where T : class, new() => Load(typeof(T)) as T;
