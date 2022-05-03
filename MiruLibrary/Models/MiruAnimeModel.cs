@@ -48,7 +48,6 @@ namespace MiruLibrary.Models
                 source.UriSource = new Uri(LocalImagePath, UriKind.RelativeOrAbsolute);
                 source.CacheOption = BitmapCacheOption.OnLoad;
                 source.EndInit();
-                // not sure if GC still needs this source.Freeze();
                 return source;
             }
         }
