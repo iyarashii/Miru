@@ -54,10 +54,6 @@ namespace MiruLibrary.Models
             // list of anime entries in the current season
             var currentSeasonList = SeasonData.SeasonEntries.ToList();
 
-            // remove anime entries with types other than 'TV' from the list
-            // TODO: Jikan API no longer can get Type so this is commented out to not remove every record will probably have to move to MAL api or Jikan 4 soon
-            //currentSeasonList.RemoveAll(x => x.Type != "TV" && x.Type != "ONA");
-
             // remove anime entries marked as 'for kids' from the list
             currentSeasonList.RemoveAll(x => x.Kids == true);
 
