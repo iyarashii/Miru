@@ -91,8 +91,6 @@ namespace MiruDatabaseLogicLayer
         // load data from the last sync
         public void LoadLastSyncedData()
         {
-            // TODO: investigate line below
-            //Database.SetInitializer(new MigrateDatabaseToLatestVersion<MiruDbContext, Migrations.Configuration>());
             // open temporary connection to the database
             using (var db = CreateMiruDbContext.Invoke())
             {
