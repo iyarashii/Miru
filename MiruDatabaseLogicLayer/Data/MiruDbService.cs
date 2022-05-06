@@ -117,16 +117,16 @@ namespace MiruDatabaseLogicLayer
         }
 
         // changes data for the displayed anime list to match time zone and anime list type passed as parameters
-        public void ChangeDisplayedAnimeList(AnimeListType listType, 
+        public void ChangeDisplayedAnimeList(AnimeListType animeListType, 
                                              TimeZoneInfo selectedTimeZone, 
-                                             AnimeType selectedBroadcastType, 
-                                             string title)
+                                             AnimeType selectedAnimeBroadcastType, 
+                                             string animeTitleToFilterBy)
         {
             using (var db = CreateMiruDbContext.Invoke())
             {
-                var userAnimeList = GetFilteredUserAnimeList(db, selectedBroadcastType, title, selectedTimeZone);
+                var userAnimeList = GetFilteredUserAnimeList(db, selectedAnimeBroadcastType, animeTitleToFilterBy, selectedTimeZone);
                 // set airing anime list entries for each day of the week
-                UpdateAnimeListEntriesUI(userAnimeList, listType);
+                UpdateAnimeListEntriesUI(userAnimeList, animeListType);
             }
         }
 

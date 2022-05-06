@@ -19,7 +19,7 @@ namespace MiruDatabaseLogicLayer
         event EventHandler<string> UpdateCurrentUsername;
         event MiruDbService.UpdateAppStatusEventHandler UpdateAppStatusUI;
 
-        void ChangeDisplayedAnimeList(AnimeListType animeListType, TimeZoneInfo selectedTimeZone, AnimeType selectedAnimeType, string animeNameFilter);
+        void ChangeDisplayedAnimeList(AnimeListType animeListType, TimeZoneInfo selectedTimeZone, AnimeType selectedAnimeBroadcastType, string animeTitleToFilterBy);
         void ClearDb();
         Task<List<MiruAnimeModel>> GetDetailedUserAnimeList(IMiruDbContext db, ICollection<AnimeListEntry> currentUserAnimeListEntries, bool seasonSyncOn);
         void LoadLastSyncedData();
