@@ -107,7 +107,9 @@
     <Compile Include="Services\FileSystemService.cs" />
     <Compile Include="Services\IFileSystemService.cs" />
     <Compile Include="Services\ITimerService.cs" />
+    <Compile Include="Services\IUserDataService.cs" />
     <Compile Include="Services\TimerService.cs" />
+    <Compile Include="Services\UserDataService.cs" />
     <Compile Include="Settings\ISettingsWriter.cs" />
     <Compile Include="Models\CurrentSeasonModel.cs" />
     <Compile Include="Models\CurrentUserAnimeListModel.cs" />

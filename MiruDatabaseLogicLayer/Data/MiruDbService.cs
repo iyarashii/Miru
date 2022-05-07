@@ -7,11 +7,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using MiruLibrary;
 using AnimeType = MiruLibrary.AnimeType;
+using MiruLibrary.Services;
 
 namespace MiruDatabaseLogicLayer
 {
     // contains the business logic that uses the local db
-    // TODO: separate filesystem methods from this class and create DataService for ShellViewModel to contain both services
     public class MiruDbService : IMiruDbService
     {
         private DateTime _syncDateData;
@@ -19,21 +19,19 @@ namespace MiruDatabaseLogicLayer
 
         // constructor
         public MiruDbService(
-            ICurrentSeasonModel currentSeasonModel, 
-            ICurrentUserAnimeListModel currentUserAnimeListModel, 
+            IUserDataService userDataService,
             IJikan jikanWrapper, 
             Func<IMiruDbContext> createMiruDbContext, 
-            ISyncedMyAnimeListUser syncedMyAnimeListUser, 
             IWebService webService, 
             Lazy<IFileSystemService> fileSystemService,
             Func<MiruAnimeModel> createMiruAnimeModel)
         {
             #region dependency injection
 
-            CurrentSeason = currentSeasonModel;
-            CurrentUserAnimeList = currentUserAnimeListModel;
+            CurrentSeason = userDataService.CurrentSeasonModel;
+            CurrentUserAnimeList = userDataService.CurrentUserAnimeListModel;
             JikanWrapper = jikanWrapper;
-            SyncedMyAnimeListUser = syncedMyAnimeListUser;
+            SyncedMyAnimeListUser = userDataService.SyncedMyAnimeListUser;
             WebService = webService;
             CreateMiruDbContext = createMiruDbContext;
             FileSystemService = fileSystemService;
