@@ -4,6 +4,7 @@ using JikanDotNet;
 using MiruDatabaseLogicLayer;
 using MiruLibrary;
 using MiruLibrary.Models;
+using MiruLibrary.Services;
 using Moq;
 using MyInternetConnectionLibrary;
 using System;
@@ -129,10 +130,13 @@ namespace Miru.Tests.DatabaseTests
             var currentSeasonModel = currentSeasonListMock.Object;
             var webService = webServiceMock.Object;
             var fileSystemService = fileServiceMock;
-            var cls = mock.Create<MiruDbService>(new NamedParameter("currentUserAnimeListModel", currentUserAnimeList), 
+            var userDataService = mock.Create<UserDataService>(
+                                                new NamedParameter("currentUserAnimeListModel", currentUserAnimeList),
                                                 new NamedParameter("currentSeasonModel", currentSeasonModel), 
+                                                new NamedParameter("syncedMyAnimeListUser", syncedMyAnimeListUser));
+
+            var cls = mock.Create<MiruDbService>(new NamedParameter("userDataService", userDataService), 
                                                 new NamedParameter("createMiruDbContext", mockFunc), 
-                                                new NamedParameter("syncedMyAnimeListUser", syncedMyAnimeListUser), 
                                                 new NamedParameter("fileSystemService", fileSystemService), 
                                                 new NamedParameter("webService", webService));
 
@@ -197,11 +201,9 @@ namespace Miru.Tests.DatabaseTests
             using (var mock = AutoMock.GetLoose())
             {
                 // Arrange
-                var currentSeasonModel = new Mock<ICurrentSeasonModel>();
-                var currentUserAnimeListModel = new Mock<ICurrentUserAnimeListModel>();
+                var userDataService = new Mock<IUserDataService>();
                 var jikanWrapper = new Mock<IJikan>();
                 var createMiruDbContext = new Mock<Func<IMiruDbContext>>();
-                var syncedMyAnimeListUser = new Mock<ISyncedMyAnimeListUser>();
                 var webService = new Mock<IWebService>();
                 var fileSystemService = new Mock<Lazy<IFileSystemService>>();
                 var createMiruAnimeModel = new Mock<Func<MiruAnimeModel>>();
@@ -210,16 +212,15 @@ namespace Miru.Tests.DatabaseTests
                 var privateProperties = clsType.GetProperties(BindingFlags.NonPublic | BindingFlags.Instance).ToList();
 
                 // Act
-                var cls = new MiruDbService(currentSeasonModel.Object, currentUserAnimeListModel.Object, 
-                    jikanWrapper.Object, createMiruDbContext.Object, syncedMyAnimeListUser.Object, webService.Object,
+                var cls = new MiruDbService(userDataService.Object, jikanWrapper.Object, createMiruDbContext.Object, webService.Object,
                     fileSystemService.Object, createMiruAnimeModel.Object);
 
                 // Assert
-                Assert.Equal(currentSeasonModel.Object, cls.CurrentSeason);
-                Assert.Equal(currentUserAnimeListModel.Object, cls.CurrentUserAnimeList);
+                Assert.Equal(userDataService.Object.CurrentSeasonModel, cls.CurrentSeason);
+                Assert.Equal(userDataService.Object.CurrentUserAnimeListModel, cls.CurrentUserAnimeList);
                 Assert.Equal(webService.Object, cls.WebService);
                 Assert.Equal(jikanWrapper.Object, privateProperties.Where(x => x.Name == "JikanWrapper").First().GetValue(cls));
-                Assert.Equal(syncedMyAnimeListUser.Object, privateProperties.Where(x => x.Name == "SyncedMyAnimeListUser").First().GetValue(cls));
+                Assert.Equal(userDataService.Object.SyncedMyAnimeListUser, privateProperties.Where(x => x.Name == "SyncedMyAnimeListUser").First().GetValue(cls));
                 Assert.Equal(createMiruDbContext.Object, privateProperties.Where(x => x.Name == "CreateMiruDbContext").First().GetValue(cls));
                 Assert.Equal(fileSystemService.Object, privateProperties.Where(x => x.Name == "FileSystemService").First().GetValue(cls));
                 Assert.Equal(createMiruAnimeModel.Object, privateProperties.Where(x => x.Name == "CreateMiruAnimeModel").First().GetValue(cls));
