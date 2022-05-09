@@ -65,11 +65,10 @@ namespace MiruLibrary.Models
             // local variables
             string dayOfTheWeek;
             string[] broadcastWords;
-            DateTime broadcastTime = default;
-            DateTime time;
+            DateTime jstAirTime = default;
 
             var jpCultureInfo = CultureInfo.GetCultureInfo("ja-JP");
-            string[] formats = { "dd/MM/yyyy HH:mm", "d/MM/yyyy HH:mm", "dd/M/yyyy HH:mm", "d/M/yyyy HH:mm" };
+            string[] formats = { "dd/MM/yyyy HH:mm", "d/MM/yyyy HH:mm", "dd/M/yyyy HH:mm", "d/M/yyyy HH:mm"};
 
             // deserialize data from senpai as a backup source of anime broadcast time
             var senpaiEntries = JsonConvert.DeserializeObject<SenpaiEntryModel>(fileSystemService?.FileSystem?.File?.ReadAllText(Constants.SenpaiFilePath));
@@ -78,26 +77,18 @@ namespace MiruLibrary.Models
             // for each airingAnime parse time and day of the week from the broadcast string
             foreach (var airingAnime in detailedAnimeList)
             {
+                airingAnime.IsOnSenpai = senpaiIDs.Contains(airingAnime.MalId);
                 bool parsed = false;
-                if (senpaiIDs.Contains(airingAnime.MalId))
+
+                if (airingAnime.IsOnSenpai)
                 {
-                    airingAnime.IsOnSenpai = true;
-                    var airDateAndTime = senpaiEntries.Items.First(x => x.MalId == airingAnime.MalId).Airdate;
-                    parsed = DateTime.TryParseExact(airDateAndTime, formats, jpCultureInfo, DateTimeStyles.None, out DateTime parsedSenpaiBroadcast);
-                    if (parsed)
-                    {
-                        airingAnime.Broadcast = airDateAndTime;
-                        broadcastTime = parsedSenpaiBroadcast;
-                    }
-                }
-                else
-                {
-                    airingAnime.IsOnSenpai = false;
+                    parsed = TryParseAndSetAirTimeFromSenpai(senpaiEntries, airingAnime, formats, jpCultureInfo);
                 }
 
                 if (!parsed && DateTime.TryParseExact(airingAnime.Broadcast, formats, jpCultureInfo, DateTimeStyles.None, out DateTime parsedBroadcast))
                 {
-                    broadcastTime = parsedBroadcast;
+                    jstAirTime = parsedBroadcast;
+                    airingAnime.JSTBroadcastTime = jstAirTime;
                 }
                 else if (!parsed)
                 {
@@ -113,7 +104,7 @@ namespace MiruLibrary.Models
                     dayOfTheWeek = broadcastWords[0];
 
                     // parse time from the 2nd broadcast string word
-                    if (!DateTime.TryParse(broadcastWords[2], out time))
+                    if (!DateTime.TryParse(broadcastWords[2], out DateTime time))
                     {
                         continue;
                     }
@@ -122,46 +113,56 @@ namespace MiruLibrary.Models
                     switch (dayOfTheWeek)
                     {
                         case "Mondays":
-                            broadcastTime = new DateTime(2020, 01, 20, time.Hour, time.Minute, 0);
+                            jstAirTime = new DateTime(2020, 01, 20, time.Hour, time.Minute, 0);
                             break;
 
                         case "Tuesdays":
-                            broadcastTime = new DateTime(2020, 01, 21, time.Hour, time.Minute, 0);
+                            jstAirTime = new DateTime(2020, 01, 21, time.Hour, time.Minute, 0);
                             break;
 
                         case "Wednesdays":
-                            broadcastTime = new DateTime(2020, 01, 22, time.Hour, time.Minute, 0);
+                            jstAirTime = new DateTime(2020, 01, 22, time.Hour, time.Minute, 0);
                             break;
 
                         case "Thursdays":
-                            broadcastTime = new DateTime(2020, 01, 23, time.Hour, time.Minute, 0);
+                            jstAirTime = new DateTime(2020, 01, 23, time.Hour, time.Minute, 0);
                             break;
 
                         case "Fridays":
-                            broadcastTime = new DateTime(2020, 01, 24, time.Hour, time.Minute, 0);
+                            jstAirTime = new DateTime(2020, 01, 24, time.Hour, time.Minute, 0);
                             break;
 
                         case "Saturdays":
-                            broadcastTime = new DateTime(2020, 01, 25, time.Hour, time.Minute, 0);
+                            jstAirTime = new DateTime(2020, 01, 25, time.Hour, time.Minute, 0);
                             break;
 
                         case "Sundays":
-                            broadcastTime = new DateTime(2020, 01, 26, time.Hour, time.Minute, 0);
+                            jstAirTime = new DateTime(2020, 01, 26, time.Hour, time.Minute, 0);
                             break;
 
                         default:
-                            broadcastTime = new DateTime();
+                            jstAirTime = new DateTime();
                             break;
                     }
                     airingAnime.IsOnSenpai = false;
+                    airingAnime.JSTBroadcastTime = jstAirTime;
                 }
-
-                // save JST broadcast time parsed from the Broadcast string
-                airingAnime.JSTBroadcastTime = broadcastTime;
 
                 // save JST broadcast time converted to your computer's local time to the model's property
                 airingAnime.ConvertJstBroadcastTimeToSelectedTimeZone(TimeZoneInfo.Local);
             }
+        }
+
+        public static bool TryParseAndSetAirTimeFromSenpai(SenpaiEntryModel senpaiEntries, MiruAnimeModel miruAnime, string[] formats, CultureInfo cultureInfo)
+        {
+            var airDateAndTime = senpaiEntries.Items.First(x => x.MalId == miruAnime.MalId).Airdate;
+            var parsed = DateTime.TryParseExact(airDateAndTime, formats, cultureInfo, DateTimeStyles.None, out DateTime parsedSenpaiBroadcast);
+            if (parsed)
+            {
+                miruAnime.Broadcast = airDateAndTime;
+                miruAnime.JSTBroadcastTime = parsedSenpaiBroadcast;
+            }
+            return parsed;
         }
 
         public static void SetAiringAnimeModelData(this MiruAnimeModel animeModel, Anime animeInfo, AnimeListEntry animeListEntry)
