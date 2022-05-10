@@ -384,7 +384,7 @@ namespace Miru.Tests.ModelsTests
                 expectedLocalBroadcastAnime.ConvertJstBroadcastTimeToSelectedTimeZone(TimeZoneInfo.Local);
 
                 // Assert
-                Assert.False(sut.First().IsOnSenpai);
+                Assert.True(sut.First().IsOnSenpai);
                 Assert.Equal(airingAnimeBroadcastInMalFormat, sut.First().Broadcast);
                 Assert.Equal(parsedBroadcast, sut.First().JSTBroadcastTime);
                 Assert.Equal(expectedLocalBroadcastAnime.LocalBroadcastTime, sut.First().LocalBroadcastTime);
