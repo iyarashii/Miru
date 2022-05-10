@@ -82,15 +82,16 @@ namespace MiruLibrary.Models
 
                 if (airingAnime.IsOnSenpai)
                 {
-                    parsed = TryParseAndSetAirTimeFromSenpai(senpaiEntries, airingAnime, formats, jpCultureInfo);
+                    var airDateAndTime = senpaiEntries.Items.First(x => x.MalId == airingAnime.MalId).Airdate;
+                    parsed = TryParseAndSetAirTime(airDateAndTime, airingAnime, formats, jpCultureInfo);
                 }
 
-                if (!parsed && DateTime.TryParseExact(airingAnime.Broadcast, formats, jpCultureInfo, DateTimeStyles.None, out DateTime parsedBroadcast))
+                if (!parsed)
                 {
-                    jstAirTime = parsedBroadcast;
-                    airingAnime.JSTBroadcastTime = jstAirTime;
+                    parsed = TryParseAndSetAirTime(airingAnime.Broadcast, airingAnime, formats, jpCultureInfo);
                 }
-                else if (!parsed)
+
+                if (!parsed)
                 {
                     // split the broadcast string into words
                     broadcastWords = airingAnime.Broadcast.Split(' ');
@@ -153,17 +154,20 @@ namespace MiruLibrary.Models
             }
         }
 
-        public static bool TryParseAndSetAirTimeFromSenpai(SenpaiEntryModel senpaiEntries, MiruAnimeModel miruAnime, string[] formats, CultureInfo cultureInfo)
+        public static bool TryParseAndSetAirTime(string airTimeText, MiruAnimeModel miruAnime, string[] formats, CultureInfo cultureInfo)
         {
-            var airDateAndTime = senpaiEntries.Items.First(x => x.MalId == miruAnime.MalId).Airdate;
-            var parsed = DateTime.TryParseExact(airDateAndTime, formats, cultureInfo, DateTimeStyles.None, out DateTime parsedSenpaiBroadcast);
+            var parsed = DateTime.TryParseExact(airTimeText, formats, cultureInfo, DateTimeStyles.None, out DateTime parsedSenpaiBroadcast);
             if (parsed)
             {
-                miruAnime.Broadcast = airDateAndTime;
+                miruAnime.Broadcast = airTimeText;
                 miruAnime.JSTBroadcastTime = parsedSenpaiBroadcast;
             }
             return parsed;
         }
+
+        //public static bool TryParseAndSetAirTimeFromMyAnimeList()
+        //{
+        //}
 
         public static void SetAiringAnimeModelData(this MiruAnimeModel animeModel, Anime animeInfo, AnimeListEntry animeListEntry)
         {
