@@ -81,9 +81,9 @@ namespace MiruLibrary.Models
                     parsed = TryParseAndSetAirTime(airDateAndTime, anime, formats, jpCultureInfo);
                 }
 
-                if (!parsed)
+                if (!parsed && !TryParseAndSetAirTime(anime.Broadcast, anime, formats, jpCultureInfo))
                 {
-                    parsed = TryParseAndSetAirTime(anime.Broadcast, anime, formats, jpCultureInfo) || TryParseAndSetAirTimeFromMyAnimeList(anime);
+                    TryParseAndSetAirTimeFromMyAnimeList(anime);
                 }
 
                 // save JST broadcast time converted to your computer's local time to the model's property
