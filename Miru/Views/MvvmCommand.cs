@@ -4,6 +4,7 @@ using System.Windows.Input;
 
 namespace Miru.Views
 {
+    // TODO: add unit tests
     public class MvvmCommand : DependencyObject, ICommand
     {
         readonly Action<object> _execute;
