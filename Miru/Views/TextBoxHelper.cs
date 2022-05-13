@@ -24,7 +24,7 @@ namespace Miru.Views
                 UIElement targetElement = s as UIElement;
                 if (targetElement != null)
                 {
-                    MvvmCommand command = new MvvmCommand(parameter => TextBoxHelper.FocusCommand(parameter))
+                    MvvmCommand command = new MvvmCommand(parameter => FocusCommand(parameter))
                     {
                         Tag = targetElement,
                     };
