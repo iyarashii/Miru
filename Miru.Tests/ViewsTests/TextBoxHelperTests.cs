@@ -29,5 +29,20 @@ namespace Miru.Tests.ViewsTests
 
             Assert.True(dependencyObject.GetValue(TextBoxHelper.FocusGestureProperty) == testData);
         }
+
+        [StaFact]
+        public void FocusCommand_GivenMvvmCommand_FocusTag()
+        {
+            var testData = new MvvmCommand(x => { })
+            {
+                Tag = new UIElement()
+            };
+            (testData.Tag as UIElement).Focusable = true;
+            (testData.Tag as UIElement).IsEnabled = true;
+
+            TextBoxHelper.FocusCommand(testData);
+
+            Assert.True((testData.Tag as UIElement).IsFocused);
+        }
     }
 }
