@@ -4,7 +4,6 @@ using System.Windows.Input;
 
 namespace Miru.Views
 {
-    // TODO: add unit tests
     public class TextBoxHelper : DependencyObject
     {
         public static KeyGesture GetFocusGesture(DependencyObject obj)
