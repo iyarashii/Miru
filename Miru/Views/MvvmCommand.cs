@@ -8,7 +8,7 @@ namespace Miru.Views
     public class MvvmCommand : DependencyObject, ICommand
     {
         readonly Action<object> _execute;
-        readonly Func<object, bool> _canExecute;
+        internal readonly Func<object, bool> _canExecute;
         public event EventHandler CanExecuteChanged;
         public MvvmCommand(Action<object> execute, Func<object, bool> canExecute = null)
         {
