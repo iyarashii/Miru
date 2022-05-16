@@ -23,5 +23,27 @@ namespace Miru.Tests.ViewsTests
             
             Assert.True(sut._canExecute(null));
         }
+
+        [Fact]
+        public void Execute_NullParam_ParamIsMvvmCommand()
+        {
+            object testResult = null;
+            var sut = new MvvmCommand(x => { testResult = x; });
+
+            sut.Execute(null);
+
+            Assert.True(testResult is MvvmCommand);
+        }
+
+        [Fact]
+        public void Execute_NotNullParam_ParamTypeMatchesGivenParam()
+        {
+            object testResult = null;
+            var sut = new MvvmCommand(x => { testResult = x; });
+
+            sut.Execute(true);
+
+            Assert.True(testResult is bool);
+        }
     }
 }
