@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Windows;
 using System.Windows.Input;
 
@@ -15,6 +16,7 @@ namespace Miru.Views
             _execute = execute ?? throw new ArgumentNullException("execute");
             _canExecute = canExecute ?? (parmeter => AlwaysCanExecute);
         }
+        [ExcludeFromCodeCoverage]
         public object Tag
         {
             get { return GetValue(TagProperty); }
@@ -23,6 +25,8 @@ namespace Miru.Views
         public static readonly DependencyProperty TagProperty = DependencyProperty
             .Register("Tag", typeof(object), typeof(MvvmCommand), new PropertyMetadata(null));
         const bool AlwaysCanExecute = true;
+
+        [ExcludeFromCodeCoverage]
         public void EvaluateCanExecute()
         {
             CanExecuteChanged?.Invoke(this, EventArgs.Empty);
