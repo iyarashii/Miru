@@ -41,5 +41,25 @@ namespace Miru.Tests.ViewsTests
 
             Assert.True(testResult is bool);
         }
+
+        [Fact]
+        public void CanExecute_canExecuteNull_ReturnTrue()
+        {
+            var sut = new MvvmCommand(x => { });
+
+            var result = sut.CanExecute(null);
+
+            Assert.True(result);
+        }
+
+        [Fact]
+        public void CanExecute_canExecuteNull_ReturnFalse()
+        {
+            var sut = new MvvmCommand(x => { }, x => { return false; });
+
+            var result = sut.CanExecute(null);
+
+            Assert.Equal(sut._canExecute(null), result);
+        }
     }
 }
