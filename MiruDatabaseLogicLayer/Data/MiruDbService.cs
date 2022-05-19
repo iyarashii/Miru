@@ -159,7 +159,6 @@ namespace MiruDatabaseLogicLayer
             // open temporary connection to the database
             using (var db = CreateMiruDbContext.Invoke())
             {
-                //TODO: Change here if multiple users should be supported
                 // if SyncedMyAnimeListUsers table is not empty then delete all rows
                 if (db.SyncedMyAnimeListUsers.Any())
                 {
