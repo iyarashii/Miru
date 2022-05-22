@@ -3,10 +3,12 @@
 // go to https://github.com/iyarashii/Miru/blob/master/LICENSE for full license details.
 
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace MiruLibrary.Models
 {
     // model for senpai JSON data serialization
+    [ExcludeFromCodeCoverage]
     public class SenpaiEntryModel
     {
         public List<Item> Items { get; set; }
