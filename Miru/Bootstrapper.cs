@@ -15,9 +15,11 @@ using MiruLibrary;
 using System.IO.Abstractions;
 using MyInternetConnectionLibrary;
 using MiruLibrary.Services;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Miru
 {
+    [ExcludeFromCodeCoverage]
     public class Bootstrapper : AutofacBootstrapper<IShellViewModel>
     {
         public Bootstrapper()
