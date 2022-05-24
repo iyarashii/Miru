@@ -5,7 +5,9 @@
 namespace MiruDatabaseLogicLayer.Migrations
 {
     using System.Data.Entity.Migrations;
+    using System.Diagnostics.CodeAnalysis;
 
+    [ExcludeFromCodeCoverage]
     public partial class AddSyncedUsersTable : DbMigration
     {
         public override void Up()
