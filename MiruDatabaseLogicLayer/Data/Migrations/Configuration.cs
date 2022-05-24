@@ -5,7 +5,9 @@
 namespace MiruDatabaseLogicLayer.Migrations
 {
     using System.Data.Entity.Migrations;
+    using System.Diagnostics.CodeAnalysis;
 
+    [ExcludeFromCodeCoverage]
     internal sealed class Configuration : DbMigrationsConfiguration<MiruDatabaseLogicLayer.MiruDbContext>
     {
         public Configuration()
