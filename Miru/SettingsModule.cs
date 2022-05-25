@@ -6,11 +6,13 @@ using Autofac;
 using MiruLibrary;
 using MiruLibrary.Settings;
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 
 namespace Miru
 {
+    [ExcludeFromCodeCoverage]
     public class SettingsModule : Autofac.Module
     {
         private readonly string _sectionNameSuffix;
