@@ -27,7 +27,7 @@ namespace Miru.Views
                             throw new ArgumentException("Type must be for an Enum.");
                     }
 
-                    this._enumType = value;
+                    _enumType = value;
                 }
             }
         }
@@ -38,18 +38,18 @@ namespace Miru.Views
 
         public EnumBindingSourceExtension(Type enumType)
         {
-            this.EnumType = enumType;
+            EnumType = enumType;
         }
 
         public override object ProvideValue(IServiceProvider serviceProvider)
         {
-            if (null == this._enumType)
+            if (null == _enumType)
                 throw new InvalidOperationException("The EnumType must be specified.");
 
-            Type actualEnumType = Nullable.GetUnderlyingType(this._enumType) ?? this._enumType;
+            Type actualEnumType = Nullable.GetUnderlyingType(_enumType) ?? _enumType;
             Array enumValues = Enum.GetValues(actualEnumType);
 
-            if (actualEnumType == this._enumType)
+            if (actualEnumType == _enumType)
                 return enumValues;
 
             Array tempArray = Array.CreateInstance(actualEnumType, enumValues.Length + 1);
