@@ -48,5 +48,46 @@ namespace Miru.Tests.ViewsTests
 
             Assert.Null(sut.EnumType);
         }
+
+        [Fact]
+        public void ProvideValue_EnumTypeNull_ThrowInvalidOperationException()
+        {
+            var sut = new EnumBindingSourceExtension();
+
+            Assert.Throws<InvalidOperationException>(() => sut.ProvideValue(null));
+        }
+
+        [Fact]
+        public void ProvideValue_EnumType_ReturnEnumTypeValues()
+        {
+            var sut = new EnumBindingSourceExtension(typeof(MiruAppStatus));
+            Array expectedResult = new[]
+            {
+                MiruAppStatus.Busy,
+                MiruAppStatus.Idle,
+                MiruAppStatus.InternetConnectionProblems
+            };
+
+            var result = sut.ProvideValue(default);
+
+            Assert.Equal(expectedResult, result);
+        }
+
+        [Fact]
+        public void ProvideValue_NullableEnumType_ReturnActualEnumTypeValues()
+        {
+            var sut = new EnumBindingSourceExtension(typeof(MiruAppStatus?));
+            Array expectedResult = new[]
+            {
+                MiruAppStatus.Busy,
+                MiruAppStatus.Busy,
+                MiruAppStatus.Idle,
+                MiruAppStatus.InternetConnectionProblems
+            };
+
+            var result = sut.ProvideValue(default);
+
+            Assert.Equal(expectedResult, result);
+        }
     }
 }
