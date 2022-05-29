@@ -5,6 +5,7 @@
 using Miru.Views;
 using System;
 using System.Windows;
+using System.Windows.Documents;
 using Xunit;
 
 namespace Miru.Tests.ViewsTests
@@ -25,6 +26,24 @@ namespace Miru.Tests.ViewsTests
         public void GetIsExternal_NullObj_ThrowNullReferenceException()
         {
             Assert.Throws<NullReferenceException> (() => HyperlinkExtensions.GetIsExternal(null));
+        }
+
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public void SetIsExternal_BoolValue_SetIsExternalProperty(bool testData)
+        {
+            var testDependencyObject = new Hyperlink();
+
+            HyperlinkExtensions.SetIsExternal(testDependencyObject, testData);
+            
+            Assert.Equal(testData, HyperlinkExtensions.GetIsExternal(testDependencyObject));
+        }
+
+        [Fact]
+        public void SetIsExternal_NullObj_ThrowNullReferenceException()
+        {
+            Assert.Throws<NullReferenceException>(() => HyperlinkExtensions.SetIsExternal(null, default));
         }
     }
 }
