@@ -6,10 +6,12 @@ using JikanDotNet;
 using MiruLibrary.Models;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity;
+using System.Diagnostics.CodeAnalysis;
 
 namespace MiruDatabaseLogicLayer
 {
     // app's default db context
+    [ExcludeFromCodeCoverage]
     public class MiruDbContext : DbContext, IMiruDbContext
     {
         // specify database name
