@@ -26,5 +26,30 @@ namespace Miru.Tests.ViewsTests
         {
             Assert.Throws<NullReferenceException>(() => RunVisibility.GetVisible(null));
         }
+
+        [Fact]
+        public void OnVisibilityChanged_TrueToFalse_SetVisiblePropertyBoolValue()
+        {
+            var testData = new Run() { FontSize = 39 };
+            
+            RunVisibility.SetVisible(testData, false);
+
+            Assert.False(RunVisibility.GetVisible(testData));
+            Assert.Equal(39d, testData.Tag);
+            Assert.Equal(0.004, testData.FontSize);
+        }
+
+        [Fact]
+        public void OnVisibilityChanged_FalseToTrue_SetVisiblePropertyBoolValue()
+        {
+            var testData = new Run() { FontSize = 39 };
+            RunVisibility.SetVisible(testData, false);
+
+            RunVisibility.SetVisible(testData, true);
+
+            Assert.True(RunVisibility.GetVisible(testData));
+            Assert.Equal(39d, testData.Tag);
+            Assert.Equal(39d, testData.FontSize);
+        }
     }
 }
