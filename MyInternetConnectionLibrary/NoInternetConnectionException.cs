@@ -3,14 +3,12 @@
 // go to https://github.com/iyarashii/Miru/blob/master/LICENSE for full license details.
 
 using System;
-using System.Net;
-using System.Net.Http;
-using System.Threading.Tasks;
+using System.Diagnostics.CodeAnalysis;
 
 namespace MyInternetConnectionLibrary
 {
     // custom exception thrown when internet connection issues occur
-    [Serializable]
+    [Serializable, ExcludeFromCodeCoverage]
     public class NoInternetConnectionException : Exception
     {
         public NoInternetConnectionException()
