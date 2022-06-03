@@ -3,10 +3,7 @@
 // go to https://github.com/iyarashii/Miru/blob/master/LICENSE for full license details.
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Diagnostics.CodeAnalysis;
 using ToastNotifications;
 using ToastNotifications.Core;
 using ToastNotifications.Lifetime;
@@ -15,6 +12,7 @@ using ToastNotifications.Position;
 
 namespace Miru.ViewModels
 {
+    [ExcludeFromCodeCoverage]
     public class ToastNotifierWrapper : IToastNotifierWrapper
     {
         private Notifier ToastNotifier { get; } = new Notifier(config =>
