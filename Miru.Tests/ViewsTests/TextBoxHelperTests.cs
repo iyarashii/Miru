@@ -23,15 +23,37 @@ namespace Miru.Tests.ViewsTests
             Assert.Equal(ModifierKeys.Control, result.Modifiers);
         }
 
-        [Fact]
-        public void SetFocusGesture_GivenKeyGesture_SetsFocusGesturePropertyToKeyGesture()
+        [StaFact]
+        public void SetFocusGesture_ObjIsNotUiElement_DoNotAddWindowInputBinding()
         {
             var testData = new KeyGesture(Key.D, ModifierKeys.Control);
             var dependencyObject = new DependencyObject();
+            var testWindow = new Window
+            {
+                Content = dependencyObject
+            };
 
             TextBoxHelper.SetFocusGesture(dependencyObject, testData);
 
-            Assert.True(dependencyObject.GetValue(TextBoxHelper.FocusGestureProperty) == testData);
+            Assert.Equal(testData, dependencyObject.GetValue(TextBoxHelper.FocusGestureProperty));
+            Assert.Empty(testWindow.InputBindings);
+        }
+
+        [StaFact]
+        public void SetFocusGesture_ObjIsUiElement_AddWindowInputBinding()
+        {
+            var testData = new KeyGesture(Key.D, ModifierKeys.Control);
+            var testObj = new FrameworkElement();
+            var testWindow = new Window
+            {
+                Content = testObj
+            };
+            var inputBindingsBeforeSetFocus = testWindow.InputBindings.Count;
+
+            TextBoxHelper.SetFocusGesture(testObj, testData);
+
+            Assert.Equal(testData, testObj.GetValue(TextBoxHelper.FocusGestureProperty));
+            Assert.True(testWindow.InputBindings.Count == ++inputBindingsBeforeSetFocus);
         }
 
         [StaFact]
@@ -47,6 +69,21 @@ namespace Miru.Tests.ViewsTests
             TextBoxHelper.FocusCommand(testData);
 
             Assert.True((testData.Tag as UIElement).IsFocused);
+        }
+
+        [StaFact]
+        public void FocusCommand_ParamNotMvvmCommand_DoNotFocusTag()
+        {
+            var testData = new FrameworkElement()
+            {
+                Tag = new UIElement()
+            };
+            (testData.Tag as UIElement).Focusable = true;
+            (testData.Tag as UIElement).IsEnabled = true;
+
+            TextBoxHelper.FocusCommand(testData);
+
+            Assert.False((testData.Tag as UIElement).IsFocused);
         }
     }
 }

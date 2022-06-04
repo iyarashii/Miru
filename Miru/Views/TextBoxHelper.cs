@@ -23,19 +23,20 @@ namespace Miru.Views
         [TypeConverter(typeof(KeyGestureConverter))]
         public static readonly DependencyProperty FocusGestureProperty =
             DependencyProperty.RegisterAttached("FocusGesture", typeof(KeyGesture), typeof(TextBoxHelper), 
-            new PropertyMetadata(new KeyGesture(Key.F, ModifierKeys.Control), 
-            new PropertyChangedCallback((s, e) =>
-            {
-                if (s is UIElement targetElement)
+            new PropertyMetadata(
+                new KeyGesture(Key.F, ModifierKeys.Control), 
+                new PropertyChangedCallback((s, e) =>
                 {
-                    MvvmCommand command = new MvvmCommand(parameter => FocusCommand(parameter))
+                    if (s is UIElement targetElement)
                     {
-                        Tag = targetElement,
-                    };
-                    InputGesture inputg = (KeyGesture)e.NewValue;
-                    Window.GetWindow(targetElement).InputBindings.Add(new InputBinding(command, inputg));
-                }
-            })));
+                        MvvmCommand command = new MvvmCommand(parameter => FocusCommand(parameter))
+                        {
+                            Tag = targetElement,
+                        };
+                        InputGesture inputg = (KeyGesture)e.NewValue;
+                        Window.GetWindow(targetElement).InputBindings.Add(new InputBinding(command, inputg));
+                    }
+                })));
 
         public static void FocusCommand(object parameter)
         {
