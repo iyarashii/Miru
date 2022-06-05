@@ -2,12 +2,9 @@
 // Licensed under the GNU General Public License v3.0,
 // go to https://github.com/iyarashii/Miru/blob/master/LICENSE for full license details.
 
-using Autofac;
 using Autofac.Extras.Moq;
-using Miru.ViewModels;
 using MiruLibrary;
 using MiruLibrary.Models;
-using Moq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
