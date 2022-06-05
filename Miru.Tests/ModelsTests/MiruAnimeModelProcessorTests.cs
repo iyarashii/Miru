@@ -2,12 +2,9 @@
 // Licensed under the GNU General Public License v3.0,
 // go to https://github.com/iyarashii/Miru/blob/master/LICENSE for full license details.
 
-using Autofac;
 using Autofac.Extras.Moq;
-using Miru.ViewModels;
 using MiruLibrary;
 using MiruLibrary.Models;
-using Moq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,6 +19,7 @@ namespace Miru.Tests.ModelsTests
             yield return new object[] { AnimeListType.AiringAndWatching, new Predicate<MiruAnimeModel>(x => x.IsOnWatchingList && x.CurrentlyAiring) };
             yield return new object[] { AnimeListType.Watching, new Predicate<MiruAnimeModel>(x => x.IsOnWatchingList) };
             yield return new object[] { AnimeListType.Season, new Predicate<MiruAnimeModel>(x => x.CurrentlyAiring) };
+            yield return new object[] { AnimeListType.Senpai, new Predicate<MiruAnimeModel>(x => x.IsOnSenpai) };
         }
 
         [Theory]
@@ -35,7 +33,8 @@ namespace Miru.Tests.ModelsTests
                 {
                      new MiruAnimeModel { IsOnWatchingList = true, CurrentlyAiring = true },
                      new MiruAnimeModel { IsOnWatchingList = true, CurrentlyAiring = false },
-                     new MiruAnimeModel { IsOnWatchingList = false, CurrentlyAiring = true }
+                     new MiruAnimeModel { IsOnWatchingList = false, CurrentlyAiring = true },
+                     new MiruAnimeModel { IsOnSenpai = true, CurrentlyAiring = false, IsOnWatchingList = false },
                 };
                 var sut = mock.Create<MiruAnimeModelProcessor>();
 
