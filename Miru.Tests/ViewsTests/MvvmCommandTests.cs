@@ -56,10 +56,12 @@ namespace Miru.Tests.ViewsTests
             Assert.True(result);
         }
 
-        [Fact]
-        public void CanExecute_canExecuteNull_ReturnFalse()
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public void CanExecute_canExecuteNotNull_ReturnFuncResult(bool funcResult)
         {
-            var sut = new MvvmCommand(x => { }, x => { return false; });
+            var sut = new MvvmCommand(x => { }, x => { return funcResult; });
 
             var result = sut.CanExecute(null);
 
