@@ -87,7 +87,7 @@ namespace MiruLibrary.Models
 
                 if (!parsed && !TryParseAndSetAirTime(anime.Broadcast, anime, formats, jpCultureInfo))
                 {
-                    TryParseAndSetAirTimeFromMyAnimeList(anime);
+                    anime.TryParseAndSetAirTimeFromMyAnimeList();
                 }
 
                 // save JST broadcast time converted to your computer's local time to the model's property
@@ -111,61 +111,54 @@ namespace MiruLibrary.Models
         /// </summary>
         /// <param name="animeToUpdate">Anime that will be updated with parsed data.</param>
         /// <returns></returns>
-        public static bool TryParseAndSetAirTimeFromMyAnimeList(MiruAnimeModel animeToUpdate)
+        public static bool TryParseAndSetAirTimeFromMyAnimeList(this MiruAnimeModel animeToUpdate)
         {
             // split the broadcast string into words
-            var broadcastWords = animeToUpdate.Broadcast.Split(' ');
+            var broadcastWords = animeToUpdate.Broadcast?.Split(' ');
 
-            if (broadcastWords.Length <= 2)
+            if (broadcastWords == null || broadcastWords.Length < 3)
             {
                 return false;
             }
-            // parse time from the 2nd broadcast string word
-            if (!DateTime.TryParse(broadcastWords[2], out DateTime time))
+            // parse time from the 3rd broadcast string word
+            if (!DateTime.TryParse(broadcastWords[2], out DateTime airTime))
             {
                 return false;
             }
 
             // set the first word of the broadcast string as a day of the week
             var dayOfTheWeek = broadcastWords[0];
-            DateTime jstAirTime;
+            int day;
 
             // depending on the 1st word set the correct day
             switch (dayOfTheWeek)
             {
                 case "Mondays":
-                    jstAirTime = new DateTime(2020, 01, 20, time.Hour, time.Minute, 0);
+                    day = 20;
                     break;
-
                 case "Tuesdays":
-                    jstAirTime = new DateTime(2020, 01, 21, time.Hour, time.Minute, 0);
+                    day = 21;
                     break;
-
                 case "Wednesdays":
-                    jstAirTime = new DateTime(2020, 01, 22, time.Hour, time.Minute, 0);
+                    day = 22;
                     break;
-
                 case "Thursdays":
-                    jstAirTime = new DateTime(2020, 01, 23, time.Hour, time.Minute, 0);
+                    day = 23;
                     break;
-
                 case "Fridays":
-                    jstAirTime = new DateTime(2020, 01, 24, time.Hour, time.Minute, 0);
+                    day = 24;
                     break;
-
                 case "Saturdays":
-                    jstAirTime = new DateTime(2020, 01, 25, time.Hour, time.Minute, 0);
+                    day = 25;
                     break;
-
                 case "Sundays":
-                    jstAirTime = new DateTime(2020, 01, 26, time.Hour, time.Minute, 0);
+                    day = 26;
                     break;
-
                 default:
-                    jstAirTime = new DateTime();
+                    day = 27;
                     break;
             }
-            animeToUpdate.JSTBroadcastTime = jstAirTime;
+            animeToUpdate.JSTBroadcastTime = new DateTime(2020, 01, day, airTime.Hour, airTime.Minute, 0);
             return true;
         }
 
