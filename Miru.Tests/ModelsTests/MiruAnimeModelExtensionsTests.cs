@@ -394,5 +394,50 @@ namespace Miru.Tests.ModelsTests
                 Assert.Equal(expectedLocalBroadcastAnime.LocalBroadcastTime, sut.First().LocalBroadcastTime);
             }
         }
+
+        [Theory]
+        [InlineData(null)]
+        [InlineData("")]
+        [InlineData("one_word")]
+        public void TryParseAndSetAirTimeFromMyAnimeList_LessThanThreeBroadcastWords_ReturnFalse(string broadcast)
+        {
+            var sut = new MiruAnimeModel() { Broadcast = broadcast };
+
+            var result = sut.TryParseAndSetAirTimeFromMyAnimeList();
+
+            Assert.False(result);
+        }
+
+        [Fact]
+        public void TryParseAndSetAirTimeFromMyAnimeList_BroadcastDateParseFail_ReturnFalse()
+        {
+            var sut = new MiruAnimeModel() { Broadcast = "test test 25:00" };
+
+            var result = sut.TryParseAndSetAirTimeFromMyAnimeList();
+
+            Assert.False(result);
+        }
+
+        [Theory]
+        [InlineData("Mondays at 01:11", DayOfWeek.Monday, 1, 11)]
+        [InlineData("Tuesdays at 2:22", DayOfWeek.Tuesday, 2, 22)]
+        [InlineData("Wednesdays at 21:37", DayOfWeek.Wednesday, 21, 37)]
+        [InlineData("Thursdays at 01:01", DayOfWeek.Thursday, 1, 1)]
+        [InlineData("Fridays at 22:05", DayOfWeek.Friday, 22, 5)]
+        [InlineData("Saturdays at 03:5", DayOfWeek.Saturday, 3, 5)]
+        [InlineData("Sundays at 9:9", DayOfWeek.Sunday, 9, 9)]
+        [InlineData("Unknown at 00:00", DayOfWeek.Monday, 0, 0)]
+        public void TryParseAndSetAirTimeFromMyAnimeList_BroadcastDateParseSuccess_ReturnTrueAndSetJstBroadcastTime(
+            string broadcast, DayOfWeek expectedDay, int expectedHour, int expectedMinute)
+        {
+            var sut = new MiruAnimeModel() { Broadcast = broadcast };
+
+            var result = sut.TryParseAndSetAirTimeFromMyAnimeList();
+
+            Assert.True(result);
+            Assert.Equal(expectedDay, sut.JSTBroadcastTime.Value.DayOfWeek);
+            Assert.Equal(expectedHour, sut.JSTBroadcastTime.Value.Hour);
+            Assert.Equal(expectedMinute, sut.JSTBroadcastTime.Value.Minute);
+        }
     }
 }
