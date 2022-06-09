@@ -161,10 +161,16 @@ namespace Miru.Tests.ModelsTests
         const string URL = "🐙";
         const int WATCHED_EPISODES = 39;
 
+        public static IEnumerable<object[]> PrepareDataForSetAiringAnimeModelData()
+        {
+            yield return new object[] { AiringStatus.Airing, "not null", null };
+            yield return new object[] { AiringStatus.Completed, null, null };
+            yield return new object[] { AiringStatus.Completed, null, new TimePeriod() { From = new DateTime(2022, 3, 14) } };
+        }
+
         [Theory]
-        [InlineData(AiringStatus.Airing, "not null")]
-        [InlineData(AiringStatus.Completed, null)]
-        public void SetAiringAnimeModelData_GivenValidInput_SetsDataCorrectly(AiringStatus airingStatus, string broadcast)
+        [MemberData(nameof(PrepareDataForSetAiringAnimeModelData))]
+        public void SetAiringAnimeModelData_GivenValidInput_SetsDataCorrectly(AiringStatus airingStatus, string broadcast, TimePeriod timePeriod)
         {
             // Arrange
             var sut = new MiruAnimeModel();
@@ -176,7 +182,7 @@ namespace Miru.Tests.ModelsTests
                 Title = TITLE,
                 ImageURL = IMAGE_URL,
                 Type = TYPE,
-                Aired = new TimePeriod() { From = airedFromDate }
+                Aired = timePeriod
             };
             var animeListEntry = new AnimeListEntry()
             {
@@ -200,7 +206,7 @@ namespace Miru.Tests.ModelsTests
             Assert.True(sut.IsOnWatchingList);
             Assert.Equal(Path.Combine(Constants.ImageCacheFolderPath, $"{ MAL_ID }.jpg"), sut.LocalImagePath);
             Assert.Equal(airingStatus == AiringStatus.Airing, sut.CurrentlyAiring);
-            Assert.Equal(broadcast ?? airedFromDate.ToString(), sut.Broadcast);
+            Assert.Equal(broadcast ?? animeInfo.Aired?.From.ToString(), sut.Broadcast);
         }
 
         [Theory]
