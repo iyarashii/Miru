@@ -4,11 +4,11 @@
 
 using MiruDatabaseLogicLayer;
 using MiruLibrary;
+using MiruLibrary.Services;
 using ModernWpf;
 using System;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
-using System.Windows.Controls;
 using System.Windows.Media;
 
 namespace Miru.ViewModels
@@ -36,6 +36,7 @@ namespace Miru.ViewModels
         IToastNotifierWrapper ToastNotifierWrapper { get; }
         string CurrentAnimeNameFilter { get; set; }
         double AnimeImageSizeInPixels { get; set; }
+        IRegistryService RegistryService { get; }
 
         bool CanSyncUserAnimeList(string typedInUsername, MiruAppStatus appStatus, bool syncSeasonList);
 

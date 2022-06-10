@@ -2,26 +2,22 @@
 // Licensed under the GNU General Public License v3.0,
 // go to https://github.com/iyarashii/Miru/blob/master/LICENSE for full license details.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Miru;
-using Miru.ViewModels;
-using Xunit;
-using MiruDatabaseLogicLayer;
-using MiruLibrary.Models;
+using Autofac;
 using Autofac.Extras.Moq;
+using Microsoft.Win32;
+using Miru.ViewModels;
+using MiruDatabaseLogicLayer;
+using MiruLibrary;
+using MiruLibrary.Models;
+using MiruLibrary.Services;
 using ModernWpf;
 using ModernWpf.Controls;
-using System.Windows.Media;
 using Moq;
-using ToastNotifications.Core;
-using System.Collections.ObjectModel;
-using Caliburn.Micro;
+using System;
+using System.Collections.Generic;
 using System.Threading;
-using MiruLibrary;
+using System.Windows.Media;
+using Xunit;
 // CODE COVERAGE commands used for .NET Framework
 // command for code coverage generation - run in Package Manager Console inside Test.csproj directory
 // dotnet test --no-build --collect:"XPlat Code Coverage" 
@@ -232,7 +228,7 @@ namespace Miru.Tests
             using (var mock = AutoMock.GetLoose())
             {
                 // Arrange
-                var cls = mock.Create<ShellViewModel>();
+                var cls = mock.Create<ShellViewModel>(new NamedParameter("registryService", new RegistryService()));
 
                 // Act
                 cls.UpdateAppStatus(inputAppStatus, inputDetailedAppStatusDescription);
@@ -507,7 +503,6 @@ namespace Miru.Tests
             }
         }
 
-        //[StaFact]
         [Fact]
         public void CopyAnimeTitleToClipboard_ValidCall()
         {
@@ -517,7 +512,7 @@ namespace Miru.Tests
                 var cls = mock.Create<ShellViewModel>();
                 var testValue = "dydnie";
                 
-                Thread STAThread = new Thread(() =>
+                Thread staThread = new Thread(() =>
                 {
                     var clipboardContentBeforeTest = System.Windows.Clipboard.GetText();
 
@@ -528,9 +523,67 @@ namespace Miru.Tests
                     Assert.Equal(testValue, System.Windows.Clipboard.GetText());
                     System.Windows.Clipboard.SetText(clipboardContentBeforeTest);
                 });
-                STAThread.SetApartmentState(ApartmentState.STA);
-                STAThread.Start();
-                STAThread.Join();
+                staThread.SetApartmentState(ApartmentState.STA);
+                staThread.Start();
+                staThread.Join();
+            }
+        }
+
+        [Theory]
+        [InlineData("")]
+        [InlineData(" ")]
+        [InlineData("test name")]
+        public void CheckSqlLocalDbInstallationPresence_InvalidSubKeyNames_ReturnFalse(string subKeyNames)
+        {
+            using (var mock = AutoMock.GetLoose())
+            {
+                var testRegKey = Registry.CurrentUser.CreateSubKey("MiruRegistryTest");
+                testRegKey.CreateSubKey(subKeyNames);
+                mock.Mock<IRegistryService>().Setup(x => x.OpenLocalMachineSubKey(It.IsAny<string>())).Returns(testRegKey);
+                var cls = mock.Create<ShellViewModel>();
+
+                var result = cls.CheckSqlLocalDbInstallationPresence();
+
+                Assert.False(result);
+                Registry.CurrentUser.DeleteSubKeyTree("MiruRegistryTest");
+            }
+        }
+
+        [Theory]
+        [InlineData("13.0")]
+        [InlineData("14.0")]
+        public void CheckSqlLocalDbInstallationPresence_SqlLocalDbVer13_0_OrGreater_ReturnTrue(string subKeyNames)
+        {
+            using (var mock = AutoMock.GetLoose())
+            {
+                var testRegKey = Registry.CurrentUser.CreateSubKey("MiruRegistryTest");
+                testRegKey.CreateSubKey(subKeyNames);
+                mock.Mock<IRegistryService>().Setup(x => x.OpenLocalMachineSubKey(It.IsAny<string>())).Returns(testRegKey);
+                var cls = mock.Create<ShellViewModel>();
+
+                var result = cls.CheckSqlLocalDbInstallationPresence();
+
+                Assert.True(result);
+                Registry.CurrentUser.DeleteSubKeyTree("MiruRegistryTest");
+            }
+        }
+
+        [Theory]
+        [InlineData("12.0")]
+        [InlineData("10.0")]
+        public void CheckSqlLocalDbInstallationPresence_SqlLocalDbVerLowerThan13_0_ReturnFalse(string subKeyNames)
+        {
+            using (var mock = AutoMock.GetLoose())
+            {
+                var testRegKey = Registry.CurrentUser.CreateSubKey("MiruRegistryTest");
+                testRegKey.CreateSubKey(subKeyNames);
+                mock.Mock<IRegistryService>().Setup(x => x.OpenLocalMachineSubKey(It.IsAny<string>())).Returns(testRegKey);
+                var cls = mock.Create<ShellViewModel>();
+
+                var result = cls.CheckSqlLocalDbInstallationPresence();
+
+                Assert.False(result);
+                Registry.CurrentUser.DeleteSubKeyTree("MiruRegistryTest");
             }
         }
         #endregion methods tests
