@@ -3,10 +3,10 @@
 // go to https://github.com/iyarashii/Miru/blob/master/LICENSE for full license details.
 
 using Caliburn.Micro;
-using Microsoft.Win32;
 using MiruDatabaseLogicLayer;
 using MiruLibrary;
 using MiruLibrary.Models;
+using MiruLibrary.Services;
 using ModernWpf;
 using System;
 using System.Collections.ObjectModel;
@@ -66,25 +66,23 @@ namespace Miru.ViewModels
         public bool CheckSqlLocalDbInstallationPresence()
         {
             string[] installedVersions;
-            var sqlLocalDbPresent = false;
-            var sqlLocalDbRegistry = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Microsoft SQL Server Local DB\Installed Versions\");
-            if (sqlLocalDbRegistry != null)
+            var sqlLocalDbRegistryKey = RegistryService.OpenLocalMachineSubKey(@"SOFTWARE\Microsoft\Microsoft SQL Server Local DB\Installed Versions\");
+            if (sqlLocalDbRegistryKey != null)
             {
-                installedVersions = sqlLocalDbRegistry.GetSubKeyNames();
+                installedVersions = sqlLocalDbRegistryKey.GetSubKeyNames();
                 foreach (var version in installedVersions)
                 {
-                    if (string.IsNullOrEmpty(version)) continue;
+                    if (string.IsNullOrWhiteSpace(version)) continue;
                     if (!float.TryParse(version, NumberStyles.Float, CultureInfo.InvariantCulture, out float parsedVersion)) break;
 
                     // 13.0 is SQL LocalDB 2016 version
                     if (parsedVersion >= 13.0)
                     {
-                        sqlLocalDbPresent = true;
-                        break;
+                        return true;
                     }
                 }
             }
-            return sqlLocalDbPresent;
+            return false;
         }
 
         // constructor
@@ -93,7 +91,8 @@ namespace Miru.ViewModels
                               IFileSystemService fileSystemService,
                               ISimpleContentDialog contentDialog,
                               IToastNotifierWrapper toastNotifierWrapper,
-                              UserSettings userSettings)
+                              UserSettings userSettings,
+                              IRegistryService registryService)
         {
             #region dependency injection
 
@@ -102,6 +101,7 @@ namespace Miru.ViewModels
             FileSystemService = fileSystemService;
             ContentDialog = contentDialog;
             ToastNotifierWrapper = toastNotifierWrapper;
+            RegistryService = registryService;
 
             #endregion dependency injection
 
@@ -140,6 +140,9 @@ namespace Miru.ViewModels
                 NotifyOfPropertyChange(() => AnimeImageSizeInPixels);
             }
         }
+
+        public IRegistryService RegistryService { get; }
+
         public IToastNotifierWrapper ToastNotifierWrapper { get; }
 
         // content dialog instance
