@@ -370,6 +370,73 @@ namespace Miru.Tests
         }
 
         [Fact]
+        public void SyncUserAnimeList_GetUserAnimeListIsFalse_AppStatusIdleWithExpectedDescription()
+        {
+            using (var mock = AutoMock.GetLoose())
+            {
+                var cls = mock.Create<ShellViewModel>();
+                string expectedAppStatusDescription = "2137";
+                (bool Success, string ErrorMessage) mockResult = (false, expectedAppStatusDescription);
+                mock.Mock<IMiruDbService>()
+                    .Setup(x => x.CurrentUserAnimeList.GetCurrentUserAnimeList(It.IsAny<string>()))
+                    .ReturnsAsync(mockResult);
+
+                cls.SyncUserAnimeList(It.IsAny<string>(), It.IsAny<MiruAppStatus>(), It.IsAny<bool>()).Wait();
+
+                mock.Mock<IMiruDbService>().Verify(x => x.CurrentUserAnimeList.GetCurrentUserAnimeList(It.IsAny<string>()), Times.Once);
+                Assert.Equal($"Miru -- { expectedAppStatusDescription }", cls.AppStatusText);
+                Assert.Equal(MiruAppStatus.Idle, cls.AppStatus);
+            }
+        }           
+
+        [Fact]
+        public void SyncUserAnimeList_GetCurrentSeasonIsFalseAndSeasonSyncOn_AppStatusInternetConnectionProblems()
+        {
+            using (var mock = AutoMock.GetLoose())
+            {
+                var cls = mock.Create<ShellViewModel>();
+                (bool Success, string ErrorMessage) mockResult = (true, null);
+                mock.Mock<IMiruDbService>()
+                    .Setup(x => x.CurrentUserAnimeList.GetCurrentUserAnimeList(It.IsAny<string>()))
+                    .ReturnsAsync(mockResult);
+                mock.Mock<IMiruDbService>()
+                    .Setup(x => x.CurrentSeason.GetCurrentSeasonList(It.IsAny<int>()))
+                    .ReturnsAsync(false);
+
+                cls.SyncUserAnimeList(It.IsAny<string>(), It.IsAny<MiruAppStatus>(), true).Wait();
+
+                mock.Mock<IMiruDbService>().Verify(x => x.CurrentSeason.GetCurrentSeasonList(It.IsAny<int>()), Times.Once);
+                Assert.Equal($"Miru -- Problems with internet connection!", cls.AppStatusText);
+                Assert.Equal(MiruAppStatus.InternetConnectionProblems, cls.AppStatus);
+            }
+        }
+
+        [Fact]
+        public void SyncUserAnimeList_SaveDetailedAnimeListDataIsFalse_AppStatusInternetConnectionProblems()
+        {
+            using (var mock = AutoMock.GetLoose())
+            {
+                var cls = mock.Create<ShellViewModel>();
+                (bool Success, string ErrorMessage) mockResult = (true, null);
+                mock.Mock<IMiruDbService>()
+                    .Setup(x => x.CurrentUserAnimeList.GetCurrentUserAnimeList(It.IsAny<string>()))
+                    .ReturnsAsync(mockResult);
+                mock.Mock<IMiruDbService>()
+                    .Setup(x => x.CurrentSeason.GetCurrentSeasonList(It.IsAny<int>()))
+                    .ReturnsAsync(true);
+                mock.Mock<IMiruDbService>()
+                    .Setup(x => x.SaveDetailedAnimeListData(It.IsAny<bool>()))
+                    .ReturnsAsync(false);
+
+                cls.SyncUserAnimeList(It.IsAny<string>(), It.IsAny<MiruAppStatus>(), It.IsAny<bool>()).Wait();
+
+                mock.Mock<IMiruDbService>().Verify(x => x.SaveDetailedAnimeListData(It.IsAny<bool>()), Times.Once);
+                Assert.Equal($"Miru -- Problems with internet connection!", cls.AppStatusText);
+                Assert.Equal(MiruAppStatus.InternetConnectionProblems, cls.AppStatus);
+            }
+        }
+
+        [Fact]
         public void UpdateUiAfterDataSync_SetsCorrectProperties()
         {
             using (var mock = AutoMock.GetLoose())
