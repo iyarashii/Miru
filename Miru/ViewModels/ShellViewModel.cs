@@ -66,7 +66,7 @@ namespace Miru.ViewModels
         public bool CheckSqlLocalDbInstallationPresence()
         {
             string[] installedVersions;
-            var sqlLocalDbRegistryKey = RegistryService.OpenLocalMachineSubKey(@"SOFTWARE\Microsoft\Microsoft SQL Server Local DB\Installed Versions\");
+            var sqlLocalDbRegistryKey = SystemService.OpenLocalMachineSubKey(@"SOFTWARE\Microsoft\Microsoft SQL Server Local DB\Installed Versions\");
             if (sqlLocalDbRegistryKey != null)
             {
                 installedVersions = sqlLocalDbRegistryKey.GetSubKeyNames();
@@ -92,7 +92,7 @@ namespace Miru.ViewModels
                               ISimpleContentDialog contentDialog,
                               IToastNotifierWrapper toastNotifierWrapper,
                               UserSettings userSettings,
-                              IRegistryService registryService)
+                              ISystemService systemService)
         {
             #region dependency injection
 
@@ -101,7 +101,7 @@ namespace Miru.ViewModels
             FileSystemService = fileSystemService;
             ContentDialog = contentDialog;
             ToastNotifierWrapper = toastNotifierWrapper;
-            RegistryService = registryService;
+            SystemService = systemService;
 
             #endregion dependency injection
 
@@ -141,7 +141,7 @@ namespace Miru.ViewModels
             }
         }
 
-        public IRegistryService RegistryService { get; }
+        public ISystemService SystemService { get; }
 
         public IToastNotifierWrapper ToastNotifierWrapper { get; }
 
@@ -535,7 +535,7 @@ namespace Miru.ViewModels
         // opens MAL anime page
         public void OpenAnimeURL(string URL)
         {
-            Process.Start(URL);
+            SystemService.StartProcess(URL);
         }
 
         // saves anime title to the clipboard and shows notification describing this action
@@ -577,12 +577,12 @@ namespace Miru.ViewModels
             var result = await ContentDialog.ShowAsync();
             if (result == ModernWpf.Controls.ContentDialogResult.Primary)
             {
-                Environment.Exit(0);
+                SystemService.ExitEnvironment(0);
             }
             if (result == ModernWpf.Controls.ContentDialogResult.Secondary)
             {
-                Process.Start(link);
-                Environment.Exit(0);
+                SystemService.StartProcess(link);
+                SystemService.ExitEnvironment(0);
             }
         }
 

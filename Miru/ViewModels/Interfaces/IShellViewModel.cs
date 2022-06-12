@@ -36,7 +36,7 @@ namespace Miru.ViewModels
         IToastNotifierWrapper ToastNotifierWrapper { get; }
         string CurrentAnimeNameFilter { get; set; }
         double AnimeImageSizeInPixels { get; set; }
-        IRegistryService RegistryService { get; }
+        ISystemService SystemService { get; }
 
         bool CanSyncUserAnimeList(string typedInUsername, MiruAppStatus appStatus, bool syncSeasonList);
 

@@ -60,7 +60,7 @@ namespace Miru
             builder.RegisterType<MiruAnimeModel>();
             builder.RegisterType<TimerService>().As<ITimerService>();
             builder.RegisterType<UserDataService>().As<IUserDataService>();
-            builder.RegisterType<RegistryService>().As<IRegistryService>();
+            builder.RegisterType<SystemService>().As<ISystemService>();
             // path to the config file is passed here
             builder.RegisterModule(new SettingsModule());
         }
