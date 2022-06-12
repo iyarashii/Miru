@@ -228,7 +228,7 @@ namespace Miru.Tests
             using (var mock = AutoMock.GetLoose())
             {
                 // Arrange
-                var cls = mock.Create<ShellViewModel>(new NamedParameter("registryService", new RegistryService()));
+                var cls = mock.Create<ShellViewModel>(new NamedParameter("systemService", new SystemService()));
 
                 // Act
                 cls.UpdateAppStatus(inputAppStatus, inputDetailedAppStatusDescription);
@@ -606,7 +606,7 @@ namespace Miru.Tests
             {
                 var testRegKey = Registry.CurrentUser.CreateSubKey("MiruRegistryTest");
                 testRegKey.CreateSubKey(subKeyNames);
-                mock.Mock<IRegistryService>().Setup(x => x.OpenLocalMachineSubKey(It.IsAny<string>())).Returns(testRegKey);
+                mock.Mock<ISystemService>().Setup(x => x.OpenLocalMachineSubKey(It.IsAny<string>())).Returns(testRegKey);
                 var cls = mock.Create<ShellViewModel>();
 
                 var result = cls.CheckSqlLocalDbInstallationPresence();
@@ -625,7 +625,7 @@ namespace Miru.Tests
             {
                 var testRegKey = Registry.CurrentUser.CreateSubKey("MiruRegistryTest");
                 testRegKey.CreateSubKey(subKeyNames);
-                mock.Mock<IRegistryService>().Setup(x => x.OpenLocalMachineSubKey(It.IsAny<string>())).Returns(testRegKey);
+                mock.Mock<ISystemService>().Setup(x => x.OpenLocalMachineSubKey(It.IsAny<string>())).Returns(testRegKey);
                 var cls = mock.Create<ShellViewModel>();
 
                 var result = cls.CheckSqlLocalDbInstallationPresence();
@@ -644,13 +644,27 @@ namespace Miru.Tests
             {
                 var testRegKey = Registry.CurrentUser.CreateSubKey("MiruRegistryTest");
                 testRegKey.CreateSubKey(subKeyNames);
-                mock.Mock<IRegistryService>().Setup(x => x.OpenLocalMachineSubKey(It.IsAny<string>())).Returns(testRegKey);
+                mock.Mock<ISystemService>().Setup(x => x.OpenLocalMachineSubKey(It.IsAny<string>())).Returns(testRegKey);
                 var cls = mock.Create<ShellViewModel>();
 
                 var result = cls.CheckSqlLocalDbInstallationPresence();
 
                 Assert.False(result);
                 Registry.CurrentUser.DeleteSubKeyTree("MiruRegistryTest");
+            }
+        }
+
+        [Fact]
+        public void OpenAnimeURL_CallsProcessWithUrlParam()
+        {
+            using (var mock = AutoMock.GetLoose())
+            {
+                string testData = "🦂💯";
+                var cls = mock.Create<ShellViewModel>();
+
+                cls.OpenAnimeURL(testData);
+
+                mock.Mock<ISystemService>().Verify(x => x.StartProcess(testData), Times.Once);
             }
         }
         #endregion methods tests

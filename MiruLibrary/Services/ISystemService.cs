@@ -3,11 +3,14 @@
 // go to https://github.com/iyarashii/Miru/blob/master/LICENSE for full license details.
 
 using Microsoft.Win32;
+using System.Diagnostics;
 
 namespace MiruLibrary.Services
 {
-    public interface IRegistryService
+    public interface ISystemService
     {
+        void ExitEnvironment(int exitCode);
         RegistryKey OpenLocalMachineSubKey(string name);
+        Process StartProcess(string fileName);
     }
 }
