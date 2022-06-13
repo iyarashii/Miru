@@ -533,9 +533,9 @@ namespace Miru.ViewModels
         }
 
         // opens MAL anime page
-        public void OpenAnimeURL(string URL)
+        public Process OpenAnimeURL(string URL)
         {
-            SystemService.StartProcess(URL);
+            return SystemService.StartProcess(URL);
         }
 
         // saves anime title to the clipboard and shows notification describing this action

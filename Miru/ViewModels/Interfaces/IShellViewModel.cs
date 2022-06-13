@@ -8,6 +8,7 @@ using MiruLibrary.Services;
 using ModernWpf;
 using System;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows.Media;
 
@@ -48,7 +49,7 @@ namespace Miru.ViewModels
 
         void UpdateBrushColors();
 
-        void OpenAnimeURL(string URL);
+        Process OpenAnimeURL(string URL);
 
         Task SyncUserAnimeList(string typedInUsername, MiruAppStatus appStatus, bool seasonSyncOn);
 

@@ -15,6 +15,7 @@ using ModernWpf.Controls;
 using Moq;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading;
 using System.Windows.Media;
 using Xunit;
@@ -660,11 +661,69 @@ namespace Miru.Tests
             using (var mock = AutoMock.GetLoose())
             {
                 string testData = "🦂💯";
+                mock.Mock<ISystemService>().Setup(x => x.StartProcess(It.IsAny<string>())).Returns<Process>(null);
                 var cls = mock.Create<ShellViewModel>();
 
-                cls.OpenAnimeURL(testData);
+                var result = cls.OpenAnimeURL(testData);
 
                 mock.Mock<ISystemService>().Verify(x => x.StartProcess(testData), Times.Once);
+                Assert.Null(result);
+            }
+        }
+
+        [Fact]
+        public void OpenNoLocalDbInfoDialog_ResultPrimary_ExitEnvironmentCalled()
+        {
+            using (var mock = AutoMock.GetLoose())
+            {
+                mock.Mock<ISimpleContentDialog>()
+                    .Setup(x => x.ShowAsync())
+                    .ReturnsAsync(ContentDialogResult.Primary);
+                var cls = mock.Create<ShellViewModel>();
+
+                cls.OpenNoLocalDbInfoDialog().Wait();
+
+                mock.Mock<ISystemService>().Verify(x => x.ExitEnvironment(0), Times.Once);
+                mock.Mock<ISystemService>().Verify(x => x.StartProcess(It.IsAny<string>()), Times.Never);
+                Assert.Equal(MiruAppStatus.Busy, cls.AppStatus);
+            }
+        }
+
+        [Fact]
+        public void OpenNoLocalDbInfoDialog_ResultSecondary_ExitEnvironmentAndOpenSqlServerDownloadUrlCalled()
+        {
+            using (var mock = AutoMock.GetLoose())
+            {
+                
+                mock.Mock<ISimpleContentDialog>()
+                    .Setup(x => x.ShowAsync())
+                    .ReturnsAsync(ContentDialogResult.Secondary);
+                var cls = mock.Create<ShellViewModel>();
+
+                cls.OpenNoLocalDbInfoDialog().Wait();
+
+                mock.Mock<ISystemService>().Verify(x => x.ExitEnvironment(0), Times.Once);
+                mock.Mock<ISystemService>()
+                    .Verify(x => x.StartProcess(@"https://docs.microsoft.com/en-us/sql/database-engine/configure-windows/sql-server-express-localdb?view=sql-server-ver15"), Times.Once);
+                Assert.Equal(MiruAppStatus.Busy, cls.AppStatus);
+            }
+        }
+
+        [Fact]
+        public void OpenNoLocalDbInfoDialog_ResultNone_NothingCalled()
+        {
+            using (var mock = AutoMock.GetLoose())
+            {
+                mock.Mock<ISimpleContentDialog>()
+                    .Setup(x => x.ShowAsync())
+                    .ReturnsAsync(ContentDialogResult.None);
+                var cls = mock.Create<ShellViewModel>();
+
+                cls.OpenNoLocalDbInfoDialog().Wait();
+
+                mock.Mock<ISystemService>().Verify(x => x.ExitEnvironment(0), Times.Never);
+                mock.Mock<ISystemService>().Verify(x => x.StartProcess(It.IsAny<string>()), Times.Never);
+                Assert.Equal(MiruAppStatus.Busy, cls.AppStatus);
             }
         }
         #endregion methods tests
