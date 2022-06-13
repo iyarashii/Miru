@@ -15,6 +15,7 @@ using ModernWpf.Controls;
 using Moq;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading;
 using System.Windows.Media;
 using Xunit;
@@ -660,11 +661,13 @@ namespace Miru.Tests
             using (var mock = AutoMock.GetLoose())
             {
                 string testData = "🦂💯";
+                mock.Mock<ISystemService>().Setup(x => x.StartProcess(It.IsAny<string>())).Returns<Process>(null);
                 var cls = mock.Create<ShellViewModel>();
 
-                cls.OpenAnimeURL(testData);
+                var result = cls.OpenAnimeURL(testData);
 
                 mock.Mock<ISystemService>().Verify(x => x.StartProcess(testData), Times.Once);
+                Assert.Null(result);
             }
         }
 
