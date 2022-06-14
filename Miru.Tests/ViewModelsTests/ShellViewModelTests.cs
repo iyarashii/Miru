@@ -245,28 +245,14 @@ namespace Miru.Tests
         {
             using (var mock = AutoMock.GetLoose())
             {
-                // Arrange
                 mock.Mock<ISimpleContentDialog>()
                     .Setup(x => x.ShowAsync())
                     .ReturnsAsync(ContentDialogResult.Primary);
-
-                mock.Mock<ISimpleContentDialog>()
-                    .Setup(x => x.Config
-                    (
-                        "Clear local data?",
-                        "Yes",
-                        "No",
-                        ContentDialogButton.Primary,
-                        "Clears local database and image cache.",
-                        ""
-                    ));
-                
                 var cls = mock.Create<ShellViewModel>();
 
-                // Act
                 cls.OpenClearLocalDataDialog().Wait();
 
-                // Assert
+                Assert.Equal(MiruAppStatus.Idle, cls.AppStatus);
                 mock.Mock<ISimpleContentDialog>()
                     .Verify(x => x.Config
                     (
@@ -278,7 +264,6 @@ namespace Miru.Tests
                         ""
                     ),
                     Times.Once);
-
                 mock.Mock<ISimpleContentDialog>().Verify(x => x.ShowAsync(), Times.Once);
             }
         }
@@ -294,20 +279,6 @@ namespace Miru.Tests
                 mock.Mock<ISimpleContentDialog>()
                     .Setup(x => x.ShowAsync())
                     .ReturnsAsync(clickedButton);
-
-                mock.Mock<ISimpleContentDialog>()
-                    .Setup(x => x.Config
-                    (
-                        "Update data from senpai.moe?",
-                        "Yes",
-                        "No",
-                        ContentDialogButton.Primary,
-                        null,
-                        ""
-                    ));
-
-                mock.Mock<IFileSystemService>().Setup(x => x.UpdateSenpaiData());
-
                 var cls = mock.Create<ShellViewModel>();
 
                 // Act
@@ -325,9 +296,8 @@ namespace Miru.Tests
                         ""
                     ),
                     Times.Once);
-
+                Assert.Equal(MiruAppStatus.Idle, cls.AppStatus);
                 mock.Mock<ISimpleContentDialog>().Verify(x => x.ShowAsync(), Times.Once);
-
                 mock.Mock<IFileSystemService>().Verify(x => x.UpdateSenpaiData(), Times.Exactly(expectedTimesCalled));
             }
         }
