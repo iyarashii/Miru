@@ -5,6 +5,7 @@
 using Microsoft.Win32;
 using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 
 namespace MiruLibrary.Services
 {
@@ -15,11 +16,13 @@ namespace MiruLibrary.Services
             return Registry.LocalMachine.OpenSubKey(name);
         }
 
+        [ExcludeFromCodeCoverage]
         public Process StartProcess(string fileName)
         {
             return Process.Start(fileName);
         }
 
+        [ExcludeFromCodeCoverage]
         public void ExitEnvironment(int exitCode)
         {
             Environment.Exit(exitCode);
