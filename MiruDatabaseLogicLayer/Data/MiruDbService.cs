@@ -187,7 +187,7 @@ namespace MiruDatabaseLogicLayer
                 UpdateAppStatusUI(MiruAppStatus.Busy, "Getting detailed user anime list data...");
 
                 // get user anime list with the detailed info
-                detailedAnimeList = await GetDetailedUserAnimeList(db, CurrentUserAnimeList?.UserAnimeListData?.Anime, seasonSyncOn);
+                detailedAnimeList = await GetDetailedUserAnimeList(db, CurrentUserAnimeList.UserAnimeListData.Anime, seasonSyncOn);
 
                 // if the user anime list is empty there were internet connection problems return false
                 if (detailedAnimeList == null)
@@ -270,7 +270,7 @@ namespace MiruDatabaseLogicLayer
                         localImagePath = animeModel.LocalImagePath;
                     }
 
-                    FileSystemService?.Value?.DownloadFile(client, localImagePath, animeInfo.ImageURL);
+                    FileSystemService.Value.DownloadFile(client, localImagePath, animeInfo.ImageURL);
                 }
 
                 if (seasonSyncOn)
