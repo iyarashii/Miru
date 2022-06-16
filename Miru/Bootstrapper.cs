@@ -92,6 +92,7 @@ namespace Miru
             Container.Resolve<UserSettings>().AnimeImageSize = Container.Resolve<IShellViewModel>().AnimeImageSizeInPixels;
             Container.Resolve<UserSettings>().DisplayedAnimeListType = Container.Resolve<IShellViewModel>().SelectedDisplayedAnimeList;
             Container.Resolve<UserSettings>().DisplayedAnimeType = Container.Resolve<IShellViewModel>().SelectedDisplayedAnimeType;
+            Container.Resolve<UserSettings>().GetDroppedAnimeData = Container.Resolve<IShellViewModel>().GetDroppedAnimeData;
             Container.Resolve<ISettingsWriter>().Write(Container.Resolve<UserSettings>());
         }
     }
