@@ -15,5 +15,6 @@ namespace MiruLibrary.Models
         public double AnimeImageSize { get; set; } = 134.0;
         public AnimeListType DisplayedAnimeListType { get; set; } = AnimeListType.Watching;
         public AnimeType DisplayedAnimeType { get; set; } = AnimeType.TV;
+        public bool GetDroppedAnimeData { get; set; } = false;
     }
 }

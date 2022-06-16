@@ -52,6 +52,7 @@ namespace Miru.ViewModels
             AnimeImageSizeInPixels = userSettings.AnimeImageSize;
             _selectedDisplayedAnimeList = userSettings.DisplayedAnimeListType;
             SelectedDisplayedAnimeType = userSettings.DisplayedAnimeType;
+            GetDroppedAnimeData = userSettings.GetDroppedAnimeData;
         }
 
         private void ConfigureAppColorTheme()
@@ -141,6 +142,7 @@ namespace Miru.ViewModels
             }
         }
 
+        public bool GetDroppedAnimeData { get; set; }
         public ISystemService SystemService { get; }
 
         public IToastNotifierWrapper ToastNotifierWrapper { get; }
