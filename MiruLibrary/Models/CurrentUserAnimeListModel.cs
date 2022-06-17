@@ -4,6 +4,7 @@
 
 using JikanDotNet;
 using System;
+using System.Linq;
 using System.Runtime.ExceptionServices;
 using System.Threading.Tasks;
 
@@ -20,6 +21,7 @@ namespace MiruLibrary.Models
 
         // stores anime list of the currently synced user
         public UserAnimeList UserAnimeListData { get; private set; }
+        public UserAnimeList UserDroppedAnimeListData { get; private set; }
 
         // get user's watching status anime list
         public async Task<(bool Success, string ErrorMessage)> GetCurrentUserAnimeList(string malUsername)
@@ -36,6 +38,30 @@ namespace MiruLibrary.Models
             catch (JikanDotNet.Exceptions.JikanRequestException)
             {
                 return (false, $"Could not find the user \"{ malUsername }\". Please make sure you typed in the name correctly.");
+            }
+
+            return (true, string.Empty);
+        }
+
+        public async Task<(bool Success, string ErrorMessage)> GetCurrentUserDroppedAnimeList(string malUsername)
+        {
+            int maxPageSize = 300, page = 1;
+            try
+            {
+                // get user's dropped status anime list
+                UserDroppedAnimeListData = await JikanWrapper
+                    .GetUserAnimeList(malUsername, UserAnimeListExtension.Dropped, page++);
+
+                while (UserDroppedAnimeListData.Anime.Count % maxPageSize == 0)
+                {
+                    var nextDroppedAnimeListPage = await JikanWrapper
+                        .GetUserAnimeList(malUsername, UserAnimeListExtension.Dropped, page++);
+                    UserDroppedAnimeListData.Anime = UserDroppedAnimeListData.Anime.Concat(nextDroppedAnimeListPage.Anime).ToArray();
+                }
+            }
+            catch (Exception)
+            {
+                return (false, "Problem with getting user's dropped anime list!");
             }
 
             return (true, string.Empty);

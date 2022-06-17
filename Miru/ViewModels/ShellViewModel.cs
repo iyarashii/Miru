@@ -422,6 +422,22 @@ namespace Miru.ViewModels
             return true;
         }
 
+        public async Task<bool> GetUserDroppedAnimeList()
+        {
+            // get user's dropped status anime list
+            UpdateAppStatus(MiruAppStatus.Busy, "Getting current user dropped anime list...");
+
+            var getCurrentUserDroppedAnimeListResult = 
+                await DbService.CurrentUserAnimeList.GetCurrentUserDroppedAnimeList(TypedInUsername);
+
+            if (!getCurrentUserDroppedAnimeListResult.Success)
+            {
+                UpdateAppStatus(MiruAppStatus.Idle, getCurrentUserDroppedAnimeListResult.ErrorMessage);
+                return false;
+            }
+            return true;
+        }
+
         public async Task<bool> GetCurrentSeason()
         {
             // get current season
@@ -470,6 +486,9 @@ namespace Miru.ViewModels
         /// <returns></returns>
         public async Task SyncUserAnimeList(string typedInUsername, MiruAppStatus appStatus, bool seasonSyncOn)
         {
+            // get user's list of dropped animes
+            if (GetDroppedAnimeData && !await GetUserDroppedAnimeList()) return;
+
             // get user's watching status anime list
             if (!await GetUserAnimeList()) return;
 
