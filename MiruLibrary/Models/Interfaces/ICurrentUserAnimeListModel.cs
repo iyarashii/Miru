@@ -10,7 +10,9 @@ namespace MiruLibrary.Models
     public interface ICurrentUserAnimeListModel
     {
         UserAnimeList UserAnimeListData { get; }
+        UserAnimeList UserDroppedAnimeListData { get; }
 
         Task<(bool Success, string ErrorMessage)> GetCurrentUserAnimeList(string malUsername);
+        Task<(bool Success, string ErrorMessage)> GetCurrentUserDroppedAnimeList(string malUsername);
     }
 }

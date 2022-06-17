@@ -62,5 +62,6 @@ namespace Miru.ViewModels
         Task SaveUserInfo(string username);
         Task<bool> SaveAnimeListData(bool isSeasonSyncOn);
         void UpdateUiAfterDataSync();
+        Task<bool> GetUserDroppedAnimeList();
     }
 }
