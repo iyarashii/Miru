@@ -5,7 +5,6 @@
 using JikanDotNet;
 using System;
 using System.Linq;
-using System.Runtime.ExceptionServices;
 using System.Threading.Tasks;
 
 namespace MiruLibrary.Models
@@ -52,11 +51,14 @@ namespace MiruLibrary.Models
                 UserDroppedAnimeListData = await JikanWrapper
                     .GetUserAnimeList(malUsername, UserAnimeListExtension.Dropped, page++);
 
-                while (UserDroppedAnimeListData.Anime.Count % maxPageSize == 0)
+                while (UserDroppedAnimeListData.Anime.Count > 0 && 
+                       UserDroppedAnimeListData.Anime.Count % maxPageSize == 0)
                 {
                     var nextDroppedAnimeListPage = await JikanWrapper
                         .GetUserAnimeList(malUsername, UserAnimeListExtension.Dropped, page++);
-                    UserDroppedAnimeListData.Anime = UserDroppedAnimeListData.Anime.Concat(nextDroppedAnimeListPage.Anime).ToArray();
+                    UserDroppedAnimeListData.Anime = UserDroppedAnimeListData.Anime
+                                                                             .Concat(nextDroppedAnimeListPage.Anime)
+                                                                             .ToArray();
                 }
             }
             catch (Exception)

@@ -78,5 +78,34 @@ namespace Miru.Tests.ModelsTests
                 Assert.Equal(expectedErrorMessage, errorMessage);
             }
         }
+
+        [Theory]
+        [InlineData(50)]
+        [InlineData(299)]
+        [InlineData(0)]
+        [InlineData(1)]
+        public async Task GetCurrentUserDroppedAnimeList_LessThan300DroppedAnimes_ReturnTrueAndCorrectCount(int expectedDroppedAnimeCount)
+        {
+            using (var mock = AutoMock.GetLoose())
+            {
+                // Arrange
+                var testData = new UserAnimeList
+                {
+                    Anime = new AnimeListEntry[expectedDroppedAnimeCount]
+                };
+                mock.Mock<IJikan>()
+                    .Setup(x => x.GetUserAnimeList(It.IsAny<string>(), UserAnimeListExtension.Dropped, It.IsAny<int>()))
+                    .ReturnsAsync(testData);
+                var sut = mock.Create<CurrentUserAnimeListModel>();
+
+                // Act
+                var (result, errorMessage) = await sut.GetCurrentUserDroppedAnimeList(It.IsAny<string>());
+
+                // Assert
+                Assert.True(result);
+                Assert.Equal(string.Empty, errorMessage);
+                Assert.Equal(expectedDroppedAnimeCount, sut.UserDroppedAnimeListData.Anime.Count);
+            }
+        }
     }
 }
