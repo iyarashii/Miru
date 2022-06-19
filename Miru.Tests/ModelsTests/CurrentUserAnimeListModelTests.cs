@@ -107,5 +107,25 @@ namespace Miru.Tests.ModelsTests
                 Assert.Equal(expectedDroppedAnimeCount, sut.UserDroppedAnimeListData.Anime.Count);
             }
         }
+
+        [Fact]
+        public async Task GetCurrentUserDroppedAnimeList_Exception_ReturnFalseAndErrorMessage()
+        {
+            using (var mock = AutoMock.GetLoose())
+            {
+                // Arrange
+                mock.Mock<IJikan>()
+                    .Setup(x => x.GetUserAnimeList(It.IsAny<string>(), UserAnimeListExtension.Dropped, It.IsAny<int>()))
+                    .ThrowsAsync(new Exception());
+                var sut = mock.Create<CurrentUserAnimeListModel>();
+
+                // Act
+                var (result, errorMessage) = await sut.GetCurrentUserDroppedAnimeList(It.IsAny<string>());
+
+                // Assert
+                Assert.False(result);
+                Assert.Equal("Problem with getting user's dropped anime list!", errorMessage);
+            }
+        }
     }
 }
