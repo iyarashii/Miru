@@ -127,5 +127,54 @@ namespace Miru.Tests.ModelsTests
                 Assert.Equal("Problem with getting user's dropped anime list!", errorMessage);
             }
         }
+
+        [Theory]
+        [InlineData(300)]
+        [InlineData(600)]
+        [InlineData(2137)]
+        [InlineData(3939)]
+        public async Task GetCurrentUserDroppedAnimeList_300OrMoreDroppedAnimes_ReturnTrueAndCorrectCount(int expectedDroppedAnimeCount)
+        {
+            using (var mock = AutoMock.GetLoose())
+            {
+                // Arrange
+                int pages = 0, restOfEntries = 0;
+                if (expectedDroppedAnimeCount % 300 == 0)
+                    pages = expectedDroppedAnimeCount / 300;
+                else if (expectedDroppedAnimeCount > 300)
+                {
+                    pages = (expectedDroppedAnimeCount - expectedDroppedAnimeCount % 300) / 300;
+                    restOfEntries = expectedDroppedAnimeCount % 300;
+                }
+                else
+                    restOfEntries = expectedDroppedAnimeCount % 300;
+                mock.Mock<IJikan>()
+                    .Setup(x => x.GetUserAnimeList(It.IsAny<string>(), UserAnimeListExtension.Dropped, It.IsAny<int>()))
+                    .ReturnsAsync(() =>
+                    {
+                        if(pages > 0)
+                        {
+                            pages--;
+                            return new UserAnimeList
+                            {
+                                Anime = new AnimeListEntry[300]
+                            };
+                        }
+                        return new UserAnimeList
+                        {
+                            Anime = new AnimeListEntry[restOfEntries]
+                        };
+                    });
+                var sut = mock.Create<CurrentUserAnimeListModel>();
+
+                // Act
+                var (result, errorMessage) = await sut.GetCurrentUserDroppedAnimeList(It.IsAny<string>());
+
+                // Assert
+                Assert.True(result);
+                Assert.Equal(string.Empty, errorMessage);
+                Assert.Equal(expectedDroppedAnimeCount, sut.UserDroppedAnimeListData.Anime.Count);
+            }
+        }
     }
 }
