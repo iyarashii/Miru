@@ -56,6 +56,7 @@ namespace MiruLibrary.Models
                 {
                     var nextDroppedAnimeListPage = await JikanWrapper
                         .GetUserAnimeList(malUsername, UserAnimeListExtension.Dropped, page++);
+                    if (nextDroppedAnimeListPage.Anime.Count == 0) break;
                     UserDroppedAnimeListData.Anime = UserDroppedAnimeListData.Anime
                                                                              .Concat(nextDroppedAnimeListPage.Anime)
                                                                              .ToArray();
