@@ -17,6 +17,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Media;
 using Xunit;
 // CODE COVERAGE commands used for .NET Framework
@@ -694,6 +695,46 @@ namespace Miru.Tests
                 mock.Mock<ISystemService>().Verify(x => x.ExitEnvironment(0), Times.Never);
                 mock.Mock<ISystemService>().Verify(x => x.StartProcess(It.IsAny<string>()), Times.Never);
                 Assert.Equal(MiruAppStatus.Busy, cls.AppStatus);
+            }
+        }
+
+        [Fact]
+        public async Task GetUserDroppedAnimeList_Fails_ReturnFalseAndIdleAppStatusWithErrorMsg()
+        {
+            using (var mock = AutoMock.GetLoose())
+            {
+                var expectedErrorMessage = "3939🔥🔥🔥";
+                mock.Mock<ICurrentUserAnimeListModel>()
+                    .Setup(x => x.GetCurrentUserDroppedAnimeList(It.IsAny<string>()))
+                    .ReturnsAsync((false, expectedErrorMessage));
+                var currentUserAnimeListMock = mock.Create<ICurrentUserAnimeListModel>();
+                mock.Mock<IMiruDbService>().SetupGet(x => x.CurrentUserAnimeList).Returns(currentUserAnimeListMock);
+                var sut = mock.Create<ShellViewModel>();
+
+                var actualResult = await sut.GetUserDroppedAnimeList();
+
+                Assert.False(actualResult);
+                Assert.Equal(MiruAppStatus.Idle, sut.AppStatus);
+                Assert.Equal($"Miru -- {expectedErrorMessage}", sut.AppStatusText);
+            }
+        }
+
+        [Fact]
+        public async Task GetUserDroppedAnimeList_Succeeds_ReturnTrueAndBusyAppStatus()
+        {
+            using (var autoMock = AutoMock.GetLoose())
+            {
+                autoMock.Mock<ICurrentUserAnimeListModel>()
+                    .Setup(x => x.GetCurrentUserDroppedAnimeList(It.IsAny<string>()))
+                    .ReturnsAsync((true, It.IsAny<string>()));
+                var currentUserAnimeListMock = autoMock.Create<ICurrentUserAnimeListModel>();
+                autoMock.Mock<IMiruDbService>().SetupGet(x => x.CurrentUserAnimeList).Returns(currentUserAnimeListMock);
+                var sut = autoMock.Create<ShellViewModel>();
+
+                var actualResult = await sut.GetUserDroppedAnimeList();
+
+                Assert.True(actualResult);
+                Assert.Equal(MiruAppStatus.Busy, sut.AppStatus);
             }
         }
         #endregion methods tests
