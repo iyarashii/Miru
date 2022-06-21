@@ -409,6 +409,27 @@ namespace Miru.Tests
         }
 
         [Fact]
+        public async Task SyncUserAnimeList_GetUserDroppedAnimeListFails_AppStatusIdleWithErrorMsg()
+        {
+            using (var mock = AutoMock.GetLoose())
+            {
+                var expectedErrorMessage = "3939🔥🔥🔥";
+                mock.Mock<ICurrentUserAnimeListModel>()
+                    .Setup(x => x.GetCurrentUserDroppedAnimeList(It.IsAny<string>()))
+                    .ReturnsAsync((false, expectedErrorMessage));
+                var currentUserAnimeListMock = mock.Create<ICurrentUserAnimeListModel>();
+                mock.Mock<IMiruDbService>().SetupGet(x => x.CurrentUserAnimeList).Returns(currentUserAnimeListMock);
+                var sut = mock.Create<ShellViewModel>();
+                sut.GetDroppedAnimeData = true;
+
+                await sut.SyncUserAnimeList(It.IsAny<string>(), It.IsAny<MiruAppStatus>(), It.IsAny<bool>());
+
+                Assert.Equal(MiruAppStatus.Idle, sut.AppStatus);
+                Assert.Equal($"Miru -- {expectedErrorMessage}", sut.AppStatusText);
+            }
+        }
+
+        [Fact]
         public void UpdateUiAfterDataSync_SetsCorrectProperties()
         {
             using (var mock = AutoMock.GetLoose())
