@@ -232,7 +232,7 @@ namespace Miru.Tests.ModelsTests
             };
 
             // Act
-            sut.SetSeasonalAnimeModelData(animeInfo, animeSubEntry);
+            sut.SetSeasonalAnimeModelData(animeInfo, animeSubEntry, default);
 
             // Assert
             Assert.Equal(MAL_ID, sut.MalId);

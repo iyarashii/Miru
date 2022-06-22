@@ -148,6 +148,10 @@
     <Compile Include="Data\Migrations\202104171832312_AddIsOnSenpaiField.designer.cs">
       <DependentUpon>202104171832312_AddIsOnSenpaiField.cs</DependentUpon>
     </Compile>
+    <Compile Include="Data\Migrations\202206221602412_AddDroppedFlag.cs" />
+    <Compile Include="Data\Migrations\202206221602412_AddDroppedFlag.designer.cs">
+      <DependentUpon>202206221602412_AddDroppedFlag.cs</DependentUpon>
+    </Compile>
     <Compile Include="Data\Migrations\Configuration.cs" />
     <Compile Include="Data\MiruDbContext.cs" />
     <Compile Include="Data\MiruDbService.cs" />
@@ -183,6 +187,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Data\Migrations\202104171832312_AddIsOnSenpaiField.resx">
       <DependentUpon>202104171832312_AddIsOnSenpaiField.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Data\Migrations\202206221602412_AddDroppedFlag.resx">
+      <DependentUpon>202206221602412_AddDroppedFlag.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

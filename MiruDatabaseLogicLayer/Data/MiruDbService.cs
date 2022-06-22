@@ -301,6 +301,11 @@ namespace MiruDatabaseLogicLayer
                 {
                     var modelToBeUpdated = detailedUserAnimeList.FirstOrDefault(x => x.MalId == seasonEntry.MalId);
                     modelToBeUpdated.CurrentlyAiring = true;
+                    modelToBeUpdated.Dropped = CurrentUserAnimeList
+                                                                ?.UserDroppedAnimeListData
+                                                                ?.Anime
+                                                                .Select(x => x.MalId)
+                                                                .Contains(modelToBeUpdated.MalId) ?? false;
                 }
                 else
                 {
@@ -317,7 +322,7 @@ namespace MiruDatabaseLogicLayer
                     }
 
                     var animeModel = CreateMiruAnimeModel.Invoke();
-                    animeModel.SetSeasonalAnimeModelData(animeInfo, seasonEntry);
+                    animeModel.SetSeasonalAnimeModelData(animeInfo, seasonEntry, CurrentUserAnimeList);
                     string localImagePath = animeModel.LocalImagePath;
                     // add airing anime created from the animeInfo data to the miruAnimeModelsList
                     detailedUserAnimeList.Add(animeModel);

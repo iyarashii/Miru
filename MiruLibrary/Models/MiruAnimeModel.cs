@@ -81,5 +81,7 @@ namespace MiruLibrary.Models
             }
             set { _totalEpisodes = value; }
         }
+
+        public bool Dropped { get; set; }
     }
 }
