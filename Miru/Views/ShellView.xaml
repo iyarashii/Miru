@@ -145,7 +145,8 @@
                           Minimum="20"
                           Text="{Binding AnimeImageSizeInPixels}"
                           Value="{Binding AnimeImageSizeInPixels, FallbackValue=134, Mode=TwoWay}"/>
-            <CheckBox x:Name="GetDroppedAnimeData" 
+            <!--Get Dropped Anime data checkbox-->
+            <CheckBox x:Name="GetDroppedAnimeData" IsEnabled="{Binding CanChangeDisplayedAnimeList}"
                       Margin="10,20,0,0" 
                       Content="Get Dropped Anime Data"/>
 
