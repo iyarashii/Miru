@@ -259,11 +259,16 @@ namespace MiruDatabaseLogicLayer
                         modelToBeUpdated.TotalEpisodes = animeListEntry.TotalEpisodes;
                         modelToBeUpdated.CurrentlyAiring = (animeListEntry.AiringStatus == AiringStatus.Airing);
                         localImagePath = modelToBeUpdated.LocalImagePath;
+                        modelToBeUpdated.Dropped = CurrentUserAnimeList
+                                                                ?.UserDroppedAnimeListData
+                                                                ?.Anime
+                                                                .Select(x => x.MalId)
+                                                                .Contains(modelToBeUpdated.MalId) ?? false;
                     }
                     else
                     {
                         var animeModel = CreateMiruAnimeModel.Invoke();
-                        animeModel.SetAiringAnimeModelData(animeInfo, animeListEntry);
+                        animeModel.SetAiringAnimeModelData(animeInfo, animeListEntry, CurrentUserAnimeList);
                         // add airing anime created from the animeInfo data to the airingAnimes list
                         detailedUserAnimeList.Add(animeModel);
 

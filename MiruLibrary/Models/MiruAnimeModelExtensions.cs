@@ -162,7 +162,8 @@ namespace MiruLibrary.Models
             return true;
         }
 
-        public static void SetAiringAnimeModelData(this MiruAnimeModel animeModel, Anime animeInfo, AnimeListEntry animeListEntry)
+        public static void SetAiringAnimeModelData(this MiruAnimeModel animeModel, Anime animeInfo, 
+            AnimeListEntry animeListEntry, ICurrentUserAnimeListModel currentUserAnimeList)
         {
             animeModel.MalId = animeInfo.MalId;
             animeModel.Broadcast = animeInfo.Broadcast ?? animeInfo.Aired?.From.ToString();
@@ -175,6 +176,11 @@ namespace MiruLibrary.Models
             animeModel.IsOnWatchingList = true;
             animeModel.CurrentlyAiring = animeListEntry.AiringStatus == AiringStatus.Airing;
             animeModel.Type = animeInfo.Type;
+            animeModel.Dropped = currentUserAnimeList
+                                                ?.UserDroppedAnimeListData
+                                                ?.Anime
+                                                .Select(x => x.MalId)
+                                                .Contains(animeModel.MalId) ?? false;
         }
 
         public static void SetSeasonalAnimeModelData(this MiruAnimeModel animeModel, Anime animeInfo, 
