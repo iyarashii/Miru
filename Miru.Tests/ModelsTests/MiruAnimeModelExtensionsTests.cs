@@ -2,21 +2,20 @@
 // Licensed under the GNU General Public License v3.0,
 // go to https://github.com/iyarashii/Miru/blob/master/LICENSE for full license details.
 
+using Autofac;
+using Autofac.Extras.Moq;
+using JikanDotNet;
+using MiruLibrary;
+using MiruLibrary.Models;
+using Moq;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Xunit;
-using MiruLibrary.Models;
-using MiruLibrary;
-using Autofac.Extras.Moq;
-using Moq;
-using JikanDotNet;
-using System.IO;
-using AnimeType = MiruLibrary.AnimeType;
-using Newtonsoft.Json;
 using System.Globalization;
+using System.IO;
+using System.Linq;
+using Xunit;
+using AnimeType = MiruLibrary.AnimeType;
 
 namespace Miru.Tests.ModelsTests
 {
@@ -193,7 +192,7 @@ namespace Miru.Tests.ModelsTests
             };
 
             // Act
-            sut.SetAiringAnimeModelData(animeInfo, animeListEntry);
+            sut.SetAiringAnimeModelData(animeInfo, animeListEntry, null);
 
             // Assert
             Assert.Equal(MAL_ID, sut.MalId);
@@ -204,9 +203,41 @@ namespace Miru.Tests.ModelsTests
             Assert.Equal(WATCHED_EPISODES, sut.WatchedEpisodes);
             Assert.Equal(TYPE, sut.Type);
             Assert.True(sut.IsOnWatchingList);
-            Assert.Equal(Path.Combine(Constants.ImageCacheFolderPath, $"{ MAL_ID }.jpg"), sut.LocalImagePath);
+            Assert.Equal(Path.Combine(Constants.ImageCacheFolderPath, $"{MAL_ID}.jpg"), sut.LocalImagePath);
             Assert.Equal(airingStatus == AiringStatus.Airing, sut.CurrentlyAiring);
             Assert.Equal(broadcast ?? animeInfo.Aired?.From.ToString(), sut.Broadcast);
+            Assert.False(sut.Dropped);
+        }
+
+        [Fact]
+        public void SetAiringAnimeModelData_MatchingMalIdOnDroppedList_DroppedIsTrue()
+        {
+            using (var autoMock = AutoMock.GetLoose())
+            {
+                // Arrange
+                var sut = new MiruAnimeModel();
+                var animeInfo = new Anime()
+                {
+                    MalId = MAL_ID,
+                };
+                var animeListEntry = new AnimeListEntry()
+                {
+                    MalId = MAL_ID,
+                };
+                var currentUserAnimeList = new UserAnimeList
+                {
+                    Anime = new List<AnimeListEntry> { animeListEntry }
+                };
+                autoMock.Mock<ICurrentUserAnimeListModel>()
+                    .SetupGet(x => x.UserDroppedAnimeListData)
+                    .Returns(currentUserAnimeList);
+
+                // Act
+                sut.SetAiringAnimeModelData(animeInfo, animeListEntry, autoMock.Create<ICurrentUserAnimeListModel>());
+
+                // Assert
+                Assert.True(sut.Dropped);
+            }
         }
 
         [Theory]
