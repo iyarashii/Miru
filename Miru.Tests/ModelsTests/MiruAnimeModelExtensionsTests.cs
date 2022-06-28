@@ -263,7 +263,7 @@ namespace Miru.Tests.ModelsTests
             };
 
             // Act
-            sut.SetSeasonalAnimeModelData(animeInfo, animeSubEntry, default);
+            sut.SetSeasonalAnimeModelData(animeInfo, animeSubEntry, null);
 
             // Assert
             Assert.Equal(MAL_ID, sut.MalId);
@@ -275,6 +275,41 @@ namespace Miru.Tests.ModelsTests
             Assert.Equal(Path.Combine(Constants.ImageCacheFolderPath, $"{ MAL_ID }.jpg"), sut.LocalImagePath);
             Assert.True(sut.CurrentlyAiring);
             Assert.Equal(broadcast ?? airedFromDate.ToString(), sut.Broadcast);
+            Assert.False(sut.Dropped);
+        }
+
+        [Fact]
+        public void SetSeasonalAnimeModelData_MatchingMalIdOnDroppedList_DroppedIsTrue()
+        {
+            using (var autoMock = AutoMock.GetLoose())
+            {
+                // Arrange
+                var sut = new MiruAnimeModel();
+                var animeInfo = new Anime()
+                {
+                    MalId = MAL_ID,
+                };
+                var animeListEntry = new AnimeSubEntry()
+                {
+                    MalId = MAL_ID,
+                };
+                var currentUserAnimeList = new UserAnimeList
+                {
+                    Anime = new List<AnimeListEntry> 
+                    {
+                        new AnimeListEntry { MalId = MAL_ID }
+                    }
+                };
+                autoMock.Mock<ICurrentUserAnimeListModel>()
+                    .SetupGet(x => x.UserDroppedAnimeListData)
+                    .Returns(currentUserAnimeList);
+
+                // Act
+                sut.SetSeasonalAnimeModelData(animeInfo, animeListEntry, autoMock.Create<ICurrentUserAnimeListModel>());
+
+                // Assert
+                Assert.True(sut.Dropped);
+            }
         }
 
         [Fact]

@@ -187,7 +187,7 @@ namespace MiruLibrary.Models
             AnimeSubEntry seasonEntry, ICurrentUserAnimeListModel currentUserAnimeList)
         {
             animeModel.MalId = animeInfo.MalId;
-            animeModel.Broadcast = animeInfo.Broadcast ?? animeInfo.Aired.From.ToString();
+            animeModel.Broadcast = animeInfo.Broadcast ?? animeInfo.Aired?.From.ToString();
             animeModel.Title = animeInfo.Title;
             animeModel.ImageURL = animeInfo.ImageURL;
             animeModel.LocalImagePath = animeInfo.MalId.ToString();
