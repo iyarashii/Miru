@@ -511,5 +511,51 @@ namespace Miru.Tests.ModelsTests
             Assert.Equal(expectedHour, sut.JSTBroadcastTime.Value.Hour);
             Assert.Equal(expectedMinute, sut.JSTBroadcastTime.Value.Minute);
         }
+
+        [Fact]
+        public void UpdateDroppedStatus_CurrentUserAnimeListNull_SetFalse()
+        {
+            var sut = new MiruAnimeModel();
+
+            sut.UpdateDroppedStatus(null);
+
+            Assert.False(sut.Dropped);
+        }
+
+        [Fact]
+        public void UpdateDroppedStatus_UserDroppedAnimeListDataNull_SetFalse()
+        {
+            using (var autoMock = AutoMock.GetLoose())
+            {
+                var sut = new MiruAnimeModel();
+                autoMock.Mock<ICurrentUserAnimeListModel>()
+                    .SetupGet(x => x.UserDroppedAnimeListData)
+                    .Returns((UserAnimeList)null);
+
+                sut.UpdateDroppedStatus(autoMock.Create<ICurrentUserAnimeListModel>());
+
+                Assert.False(sut.Dropped);
+            }
+        }
+
+        [Fact]
+        public void UpdateDroppedStatus__SetTrue()
+        {
+            using (var autoMock = AutoMock.GetLoose())
+            {
+                UserAnimeList userAnimeList = new UserAnimeList()
+                {
+                    Anime = new List<AnimeListEntry> { new AnimeListEntry { MalId = 2137 } }
+                };
+                var sut = new MiruAnimeModel() { MalId = 2137};
+                autoMock.Mock<ICurrentUserAnimeListModel>()
+                    .SetupGet(x => x.UserDroppedAnimeListData)
+                    .Returns(userAnimeList);
+
+                sut.UpdateDroppedStatus(autoMock.Create<ICurrentUserAnimeListModel>());
+
+                Assert.True(sut.Dropped);
+            }
+        }
     }
 }

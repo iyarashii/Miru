@@ -259,11 +259,7 @@ namespace MiruDatabaseLogicLayer
                         modelToBeUpdated.TotalEpisodes = animeListEntry.TotalEpisodes;
                         modelToBeUpdated.CurrentlyAiring = (animeListEntry.AiringStatus == AiringStatus.Airing);
                         localImagePath = modelToBeUpdated.LocalImagePath;
-                        modelToBeUpdated.Dropped = CurrentUserAnimeList
-                                                                ?.UserDroppedAnimeListData
-                                                                ?.Anime
-                                                                .Select(x => x.MalId)
-                                                                .Contains(modelToBeUpdated.MalId) ?? false;
+                        modelToBeUpdated.UpdateDroppedStatus(CurrentUserAnimeList);
                     }
                     else
                     {
@@ -306,11 +302,7 @@ namespace MiruDatabaseLogicLayer
                 {
                     var modelToBeUpdated = detailedUserAnimeList.FirstOrDefault(x => x.MalId == seasonEntry.MalId);
                     modelToBeUpdated.CurrentlyAiring = true;
-                    modelToBeUpdated.Dropped = CurrentUserAnimeList
-                                                                ?.UserDroppedAnimeListData
-                                                                ?.Anime
-                                                                .Select(x => x.MalId)
-                                                                .Contains(modelToBeUpdated.MalId) ?? false;
+                    modelToBeUpdated.UpdateDroppedStatus(CurrentUserAnimeList);
                 }
                 else
                 {
