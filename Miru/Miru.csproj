@@ -151,6 +151,7 @@
     <Compile Include="ViewModels\ShellViewModel.cs" />
     <Compile Include="ViewModels\Helpers\SimpleContentDialog.cs" />
     <Compile Include="ViewModels\Helpers\ToastNotifierWrapper.cs" />
+    <Compile Include="Views\Converters\DroppedToColorConverter.cs" />
     <Compile Include="Views\Extensions\EnumBindingSourceExtension.cs" />
     <Compile Include="Views\Extensions\HyperlinkExtensions.cs" />
     <Compile Include="Views\Converters\InverseBooleanConverter.cs" />
