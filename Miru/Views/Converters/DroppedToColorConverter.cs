@@ -26,7 +26,9 @@ namespace Miru.Views
                 case AnimeListType.Season:
                     if ((bool)values[0])
                         return Brushes.Red.Color;
-                    return Brushes.Green.Color;
+                    if ((bool)values[2])
+                        return Brushes.Green.Color;
+                    return DependencyProperty.UnsetValue;
                 default:
                     return DependencyProperty.UnsetValue;
             }

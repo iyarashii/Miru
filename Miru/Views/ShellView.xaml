@@ -58,6 +58,7 @@
                                                     <MultiBinding Converter="{StaticResource DroppedToColor}">
                                                         <Binding Path="Dropped"/>
                                                         <Binding Source="{x:Reference DisplayedAnimeList}" Path="SelectedItem"/>
+                                                        <Binding Path="IsOnWatchingList"/>
                                                     </MultiBinding>
                                                 </SolidColorBrush.Color>
                                             </SolidColorBrush>
