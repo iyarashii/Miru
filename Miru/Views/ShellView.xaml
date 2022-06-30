@@ -26,6 +26,7 @@
 
             <!-- converter used for inversing boolean value of a binding-->
             <local:InverseBooleanConverter x:Key="InverseBoolean" />
+            <local:DroppedToColorConverter x:Key="DroppedToColor" />
 
             <!-- Hide scroll viewers on data grids -->
             <Style TargetType="ScrollViewer">
@@ -50,6 +51,18 @@
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <TextBlock TextWrapping="Wrap" TextAlignment="Center" HorizontalAlignment="Stretch">
+                                        <TextBlock.Background>
+                                            <!--TODO: maybe add highlight opacity selection to settings--> 
+                                            <SolidColorBrush Opacity="0.66">
+                                                <SolidColorBrush.Color>
+                                                    <MultiBinding Converter="{StaticResource DroppedToColor}">
+                                                        <Binding Path="Dropped"/>
+                                                        <Binding Source="{x:Reference DisplayedAnimeList}" Path="SelectedItem"/>
+                                                        <Binding Path="IsOnWatchingList"/>
+                                                    </MultiBinding>
+                                                </SolidColorBrush.Color>
+                                            </SolidColorBrush>
+                                        </TextBlock.Background>
                                         <TextBlock.Inlines>
                                             <Run FontWeight="Bold" Text="{Binding LocalBroadcastTime, StringFormat=HH:mm}" />
                                             <LineBreak />
