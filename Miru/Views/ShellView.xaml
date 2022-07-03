@@ -52,8 +52,8 @@
                                 <DataTemplate>
                                     <TextBlock TextWrapping="Wrap" TextAlignment="Center" HorizontalAlignment="Stretch">
                                         <TextBlock.Background>
-                                            <!--TODO: maybe add highlight opacity selection to settings--> 
-                                            <SolidColorBrush Opacity="0.66">
+                                            <!-- TODO: maybe add highlight opacity selection to settings-->
+                                            <SolidColorBrush Opacity="{Binding Source={x:Reference HighlightOpacity}, Path=Value}">
                                                 <SolidColorBrush.Color>
                                                     <MultiBinding Converter="{StaticResource DroppedToColor}">
                                                         <Binding Path="Dropped"/>
@@ -158,6 +158,18 @@
                           Minimum="20"
                           Text="{Binding AnimeImageSizeInPixels}"
                           Value="{Binding AnimeImageSizeInPixels, FallbackValue=134, Mode=TwoWay}"/>
+            <!--Dropped / Watching Highlight Opacity selection-->
+            <ui:NumberBox x:Name="HighlightOpacity" Margin="10,0,0,0"
+                          ui:ControlHelper.Header="Dropped / Watching Highlight Opacity"
+                          SpinButtonPlacementMode="Inline"
+                          SmallChange="0.01"
+                          LargeChange="0.1"
+                          Maximum="1"
+                          Minimum="0"
+                          Value="0.66"/>
+            <!-- TODO: try to display as percentage-->
+            <!--Text="{Binding RelativeSource={RelativeSource Self}, Path=Value, StringFormat='{}{0:P}', Mode=OneWay}"-->
+
             <!--Get Dropped Anime data checkbox-->
             <CheckBox x:Name="GetDroppedAnimeData" IsEnabled="{Binding CanChangeDisplayedAnimeList}"
                       Margin="10,20,0,0" 
