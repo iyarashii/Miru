@@ -33,6 +33,7 @@ namespace Miru.ViewModels
         private string _userAnimeListURL;
         private string _currentAnimeNameFilter;
         private double _animeImageSizeInPixels;
+        private double _watchingStatusHighlightOpacity;
 
         // fields with default values for properties with setter logic
         private AnimeListType _selectedDisplayedAnimeList = AnimeListType.Watching;
@@ -53,6 +54,7 @@ namespace Miru.ViewModels
             _selectedDisplayedAnimeList = userSettings.DisplayedAnimeListType;
             SelectedDisplayedAnimeType = userSettings.DisplayedAnimeType;
             GetDroppedAnimeData = userSettings.GetDroppedAnimeData;
+            WatchingStatusHighlightOpacity = userSettings.WatchingStatusHighlightOpacity;
         }
 
         private void ConfigureAppColorTheme()
@@ -139,6 +141,24 @@ namespace Miru.ViewModels
                     _animeImageSizeInPixels = value;
                 }
                 NotifyOfPropertyChange(() => AnimeImageSizeInPixels);
+            }
+        }
+
+        public double WatchingStatusHighlightOpacity
+        {
+            get { return _watchingStatusHighlightOpacity; }
+            set
+            {
+                if (double.IsNaN(value))
+                {
+                    double defaultValue = 0.66;
+                    _watchingStatusHighlightOpacity = defaultValue;
+                }
+                else
+                {
+                    _watchingStatusHighlightOpacity = value;
+                }
+                NotifyOfPropertyChange(() => WatchingStatusHighlightOpacity);
             }
         }
 

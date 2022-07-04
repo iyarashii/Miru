@@ -10,5 +10,6 @@ namespace MiruLibrary.Models
         public AnimeListType DisplayedAnimeListType { get; set; } = AnimeListType.Watching;
         public AnimeType DisplayedAnimeType { get; set; } = AnimeType.TV;
         public bool GetDroppedAnimeData { get; set; } = false;
+        public double WatchingStatusHighlightOpacity { get; set; } = 0.66;
     }
 }
