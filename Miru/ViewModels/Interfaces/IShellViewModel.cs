@@ -39,6 +39,7 @@ namespace Miru.ViewModels
         double AnimeImageSizeInPixels { get; set; }
         ISystemService SystemService { get; }
         bool GetDroppedAnimeData { get; set; }
+        double WatchingStatusHighlightOpacity { get; set; }
 
         bool CanSyncUserAnimeList(string typedInUsername, MiruAppStatus appStatus, bool syncSeasonList);
 

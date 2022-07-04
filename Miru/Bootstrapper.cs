@@ -93,6 +93,7 @@ namespace Miru
             Container.Resolve<UserSettings>().DisplayedAnimeListType = Container.Resolve<IShellViewModel>().SelectedDisplayedAnimeList;
             Container.Resolve<UserSettings>().DisplayedAnimeType = Container.Resolve<IShellViewModel>().SelectedDisplayedAnimeType;
             Container.Resolve<UserSettings>().GetDroppedAnimeData = Container.Resolve<IShellViewModel>().GetDroppedAnimeData;
+            Container.Resolve<UserSettings>().WatchingStatusHighlightOpacity = Container.Resolve<IShellViewModel>().WatchingStatusHighlightOpacity;
             Container.Resolve<ISettingsWriter>().Write(Container.Resolve<UserSettings>());
         }
     }

@@ -27,6 +27,7 @@
             <!-- converter used for inversing boolean value of a binding-->
             <local:InverseBooleanConverter x:Key="InverseBoolean" />
             <local:DroppedToColorConverter x:Key="DroppedToColor" />
+            <local:PercentageNumberBoxNumberFormatter x:Key="PercentageFormatter" />
 
             <!-- Hide scroll viewers on data grids -->
             <Style TargetType="ScrollViewer">
@@ -164,11 +165,10 @@
                           SpinButtonPlacementMode="Inline"
                           SmallChange="0.01"
                           LargeChange="0.1"
+                          NumberFormatter="{StaticResource PercentageFormatter}"
                           Maximum="1"
                           Minimum="0"
-                          Value="0.66"/>
-            <!-- TODO: try to display as percentage-->
-            <!--Text="{Binding RelativeSource={RelativeSource Self}, Path=Value, StringFormat='{}{0:P}', Mode=OneWay}"-->
+                          Value="{Binding WatchingStatusHighlightOpacity, FallbackValue=0.66, Mode=TwoWay}"/>
 
             <!--Get Dropped Anime data checkbox-->
             <CheckBox x:Name="GetDroppedAnimeData" IsEnabled="{Binding CanChangeDisplayedAnimeList}"

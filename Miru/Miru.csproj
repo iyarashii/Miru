@@ -158,6 +158,7 @@
     <Compile Include="Views\Extensions\RunVisibility.cs" />
     <Compile Include="ViewModels\Interfaces\ISimpleContentDialog.cs" />
     <Compile Include="Views\MvvmCommand.cs" />
+    <Compile Include="Views\PercentageNumberBoxNumberFormatter.cs" />
     <Compile Include="Views\ShellView.xaml.cs">
       <DependentUpon>ShellView.xaml</DependentUpon>
     </Compile>

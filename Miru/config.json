@@ -2,5 +2,6 @@
   "animeImageSize": 134.0,
   "displayedAnimeListType": 1,
   "displayedAnimeType": 1,
-  "getDroppedAnimeData": false
+  "getDroppedAnimeData": false,
+  "watchingStatusHighlightOpacity": 0.66
 }
