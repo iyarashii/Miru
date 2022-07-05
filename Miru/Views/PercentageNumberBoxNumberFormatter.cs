@@ -3,11 +3,6 @@
 // go to https://github.com/iyarashii/Miru/blob/master/LICENSE for full license details.
 
 using ModernWpf.Controls;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Miru.Views
 {
@@ -15,14 +10,14 @@ namespace Miru.Views
     {
         public string FormatDouble(double value)
         {
-            return $"{value*100}%";
+            return $"{value * 100}%";
         }
 
         public double? ParseDouble(string text)
         {
             if (double.TryParse(text, out double result))
             {
-                return result/100;
+                return result / 100;
             }
             return null;
         }
