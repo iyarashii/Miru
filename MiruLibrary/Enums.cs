@@ -38,6 +38,8 @@ namespace MiruLibrary
         [Description("TV")]
         TV,
         [Description("ONA")]
-        ONA
+        ONA,
+        [Description("Any")]
+        Any
     }
 }
