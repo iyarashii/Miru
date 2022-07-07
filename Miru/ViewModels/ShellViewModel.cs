@@ -133,8 +133,7 @@ namespace Miru.ViewModels
             {
                 if (double.IsNaN(value))
                 {
-                    double defaultSize = 134;
-                    _animeImageSizeInPixels = defaultSize;
+                    _animeImageSizeInPixels = 134.0;
                 }
                 else
                 {
@@ -151,8 +150,7 @@ namespace Miru.ViewModels
             {
                 if (double.IsNaN(value))
                 {
-                    double defaultValue = 0.66;
-                    _watchingStatusHighlightOpacity = defaultValue;
+                    _watchingStatusHighlightOpacity = 0.66;
                 }
                 else
                 {

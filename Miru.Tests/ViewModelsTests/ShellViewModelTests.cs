@@ -762,6 +762,22 @@ namespace Miru.Tests
 
         #region properties tests
         [Theory]
+        [InlineData(double.NaN, 0.66)]
+        [InlineData(21.37, 21.37)]
+        [InlineData(1337, 1337)]
+        public void WatchingStatusHighlightOpacity_ReturnsCorrectValue(double testValue, double expected)
+        {
+            using (var mock = AutoMock.GetLoose())
+            {
+                var cls = mock.Create<ShellViewModel>();
+
+                cls.WatchingStatusHighlightOpacity = testValue;
+
+                Assert.Equal(expected, cls.WatchingStatusHighlightOpacity);
+            }
+        }
+
+        [Theory]
         [InlineData(double.NaN, 134.0)]
         [InlineData(21.37, 21.37)]
         [InlineData(1337, 1337)]
