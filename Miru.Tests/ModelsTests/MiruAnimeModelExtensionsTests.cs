@@ -104,6 +104,24 @@ namespace Miru.Tests.ModelsTests
             }
         }
 
+        [Fact]
+        public void FilterByBroadcastType_AnimeBroadcastTypeAny_DoesNotFilterAnimeList()
+        {
+            using (var mock = AutoMock.GetLoose())
+            {
+                var animeList = new List<MiruAnimeModel>
+                {
+                    new MiruAnimeModel() { Type = "TV"},
+                    new MiruAnimeModel() { Type = "ONA"},
+                    new MiruAnimeModel() { Type = string.Empty},
+                };
+
+                animeList.FilterByBroadcastType(AnimeType.Any);
+
+                Assert.Equal(3, animeList.Count());
+            }
+        }
+
         public static IEnumerable<object[]> GetTimeZoneData() // Tokyo Standard Time = UTC+9
         {
             yield return new object[] { TimeZoneInfo.FindSystemTimeZoneById("Central European Standard Time"),
