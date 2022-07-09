@@ -40,6 +40,12 @@ namespace MiruLibrary
         [Description("ONA")]
         ONA,
         [Description("Any")]
-        Any
+        Any,
+        [Description("Movie")]
+        Movie,
+        [Description("Special")]
+        Special,
+        [Description("OVA")]
+        OVA
     }
 }

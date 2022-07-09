@@ -37,7 +37,20 @@ namespace MiruLibrary.Models
                 case AnimeType.ONA:
                     animeList.RemoveAll(x => x.Type != "ONA");
                     break;
+
                 case AnimeType.Any:
+                    break;
+
+                case AnimeType.Movie:
+                    animeList.RemoveAll(x => x.Type != "Movie");
+                    break;
+
+                case AnimeType.Special:
+                    animeList.RemoveAll(x => x.Type != "Special");
+                    break;
+
+                case AnimeType.OVA:
+                    animeList.RemoveAll(x => x.Type != "OVA");
                     break;
             }
         }
