@@ -79,6 +79,9 @@ namespace Miru.Tests.ModelsTests
         [InlineData(AnimeType.Both, 3)]
         [InlineData(AnimeType.ONA, 2)]
         [InlineData(AnimeType.TV, 1)]
+        [InlineData(AnimeType.OVA, 1)]
+        [InlineData(AnimeType.Special, 1)]
+        [InlineData(AnimeType.Movie, 1)]
         public void FilterByBroadcastType_GivenBroadcastType_ShouldFilterAnimeList(AnimeType broadcastType, int expectedListCount)
         {
             using (var mock = AutoMock.GetLoose())
@@ -89,6 +92,9 @@ namespace Miru.Tests.ModelsTests
                     new MiruAnimeModel() { Type = "TV"},
                     new MiruAnimeModel() { Type = "ONA"},
                     new MiruAnimeModel() { Type = "ONA"},
+                    new MiruAnimeModel() { Type = "OVA"},
+                    new MiruAnimeModel() { Type = "Special"},
+                    new MiruAnimeModel() { Type = "Movie"},
                     new MiruAnimeModel() { Type = string.Empty},
                 };
 
