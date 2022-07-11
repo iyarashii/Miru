@@ -191,7 +191,7 @@
                     ui:ControlHelper.PlaceholderText="CTRL+M to focus" />
 
                 <!-- sync button -->
-                <Button Margin="10,13,10,0" IsDefault="True" MinWidth="100"
+                <Button Margin="10,13,10,0" MinWidth="100"
                  Content="Sync">
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="Click">
