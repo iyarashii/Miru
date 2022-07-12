@@ -1,12 +1,12 @@
 # Miru
 Miru is a WPF app used to display data from the [jikan](https://github.com/Ervie/jikan.net) MyAnimeList API.
-![App main view](https://i.imgur.com/dUGda9N.png)
+![App main view](https://i.imgur.com/CvFAJEQ.png)
 Idea for the app is based on [senpai](http://www.senpai.moe/) a great site that shows airing anime in a neat way.  
 It lets you display airing animes from the user's MAL watching list. Also it can display list of TV animes from the current season.
 This app displays airing animes for each day of the week in the specified timezone.  
 It uses EF6 and SQL Server's LocalDB to store the data.
 # Building
-Build the solution with Visual Studio 2019 or newer.
+Build the solution with Visual Studio 2022.
 # Installation guide for SQL Server LocalDB
 ### Follow these steps to install on Windows 10:
 
@@ -32,10 +32,10 @@ Build the solution with Visual Studio 2019 or newer.
 # Usage
 After starting the application, you should see an app window that looks like image below.
 Theme and time zone should be the same as your system's by the default.
-![Image of the app window after 1st run](https://i.imgur.com/wCwJ8Z9.png)
-Enter any MAL username in the `MAL Username` textbox (you can use `CTRL`+`M` shortcut to instantly focus this field and start typing) and click `Sync` button or hit `Enter` key.
+![Image of the app window after 1st run](https://i.imgur.com/fZwnwTG.png)
+Enter any MAL username in the `MAL Username` textbox (you can use `CTRL`+`M` shortcut to instantly focus this field and start typing) and click `Sync` button.
 Wait for synchronization, after it you should see shows from the MAL list of the typed in user if their list is `public` for example:
-![Image of synchronized app window](https://i.imgur.com/qkolVWj.png)
+![Image of synchronized app window](https://i.imgur.com/Iusn7zm.png)
 You can click on the username hyperlink (`iyarashii777's` on the image above) to go to the user's animelist page on MAL.
 
 `Get Shows From The Current Season` button works like `Sync` button but it also gets all the animes from the current season even if the user is not watching them.  
@@ -43,11 +43,14 @@ You can click on the username hyperlink (`iyarashii777's` on the image above) to
 `Clear Cache` button clears data from database and local cache (local cache is located on the desktop in `MiruCache` folder).  
 `Update Senpai Data` gets data from the senpai.moe site and stores it as JSON file in the local cache.  
 `Filter Titles` lets you filter animes by name. It takes effect immediately as you are typing, you can use `CTRL`+`F` shortcut to instantly focus this field and start typing.  
-You can set size of the images using `Art Size` field, size you selected will be saved if you close the app and loaded on the next app launch.  
+You can set size of the images using `Art Size` field, size you select will be saved if you close the app and loaded on the next app launch.  
+You can set opacity of the green/red highlight using `Dropped / Watching Highlight Opacity` field, value you select will be saved if you close the app and loaded on the next app launch.  
 To reset to default you can delete your value and focus other element.  
 You can click on the anime image to go to the MAL page associated with that anime and you can click on the
 anime name next to the image to copy it to your clipboard.  
-If anime list does not fit on the screen, you can scroll it up and down using a mouse scroll on each day anime list.
+If anime list does not fit on the screen, you can scroll it up and down using a mouse scroll on each day anime list.  
+`Get Dropped Anime Data` checkbox gets dropped anime info from user list during sync - check it if you want to have green/red highlight of dropped and watching animes when you set `List Type` to `Senpai - Current Season` or `Current Season`.
 
-You can get a list of all TV & ONA animes in the current season by clicking `Get Shows From The Current Season` button:
-![Image of the current season](https://i.imgur.com/OJFWLDo.png)
+
+You can get a list of all animes in the current season by clicking `Get Shows From The Current Season` button:
+![Image of the current season](https://user-images.githubusercontent.com/38395954/178522617-ebc45b73-a434-4e51-94f2-0c7614decb2e.png)
