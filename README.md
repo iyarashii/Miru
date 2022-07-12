@@ -5,30 +5,6 @@ Idea for the app is based on [senpai](http://www.senpai.moe/) a great site that 
 It lets you display airing animes from the user's MAL watching list. Also it can display list of TV animes from the current season.
 This app displays airing animes for each day of the week in the specified timezone.  
 It uses EF6 and SQL Server's LocalDB to store the data.
-# Building
-Build the solution with Visual Studio 2022.
-# Installation guide for SQL Server LocalDB
-### Follow these steps to install on Windows 10:
-
-1.  **Check if you have LocalDB installed on your PC:**
-    1. Open Control Panel.
-    2. Click Programs > Uninstall a program.
-    3. Search for `localdb`.
-    4. If you see `SQL Server 2016 LocalDB` or newer go to step 3 otherwise go to step 2. 
-    ![Image of SQL Server 2016 LocalDB in control panel](https://i.imgur.com/3WApAAy.png)
-
-2.  **Download and install LocalDB:**
-    1. Download the LocalDB from [here](https://www.microsoft.com/en-us/download/confirmation.aspx?id=56840).
-    2. Run the downloaded `SQLServer2016-SSEI-Expr.exe`.
-    3. Select `Download Media`.
-    ![Step 1 of installation](https://i.imgur.com/So90kQ2.png)
-    4. Select preferred language and download location, select `LocalDB` as a package.
-    ![Step 2 of installation](https://i.imgur.com/ryTqeU9.png)
-    5. Click `Download` and wait for the download to complete.
-    6. Run downloaded `SqlLocalDB.msi` installer.
-
-3.  **Run the app using Miru.exe.**
-    
 # Usage
 After starting the application, you should see an app window that looks like image below.
 Theme and time zone should be the same as your system's by the default.
@@ -54,3 +30,26 @@ If anime list does not fit on the screen, you can scroll it up and down using a 
 
 You can get a list of all animes in the current season by clicking `Get Shows From The Current Season` button:
 ![Image of the current season](https://user-images.githubusercontent.com/38395954/178522617-ebc45b73-a434-4e51-94f2-0c7614decb2e.png)
+# Building
+Build the solution with Visual Studio 2022.
+# Installation guide for SQL Server LocalDB
+### Follow these steps to install on Windows 10:
+
+1.  **Check if you have LocalDB installed on your PC:**
+    1. Open Control Panel.
+    2. Click Programs > Uninstall a program.
+    3. Search for `localdb`.
+    4. If you see `SQL Server 2016 LocalDB` or newer go to step 3 otherwise go to step 2. 
+    ![Image of SQL Server 2016 LocalDB in control panel](https://i.imgur.com/3WApAAy.png)
+
+2.  **Download and install LocalDB:**
+    1. Download the LocalDB from [here](https://www.microsoft.com/en-us/download/confirmation.aspx?id=56840).
+    2. Run the downloaded `SQLServer2016-SSEI-Expr.exe`.
+    3. Select `Download Media`.
+    ![Step 1 of installation](https://i.imgur.com/So90kQ2.png)
+    4. Select preferred language and download location, select `LocalDB` as a package.
+    ![Step 2 of installation](https://i.imgur.com/ryTqeU9.png)
+    5. Click `Download` and wait for the download to complete.
+    6. Run downloaded `SqlLocalDB.msi` installer.
+
+3.  **Run the app using Miru.exe.**
