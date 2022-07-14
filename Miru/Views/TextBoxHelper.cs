@@ -4,6 +4,7 @@
 
 using System.ComponentModel;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 
 namespace Miru.Views
@@ -41,7 +42,10 @@ namespace Miru.Views
         public static void FocusCommand(object parameter)
         {
             if (parameter is MvvmCommand targetCommand && targetCommand.Tag is UIElement targetElement)
+            {
                 targetElement.Focus();
+                (targetElement as TextBox).SelectAll();
+            }
         }
     }
 }

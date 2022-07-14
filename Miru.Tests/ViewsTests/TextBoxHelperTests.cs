@@ -4,6 +4,7 @@
 
 using Miru.Views;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using Xunit;
 
@@ -57,18 +58,20 @@ namespace Miru.Tests.ViewsTests
         }
 
         [StaFact]
-        public void FocusCommand_GivenMvvmCommand_FocusTag()
+        public void FocusCommand_GivenMvvmCommand_FocusTagAndSelectAllText()
         {
+            var testText = "3939";
             var testData = new MvvmCommand(x => { })
             {
-                Tag = new UIElement()
+                Tag = new TextBox() { Text = testText}
             };
-            (testData.Tag as UIElement).Focusable = true;
-            (testData.Tag as UIElement).IsEnabled = true;
+            (testData.Tag as TextBox).Focusable = true;
+            (testData.Tag as TextBox).IsEnabled = true;
 
             TextBoxHelper.FocusCommand(testData);
 
-            Assert.True((testData.Tag as UIElement).IsFocused);
+            Assert.True((testData.Tag as TextBox).IsFocused);
+            Assert.Equal(testText, (testData.Tag as TextBox).SelectedText);
         }
 
         [StaFact]
