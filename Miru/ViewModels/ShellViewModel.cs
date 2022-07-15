@@ -274,7 +274,7 @@ namespace Miru.ViewModels
             get { return _appStatusText; }
             private set
             {
-                _appStatusText = $"Miru -- { value }";
+                _appStatusText = value;
                 NotifyOfPropertyChange(() => AppStatus);
                 NotifyOfPropertyChange(() => AppStatusText);
             }

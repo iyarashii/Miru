@@ -210,11 +210,11 @@ namespace Miru.Tests
             }
         }
 
-        private const string BUSY_APP_STATUS_TEXT = "Miru -- Busy...";
-        private const string IDLE_APP_STATUS_TEXT = "Miru -- Idle";
-        private const string InternetConnectionProblemsAppStatusText = "Miru -- Problems with internet connection!";
+        private const string BUSY_APP_STATUS_TEXT = "Busy...";
+        private const string IDLE_APP_STATUS_TEXT = "Idle";
+        private const string InternetConnectionProblemsAppStatusText = "Problems with internet connection!";
         private const string CUSTOM_APP_STATUS_DETAILED_DESCRIPTION = "custom";
-        private const string APP_STATUS_TEXT_FOR_CUSTOM_DESCRIPTION = "Miru -- custom";
+        private const string APP_STATUS_TEXT_FOR_CUSTOM_DESCRIPTION = "custom";
 
 
         [Theory]
@@ -356,7 +356,7 @@ namespace Miru.Tests
                 cls.SyncUserAnimeList(It.IsAny<string>(), It.IsAny<MiruAppStatus>(), It.IsAny<bool>()).Wait();
 
                 mock.Mock<IMiruDbService>().Verify(x => x.CurrentUserAnimeList.GetCurrentUserAnimeList(It.IsAny<string>()), Times.Once);
-                Assert.Equal($"Miru -- { expectedAppStatusDescription }", cls.AppStatusText);
+                Assert.Equal(expectedAppStatusDescription, cls.AppStatusText);
                 Assert.Equal(MiruAppStatus.Idle, cls.AppStatus);
             }
         }           
@@ -378,7 +378,7 @@ namespace Miru.Tests
                 cls.SyncUserAnimeList(It.IsAny<string>(), It.IsAny<MiruAppStatus>(), true).Wait();
 
                 mock.Mock<IMiruDbService>().Verify(x => x.CurrentSeason.GetCurrentSeasonList(It.IsAny<int>()), Times.Once);
-                Assert.Equal($"Miru -- Problems with internet connection!", cls.AppStatusText);
+                Assert.Equal("Problems with internet connection!", cls.AppStatusText);
                 Assert.Equal(MiruAppStatus.InternetConnectionProblems, cls.AppStatus);
             }
         }
@@ -403,7 +403,7 @@ namespace Miru.Tests
                 cls.SyncUserAnimeList(It.IsAny<string>(), It.IsAny<MiruAppStatus>(), It.IsAny<bool>()).Wait();
 
                 mock.Mock<IMiruDbService>().Verify(x => x.SaveDetailedAnimeListData(It.IsAny<bool>()), Times.Once);
-                Assert.Equal($"Miru -- Problems with internet connection!", cls.AppStatusText);
+                Assert.Equal("Problems with internet connection!", cls.AppStatusText);
                 Assert.Equal(MiruAppStatus.InternetConnectionProblems, cls.AppStatus);
             }
         }
@@ -425,7 +425,7 @@ namespace Miru.Tests
                 await sut.SyncUserAnimeList(It.IsAny<string>(), It.IsAny<MiruAppStatus>(), It.IsAny<bool>());
 
                 Assert.Equal(MiruAppStatus.Idle, sut.AppStatus);
-                Assert.Equal($"Miru -- {expectedErrorMessage}", sut.AppStatusText);
+                Assert.Equal(expectedErrorMessage, sut.AppStatusText);
             }
         }
 
@@ -736,7 +736,7 @@ namespace Miru.Tests
 
                 Assert.False(actualResult);
                 Assert.Equal(MiruAppStatus.Idle, sut.AppStatus);
-                Assert.Equal($"Miru -- {expectedErrorMessage}", sut.AppStatusText);
+                Assert.Equal(expectedErrorMessage, sut.AppStatusText);
             }
         }
 
@@ -1052,7 +1052,7 @@ namespace Miru.Tests
                 typeof(ShellViewModel).GetProperty("AppStatusText").SetValue(cls, testValue);
 
                 // Assert
-                Assert.Equal($"Miru -- { testValue }", cls.AppStatusText);
+                Assert.Equal(testValue, cls.AppStatusText);
             }
         }
 
@@ -1064,8 +1064,7 @@ namespace Miru.Tests
                 // Arrange
                 var cls = mock.Create<ShellViewModel>();
                 var testValue = It.IsAny<MiruAppStatus>();
-                var expectedAppStatusTextValue = "Miru -- ";
-                expectedAppStatusTextValue += testValue == MiruAppStatus.Idle ? "Idle" : testValue == MiruAppStatus.Busy ? "Busy..." : "Problems with internet connection!";
+                var expectedAppStatusTextValue = testValue == MiruAppStatus.Idle ? "Idle" : testValue == MiruAppStatus.Busy ? "Busy..." : "Problems with internet connection!";
 
                 // Act
                 typeof(ShellViewModel).GetProperty("AppStatus").SetValue(cls, testValue);
