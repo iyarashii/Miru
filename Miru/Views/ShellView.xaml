@@ -19,7 +19,7 @@
         ui:WindowHelper.UseModernWindowStyle="True"
         ui:TitleBar.IsIconVisible="True"
         MinWidth="{Binding ElementName=FirstRowPanel, Path=ActualWidth}"
-        Title="{Binding Path=AppStatusText, Mode=OneWay}" WindowState="Maximized">
+        Title="{Binding Path=AppStatusText, Mode=OneWay, StringFormat='{}Miru -- {0}'}" WindowState="Maximized">
     <!-- view-wide styles -->
     <Window.Resources>
         <ResourceDictionary>
