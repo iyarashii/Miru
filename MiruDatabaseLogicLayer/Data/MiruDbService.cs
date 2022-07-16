@@ -89,6 +89,7 @@ namespace MiruDatabaseLogicLayer
         public event EventHandler<string> UpdateCurrentUsername;
         public event SortedAnimeListEventHandler UpdateAnimeListEntriesUI;
         public event UpdateAppStatusEventHandler UpdateAppStatusUI;
+        public event EventHandler<int> UpdateSyncProgress; 
 
         // load data from the last sync
         public void LoadLastSyncedData()
@@ -232,6 +233,7 @@ namespace MiruDatabaseLogicLayer
 
             using (var client = WebService.CreateWebClient.Invoke())
             {
+                int currentCompletedCount = 0;
                 // for each airing anime from the animeListEntries collection
                 foreach (var animeListEntry in currentUserAnimeListEntries)
                 {
@@ -272,6 +274,8 @@ namespace MiruDatabaseLogicLayer
                     }
 
                     FileSystemService.Value.DownloadFile(client, localImagePath, animeInfo.ImageURL);
+                    currentCompletedCount++;
+                    UpdateSyncProgress(this, currentCompletedCount);
                 }
 
                 if (seasonSyncOn)

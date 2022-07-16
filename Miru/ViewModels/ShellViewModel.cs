@@ -34,6 +34,7 @@ namespace Miru.ViewModels
         private string _currentAnimeNameFilter;
         private double _animeImageSizeInPixels;
         private double _watchingStatusHighlightOpacity;
+        private double _syncProgress;
 
         // fields with default values for properties with setter logic
         private AnimeListType _selectedDisplayedAnimeList = AnimeListType.Watching;
@@ -46,6 +47,7 @@ namespace Miru.ViewModels
             DbService.UpdateCurrentUsername += new EventHandler<string>(UpdateUsername);
             DbService.UpdateAnimeListEntriesUI += new MiruDbService.SortedAnimeListEventHandler(SortedAnimeLists.SetAnimeSortedByAirDayOfWeekAndFilteredByGivenAnimeListType);
             DbService.UpdateAppStatusUI += new MiruDbService.UpdateAppStatusEventHandler(UpdateAppStatus);
+            DbService.UpdateSyncProgress += new EventHandler<int>(UpdateSyncProgress);
         }
 
         private void LoadUserSettings(UserSettings userSettings)
@@ -350,7 +352,7 @@ namespace Miru.ViewModels
             get { return _userAnimeListURL; }
             set
             {
-                _userAnimeListURL = $@"https://myanimelist.net/animelist/{ value }";
+                _userAnimeListURL = $@"https://myanimelist.net/animelist/{value}";
                 NotifyOfPropertyChange(() => UserAnimeListURL);
             }
         }
@@ -366,9 +368,25 @@ namespace Miru.ViewModels
             }
         }
 
+        public double SyncProgress
+        {
+            get => _syncProgress;
+            set
+            {
+                _syncProgress = value;
+                NotifyOfPropertyChange(() => SyncProgress);
+            }                
+        }
+
         #endregion properties
 
         #region event handlers and guard methods
+
+        public void UpdateSyncProgress(object sender, int currentCount)
+        {
+            double totalCount = (sender as MiruDbService).CurrentUserAnimeList.UserAnimeListData.Anime.Count;
+            SyncProgress = (currentCount / totalCount) * 100;
+        }
 
         public void UpdateSyncDate(object sender, DateTime value)
         {
@@ -377,7 +395,7 @@ namespace Miru.ViewModels
 
         public void UpdateUsername(object sender, string name)
         {
-            if(string.IsNullOrEmpty(TypedInUsername))
+            if (string.IsNullOrEmpty(TypedInUsername))
             {
                 MalUserName = TypedInUsername = name;
             }
@@ -445,7 +463,7 @@ namespace Miru.ViewModels
             // get user's dropped status anime list
             UpdateAppStatus(MiruAppStatus.Busy, "Getting current user dropped anime list...");
 
-            var getCurrentUserDroppedAnimeListResult = 
+            var getCurrentUserDroppedAnimeListResult =
                 await DbService.CurrentUserAnimeList.GetCurrentUserDroppedAnimeList(TypedInUsername);
 
             if (!getCurrentUserDroppedAnimeListResult.Success)
@@ -587,7 +605,7 @@ namespace Miru.ViewModels
 
         public string PrepareAnimeTitleCopiedNotification(string animeTitle)
         {
-            return $"'{ animeTitle }' copied to the clipboard!";
+            return $"'{animeTitle}' copied to the clipboard!";
         }
 
         public void UpdateAppStatus(MiruAppStatus newAppStatus, string detailedAppStatusDescription = null)
@@ -607,7 +625,7 @@ namespace Miru.ViewModels
         {
             var link = @"https://docs.microsoft.com/en-us/sql/database-engine/configure-windows/sql-server-express-localdb?view=sql-server-ver15";
 
-            ContentDialog.Config("No SQL Server Express LocalDB found", "Close", "", secondaryButtonText:"Open LocalDB Download Page",
+            ContentDialog.Config("No SQL Server Express LocalDB found", "Close", "", secondaryButtonText: "Open LocalDB Download Page",
                                  content: $"Please install SQL Server Express LocalDB 2016 or newer for this app to work!");
 
             UpdateAppStatus(MiruAppStatus.Busy);
