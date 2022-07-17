@@ -185,7 +185,7 @@ namespace MiruDatabaseLogicLayer
             // open temporary connection to the database
             using (var db = CreateMiruDbContext.Invoke())
             {
-                UpdateAppStatusUI(MiruAppStatus.Busy, "Getting detailed user anime list data...");
+                UpdateAppStatusUI(MiruAppStatus.Busy, "Downloading detailed user anime list data...");
 
                 // get user anime list with the detailed info
                 detailedAnimeList = await GetDetailedUserAnimeList(db, CurrentUserAnimeList.UserAnimeListData.Anime, seasonSyncOn);
@@ -275,7 +275,7 @@ namespace MiruDatabaseLogicLayer
 
                     FileSystemService.Value.DownloadFile(client, localImagePath, animeInfo.ImageURL);
                     currentCompletedCount++;
-                    UpdateSyncProgress(this, currentCompletedCount);
+                    UpdateSyncProgress(nameof(GetDetailedUserAnimeList), currentCompletedCount);
                 }
 
                 if (seasonSyncOn)
@@ -293,11 +293,14 @@ namespace MiruDatabaseLogicLayer
         /// <returns></returns>
         private async Task<List<MiruAnimeModel>> GetDetailedSeasonAnimeListInfo(List<MiruAnimeModel> detailedUserAnimeList, IWebClientWrapper client)
         {
+            UpdateAppStatusUI(MiruAppStatus.Busy, "Downloading detailed current season anime data...");
+
             // set airing flag to false for whole list to remove anime that already ended
             detailedUserAnimeList.ForEach(x => x.CurrentlyAiring = false);
 
             HashSet<long> airingAnimesMalIDs = detailedUserAnimeList.Select(x => x.MalId).ToHashSet();
             var currentFilteredSeasonList = CurrentSeason.GetFilteredSeasonList();
+            int currentCompletedCount = 0;
 
             // add season animes that are not a part of miruAnimeModelsList
             foreach (var seasonEntry in currentFilteredSeasonList)
@@ -330,6 +333,8 @@ namespace MiruDatabaseLogicLayer
 
                     FileSystemService.Value.DownloadFile(client, localImagePath, animeInfo.ImageURL);
                 }
+                currentCompletedCount++;
+                UpdateSyncProgress(nameof(GetDetailedSeasonAnimeListInfo), currentCompletedCount);
             }
 
             // detailed anime list updated successfully

@@ -384,7 +384,15 @@ namespace Miru.ViewModels
 
         public void UpdateSyncProgress(object sender, int currentCount)
         {
-            double totalCount = (sender as MiruDbService).CurrentUserAnimeList.UserAnimeListData.Anime.Count;
+            double totalCount = 0;
+            if((sender as string) == nameof(DbService.GetDetailedUserAnimeList))
+            {
+                totalCount = DbService.CurrentUserAnimeList.UserAnimeListData.Anime.Count;
+            }
+            else if((sender as string) == "GetDetailedSeasonAnimeListInfo")
+            {
+                totalCount = DbService.CurrentSeason.GetFilteredSeasonList().Count;
+            }
             SyncProgress = (currentCount / totalCount) * 100;
         }
 
