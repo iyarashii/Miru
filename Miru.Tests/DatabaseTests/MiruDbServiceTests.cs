@@ -74,6 +74,7 @@ namespace Miru.Tests.DatabaseTests
             var mockEventHandler = new Mock<EventHandler<DateTime>>();
             var mockUsernameEventHandler = new Mock<EventHandler<string>>();
             var mockSyncProgressEventHandler = new Mock<EventHandler<int>>();
+            var mockUpdateAppStatusEventHandler = new Mock<MiruDbService.UpdateAppStatusEventHandler>();
 
             Func<IMiruDbContext> mockFunc = () => { return mockContext.Object; };
             Func<IWebClientWrapper> mockWebClientFunc = () => { return Mock.Of<IWebClientWrapper>(); };
@@ -150,6 +151,7 @@ namespace Miru.Tests.DatabaseTests
             cls.UpdateSyncDate += mockEventHandler.Object;
             cls.UpdateCurrentUsername += mockUsernameEventHandler.Object;
             cls.UpdateSyncProgress += mockSyncProgressEventHandler.Object;
+            cls.UpdateAppStatusUI += mockUpdateAppStatusEventHandler.Object;
 
             return cls;
         }
