@@ -40,6 +40,8 @@ namespace Miru.ViewModels
         ISystemService SystemService { get; }
         bool GetDroppedAnimeData { get; set; }
         double WatchingStatusHighlightOpacity { get; set; }
+        int TotalProgressCount { get; set; }
+        int CurrentProgressCount { get; set; }
 
         bool CanSyncUserAnimeList(string typedInUsername, MiruAppStatus appStatus, bool syncSeasonList);
 

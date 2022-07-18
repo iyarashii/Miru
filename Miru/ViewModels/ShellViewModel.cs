@@ -35,6 +35,8 @@ namespace Miru.ViewModels
         private double _animeImageSizeInPixels;
         private double _watchingStatusHighlightOpacity;
         private double _syncProgress;
+        private int _totalProgressCount;
+        private int _currentProgressCount;
 
         // fields with default values for properties with setter logic
         private AnimeListType _selectedDisplayedAnimeList = AnimeListType.Watching;
@@ -378,13 +380,32 @@ namespace Miru.ViewModels
             }                
         }
 
+        public int CurrentProgressCount
+        {
+            get => _currentProgressCount;
+            set
+            {
+                _currentProgressCount = value;
+                NotifyOfPropertyChange(() => CurrentProgressCount);
+            }
+        }
+
+        public int TotalProgressCount
+        {
+            get => _totalProgressCount;
+            set
+            {
+                _totalProgressCount = value;
+                NotifyOfPropertyChange(() => TotalProgressCount);
+            }
+        }
         #endregion properties
 
         #region event handlers and guard methods
 
         public void UpdateSyncProgress(object sender, int currentCount)
         {
-            double totalCount = 0;
+            int totalCount = 0;
             if((sender as string) == nameof(DbService.GetDetailedUserAnimeList))
             {
                 totalCount = DbService.CurrentUserAnimeList.UserAnimeListData.Anime.Count;
@@ -393,7 +414,9 @@ namespace Miru.ViewModels
             {
                 totalCount = DbService.CurrentSeason.GetFilteredSeasonList().Count;
             }
-            SyncProgress = (currentCount / totalCount) * 100;
+            SyncProgress = (double)currentCount / totalCount * 100;
+            CurrentProgressCount = currentCount;
+            TotalProgressCount = totalCount;
         }
 
         public void UpdateSyncDate(object sender, DateTime value)
