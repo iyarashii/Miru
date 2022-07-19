@@ -4,6 +4,7 @@
 
 using Autofac;
 using Autofac.Extras.Moq;
+using JikanDotNet;
 using Microsoft.Win32;
 using Miru.ViewModels;
 using MiruDatabaseLogicLayer;
@@ -442,7 +443,7 @@ namespace Miru.Tests
                     .Setup(x => x.ChangeDisplayedAnimeList(
                         It.IsAny<AnimeListType>(), 
                         It.IsAny<TimeZoneInfo>(), 
-                        It.IsAny<AnimeType>(), 
+                        It.IsAny<MiruLibrary.AnimeType>(), 
                         null));
 
                 // Act
@@ -928,7 +929,7 @@ namespace Miru.Tests
             {
                 // Arrange
                 var cls = mock.Create<ShellViewModel>();
-                var testValue = AnimeType.ONA;
+                var testValue = MiruLibrary.AnimeType.ONA;
                 mock.Mock<IMiruDbService>()
                     .Setup(x => x.ChangeDisplayedAnimeList(cls.SelectedDisplayedAnimeList, cls.SelectedTimeZone, testValue, cls.CurrentAnimeNameFilter));
 
@@ -1141,6 +1142,52 @@ namespace Miru.Tests
 
                 // Assert
                 Assert.Equal(testValue, cls.CanChangeDisplayedAnimeList);
+            }
+        }
+
+        [Fact]
+        public void UpdateSyncProgress_SenderIsGetDetailedUserAnimeList_TotalCountSetToCurrentAnimeList()
+        {
+            using (var mock = AutoMock.GetLoose())
+            {
+                // Arrange
+                int testTotalCount = 39;
+                int testCurrentCount = 7;
+                mock.Mock<IMiruDbService>().Setup(x => x.CurrentUserAnimeList.UserAnimeListData)
+                    .Returns(new JikanDotNet.UserAnimeList { Anime = new AnimeListEntry[39] });
+                var sut = mock.Create<ShellViewModel>();
+                var testValue = nameof(MiruDbService.GetDetailedUserAnimeList);
+
+                // Act
+                sut.UpdateSyncProgress(testValue, testCurrentCount);
+
+                // Assert
+                Assert.Equal(testTotalCount, sut.TotalProgressCount);
+                Assert.Equal(testCurrentCount, sut.CurrentProgressCount);
+                Assert.Equal((double)testCurrentCount/testTotalCount*100, sut.SyncProgress);
+            }
+        }
+
+        [Fact]
+        public void UpdateSyncProgress_SenderIsGetDetailedSeasonAnimeListInfo_TotalCountSetToCurrentSeasonFilteredList()
+        {
+            using (var mock = AutoMock.GetLoose())
+            {
+                // Arrange
+                int testTotalCount = 39;
+                int testCurrentCount = 7;
+                mock.Mock<IMiruDbService>().Setup(x => x.CurrentSeason.GetFilteredSeasonList())
+                    .Returns(new List<AnimeSubEntry>(new AnimeSubEntry[testTotalCount]));
+                var sut = mock.Create<ShellViewModel>();
+                var testValue = "GetDetailedSeasonAnimeListInfo";
+
+                // Act
+                sut.UpdateSyncProgress(testValue, testCurrentCount);
+
+                // Assert
+                Assert.Equal(testTotalCount, sut.TotalProgressCount);
+                Assert.Equal(testCurrentCount, sut.CurrentProgressCount);
+                Assert.Equal((double)testCurrentCount / testTotalCount * 100, sut.SyncProgress);
             }
         }
 
