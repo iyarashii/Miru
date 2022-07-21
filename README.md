@@ -1,6 +1,7 @@
 # Miru
 Miru is a WPF app used to display data from the [jikan](https://github.com/Ervie/jikan.net) MyAnimeList API.
-![App main view](https://i.imgur.com/CvFAJEQ.png)
+![App main view](https://user-images.githubusercontent.com/38395954/180266634-bc9b02f7-f6c3-4519-a4f7-650884603c6e.png)
+
 Idea for the app is based on [senpai](http://www.senpai.moe/) a great site that shows airing anime in a neat way.  
 It lets you display airing animes from the user's MAL watching list. Also it can display list of TV animes from the current season.
 This app displays airing animes for each day of the week in the specified timezone.  
