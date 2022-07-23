@@ -1,6 +1,7 @@
 # Miru
 Miru is a WPF app used to display data from the [jikan](https://github.com/Ervie/jikan.net) MyAnimeList API.
-![App main view](https://user-images.githubusercontent.com/38395954/180266634-bc9b02f7-f6c3-4519-a4f7-650884603c6e.png)
+![App main view](https://user-images.githubusercontent.com/38395954/180601939-adcd1279-217e-4fe0-a47f-0b1b808a6b69.png)
+
 
 Idea for the app is based on [senpai](http://www.senpai.moe/) a great site that shows airing anime in a neat way.  
 It lets you display airing animes from the user's MAL watching list. Also it can display list of TV animes from the current season.
@@ -9,10 +10,12 @@ It uses EF6 and SQL Server's LocalDB to store the data.
 # Usage
 After starting the application, you should see an app window that looks like image below.
 Theme and time zone should be the same as your system's by the default.
-![Image of the app window after 1st run](https://i.imgur.com/fZwnwTG.png)
+![Image of the app window after 1st run](https://user-images.githubusercontent.com/38395954/180602243-25871e49-3edf-4f7f-8c44-d3eadfc87280.png)
 Enter any MAL username in the `MAL Username` textbox (you can use `CTRL`+`M` shortcut to instantly focus this field and start typing) and click `Sync` button.
 Wait for synchronization, after it you should see shows from the MAL list of the typed in user if their list is `public` for example:
-![Image of synchronized app window](https://i.imgur.com/Iusn7zm.png)
+![Image of synchronized app window](https://user-images.githubusercontent.com/38395954/180602370-bb742a14-7d60-43dd-91fe-25bc2e28b39a.png)
+
+
 You can click on the username hyperlink (`iyarashii777's` on the image above) to go to the user's animelist page on MAL.
 
 `Get Shows From The Current Season` button works like `Sync` button but it also gets all the animes from the current season even if the user is not watching them.  
@@ -30,7 +33,8 @@ If anime list does not fit on the screen, you can scroll it up and down using a 
 
 
 You can get a list of all animes in the current season by clicking `Get Shows From The Current Season` button:
-![Image of the current season](https://user-images.githubusercontent.com/38395954/178522617-ebc45b73-a434-4e51-94f2-0c7614decb2e.png)
+![Image of the current season](https://user-images.githubusercontent.com/38395954/180602427-26ec53d7-9a3d-4b0a-88b8-e1b49e577135.png)
+
 # Building
 Build the solution with Visual Studio 2022.
 # Installation guide for SQL Server LocalDB
@@ -54,3 +58,11 @@ Build the solution with Visual Studio 2022.
     6. Run downloaded `SqlLocalDB.msi` installer.
 
 3.  **Run the app using Miru.exe.**
+# Changelog
+For older changes go to the releases page and browse older releases.
+### Miru 2.4
+* Added progress bar that displays download progress of anime data: ![progress bar img](https://user-images.githubusercontent.com/38395954/180602002-8a5c0b4b-5f8c-4b1b-b75a-81a25e3c8442.png)
+![season sync progress bar img](https://user-images.githubusercontent.com/38395954/180602324-79d5386f-9b66-422d-88d2-0fec62c01911.png)
+
+* After using `CTRL+F` or `CTRL+M` to focus text boxes select all text of the text box.
+* **Get Dropped Anime Data** checkbox default value changed to `true`.
