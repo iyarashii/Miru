@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using MiruLibrary;
 using AnimeType = MiruLibrary.AnimeType;
 using MiruLibrary.Services;
+using System.Data.Entity;
 
 namespace MiruDatabaseLogicLayer
 {
@@ -94,6 +95,7 @@ namespace MiruDatabaseLogicLayer
         // load data from the last sync
         public void LoadLastSyncedData()
         {
+            Database.SetInitializer(new MigrateDatabaseToLatestVersion<MiruDbContext, Migrations.Configuration>());
             // open temporary connection to the database
             using (var db = CreateMiruDbContext.Invoke())
             {
