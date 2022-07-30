@@ -7,6 +7,10 @@ Idea for the app is based on [senpai](http://www.senpai.moe/) a great site that 
 It lets you display airing animes from the user's MAL watching list. Also it can display list of TV animes from the current season.
 This app displays airing animes for each day of the week in the specified timezone.  
 It uses EF6 and SQL Server's LocalDB to store the data.
+
+SonarQube quality gate:
+![SonarQube result](https://user-images.githubusercontent.com/38395954/181906084-385a3f4a-c902-4138-81f5-d1e92301532d.png)
+
 # Usage
 After starting the application, you should see an app window that looks like image below.
 Theme and time zone should be the same as your system's by the default.
