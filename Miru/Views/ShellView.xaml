@@ -151,7 +151,7 @@
                      />
             <!--anime image size selection-->
             <ui:NumberBox x:Name="AnimeImageSize" Margin="10,0,0,0"
-                          ui:ControlHelper.Header="Art Size"
+                          ui:ControlHelper.Header="Art Size (px)"
                           SpinButtonPlacementMode="Inline"
                           SmallChange="1"
                           LargeChange="50"
