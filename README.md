@@ -15,7 +15,7 @@ SonarQube quality gate:
 After starting the application, you should see an app window that looks like image below.
 Theme and time zone should be the same as your system's by the default.
 ![Image of the app window after 1st run](https://user-images.githubusercontent.com/38395954/180602243-25871e49-3edf-4f7f-8c44-d3eadfc87280.png)
-Enter any MAL username in the `MAL Username` textbox (you can use `CTRL`+`M` shortcut to instantly focus this field and start typing) and click `Sync` button.
+Enter any MAL username in the `MAL Username` textbox (you can use <kbd>CTRL</kbd> + <kbd>M</kbd> shortcut to instantly focus this field and start typing) and click `Sync` button.
 Wait for synchronization, after it you should see shows from the MAL list of the typed in user if their list is `public` for example:
 ![Image of synchronized app window](https://user-images.githubusercontent.com/38395954/180602370-bb742a14-7d60-43dd-91fe-25bc2e28b39a.png)
 
@@ -26,7 +26,7 @@ You can click on the username hyperlink (`iyarashii777's` on the image above) to
 `List Type`, `Broadcast Type` and `Time Zone` drop-downs can be used to customize anime list display.  
 `Clear Cache` button clears data from database and local cache (local cache is located on the desktop in `MiruCache` folder).  
 `Update Senpai Data` gets data from the senpai.moe site and stores it as JSON file in the local cache.  
-`Filter Titles` lets you filter animes by name. It takes effect immediately as you are typing, you can use `CTRL`+`F` shortcut to instantly focus this field and start typing.  
+`Filter Titles` lets you filter animes by name. It takes effect immediately as you are typing, you can use <kbd>CTRL</kbd> + <kbd>F</kbd> shortcut to instantly focus this field and start typing.  
 You can set size of the images using `Art Size` field, size you select will be saved if you close the app and loaded on the next app launch.  
 You can set opacity of the green/red highlight using `Dropped / Watching Highlight Opacity` field, value you select will be saved if you close the app and loaded on the next app launch.  
 To reset to default you can delete your value and focus other element.  
@@ -68,5 +68,5 @@ For older changes go to the releases page and browse older releases.
 * Added progress bar that displays download progress of anime data: ![progress bar img](https://user-images.githubusercontent.com/38395954/180602002-8a5c0b4b-5f8c-4b1b-b75a-81a25e3c8442.png)
 ![season sync progress bar img](https://user-images.githubusercontent.com/38395954/180602324-79d5386f-9b66-422d-88d2-0fec62c01911.png)
 
-* After using `CTRL+F` or `CTRL+M` to focus text boxes select all text of the text box.
+* After using <kbd>CTRL</kbd> + <kbd>F</kbd> or <kbd>CTRL</kbd> + <kbd>M</kbd> to focus text boxes select all text of the text box.
 * **Get Dropped Anime Data** checkbox default value changed to `true`.
