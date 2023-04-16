@@ -192,6 +192,8 @@ namespace MiruLibrary.Models
             animeModel.CurrentlyAiring = animeListEntry.AiringStatus == AiringStatus.Airing;
             animeModel.Type = animeInfo.Type;
             animeModel.UpdateDroppedStatus(currentUserAnimeList);
+            animeModel.OpeningThemes = JsonConvert.SerializeObject(animeInfo.OpeningTheme);
+            animeModel.EndingThemes = JsonConvert.SerializeObject(animeInfo.EndingTheme);
         }
 
         public static void SetSeasonalAnimeModelData(this MiruAnimeModel animeModel, Anime animeInfo, 
@@ -207,6 +209,8 @@ namespace MiruLibrary.Models
             animeModel.CurrentlyAiring = true;
             animeModel.Type = animeInfo.Type;
             animeModel.UpdateDroppedStatus(currentUserAnimeList);
+            animeModel.OpeningThemes = JsonConvert.SerializeObject(animeInfo.OpeningTheme);
+            animeModel.EndingThemes = JsonConvert.SerializeObject(animeInfo.EndingTheme);
         }
 
         public static void UpdateDroppedStatus(this MiruAnimeModel animeModel, ICurrentUserAnimeListModel currentUserAnimeListModel)

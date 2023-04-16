@@ -152,6 +152,10 @@
     <Compile Include="Data\Migrations\202206221602412_AddDroppedFlag.designer.cs">
       <DependentUpon>202206221602412_AddDroppedFlag.cs</DependentUpon>
     </Compile>
+    <Compile Include="Data\Migrations\202304161215113_AddOpeningsAndEndings.cs" />
+    <Compile Include="Data\Migrations\202304161215113_AddOpeningsAndEndings.designer.cs">
+      <DependentUpon>202304161215113_AddOpeningsAndEndings.cs</DependentUpon>
+    </Compile>
     <Compile Include="Data\Migrations\Configuration.cs" />
     <Compile Include="Data\MiruDbContext.cs" />
     <Compile Include="Data\MiruDbService.cs" />
@@ -190,6 +194,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Data\Migrations\202206221602412_AddDroppedFlag.resx">
       <DependentUpon>202206221602412_AddDroppedFlag.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Data\Migrations\202304161215113_AddOpeningsAndEndings.resx">
+      <DependentUpon>202304161215113_AddOpeningsAndEndings.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
