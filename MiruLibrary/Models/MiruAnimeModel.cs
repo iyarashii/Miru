@@ -2,7 +2,9 @@
 // Licensed under the GNU General Public License v3.0,
 // go to https://github.com/iyarashii/Miru/blob/master/LICENSE for full license details.
 
+using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.IO;
@@ -83,5 +85,38 @@ namespace MiruLibrary.Models
         }
 
         public bool Dropped { get; set; }
+        private string _openingThemes;
+        //     Anime's opening themes numerically indexed with array values.
+        public string OpeningThemes 
+        {
+            get
+            {
+                string uiOutput = "OP\n";
+                var openings = JsonConvert.DeserializeObject<List<string>>(_openingThemes);
+                for (int i = 0; i < openings.Count; i++)
+                {
+                    uiOutput += $"{openings[i]}\n";
+                }
+                return uiOutput;
+            }
+            set => _openingThemes = value;
+        }
+        private string _endingThemes;
+
+        //     Anime's ending themes numerically indexed with array values.
+        public string EndingThemes
+        {
+            get
+            {
+                string uiOutput = "ED\n";
+                var endings = JsonConvert.DeserializeObject<List<string>>(_endingThemes);
+                for (int i = 0; i < endings.Count; i++)
+                {
+                    uiOutput += $"{endings[i]}\n";
+                }
+                return uiOutput;
+            }
+            set => _endingThemes = value;
+        }
     }
 }

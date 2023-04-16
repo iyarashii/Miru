@@ -13,6 +13,7 @@ using MiruLibrary;
 using AnimeType = MiruLibrary.AnimeType;
 using MiruLibrary.Services;
 using System.Data.Entity;
+using Newtonsoft.Json;
 
 namespace MiruDatabaseLogicLayer
 {
@@ -264,6 +265,8 @@ namespace MiruDatabaseLogicLayer
                         modelToBeUpdated.CurrentlyAiring = (animeListEntry.AiringStatus == AiringStatus.Airing);
                         localImagePath = modelToBeUpdated.LocalImagePath;
                         modelToBeUpdated.UpdateDroppedStatus(CurrentUserAnimeList);
+                        modelToBeUpdated.OpeningThemes = JsonConvert.SerializeObject(animeInfo.OpeningTheme);
+                        modelToBeUpdated.EndingThemes = JsonConvert.SerializeObject(animeInfo.EndingTheme);
                     }
                     else
                     {
