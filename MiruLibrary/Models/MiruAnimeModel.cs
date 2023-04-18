@@ -92,11 +92,19 @@ namespace MiruLibrary.Models
             get
             {
                 string uiOutput = "OP\n";
-                var openings = JsonConvert.DeserializeObject<List<string>>(_openingThemes);
-                for (int i = 0; i < openings.Count; i++)
+                try
                 {
-                    uiOutput += $"{openings[i]}\n";
+                    var openings = JsonConvert.DeserializeObject<List<string>>(_openingThemes);
+                    for (int i = 0; i < openings.Count; i++)
+                    {
+                        uiOutput += $"{openings[i]}\n";
+                    }
                 }
+                catch (Exception)
+                {
+                    uiOutput = "OP\n";
+                }
+                
                 return uiOutput;
             }
             set => _openingThemes = value;
@@ -109,11 +117,19 @@ namespace MiruLibrary.Models
             get
             {
                 string uiOutput = "ED\n";
-                var endings = JsonConvert.DeserializeObject<List<string>>(_endingThemes);
-                for (int i = 0; i < endings.Count; i++)
+                try
                 {
-                    uiOutput += $"{endings[i]}\n";
+                    var endings = JsonConvert.DeserializeObject<List<string>>(_endingThemes);
+                    for (int i = 0; i < endings.Count; i++)
+                    {
+                        uiOutput += $"{endings[i]}\n";
+                    }
                 }
+                catch (Exception)
+                {
+                    uiOutput = "ED\n";
+                }
+                
                 return uiOutput;
             }
             set => _endingThemes = value;
