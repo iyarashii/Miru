@@ -102,7 +102,7 @@ namespace MiruLibrary.Models
                 }
                 catch (Exception)
                 {
-                    uiOutput = "OP\n";
+                    uiOutput = _openingThemes;
                 }
                 
                 return uiOutput;
@@ -127,7 +127,7 @@ namespace MiruLibrary.Models
                 }
                 catch (Exception)
                 {
-                    uiOutput = "ED\n";
+                    uiOutput = _endingThemes;
                 }
                 
                 return uiOutput;
