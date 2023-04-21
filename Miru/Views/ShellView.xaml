@@ -82,11 +82,21 @@
                                             <Run Text="{Binding EndingThemes}"/>
                                         </TextBlock.Inlines>
                                         <i:Interaction.Triggers>
-                                            <i:EventTrigger EventName="MouseDown">
+                                            <i:EventTrigger EventName="MouseLeftButtonDown">
                                                 <cal:ActionMessage MethodName="CopyAnimeTitleToClipboard">
                                                     <cal:Parameter Value="{Binding Title}" />
                                                 </cal:ActionMessage>
                                             </i:EventTrigger>
+                                            <i:EventTrigger EventName="MouseRightButtonDown">
+                                                <cal:ActionMessage MethodName="CopyAnimeTitleToClipboard">
+                                                    <cal:Parameter Value="{Binding OpeningThemes}" />
+                                                </cal:ActionMessage>
+                                            </i:EventTrigger>
+                                            <!--<i:EventTrigger EventName="MouseWheelDown">
+                                                <cal:ActionMessage MethodName="CopyAnimeTitleToClipboard">
+                                                    <cal:Parameter Value="{Binding EndingThemes}" />
+                                                </cal:ActionMessage>
+                                            </i:EventTrigger>-->
                                         </i:Interaction.Triggers>
                                     </TextBlock>
                                 </DataTemplate>
