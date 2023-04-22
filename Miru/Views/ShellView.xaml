@@ -77,9 +77,9 @@
                                                     </MultiBinding>
                                                 </Run.Text>
                                             </Run>
-                                            <LineBreak />
+                                            <!--<LineBreak />
                                             <Run Text="{Binding OpeningThemes}"/>
-                                            <Run Text="{Binding EndingThemes}"/>
+                                            <Run Text="{Binding EndingThemes}"/>-->
                                         </TextBlock.Inlines>
                                         <i:Interaction.Triggers>
                                             <i:EventTrigger EventName="MouseLeftButtonDown">
@@ -88,15 +88,12 @@
                                                 </cal:ActionMessage>
                                             </i:EventTrigger>
                                             <i:EventTrigger EventName="MouseRightButtonDown">
-                                                <cal:ActionMessage MethodName="CopyAnimeTitleToClipboard">
+                                                <cal:ActionMessage MethodName="OpenCopySongDataDialog">
+                                                    <cal:Parameter Value="{Binding Title}" />
                                                     <cal:Parameter Value="{Binding OpeningThemes}" />
-                                                </cal:ActionMessage>
-                                            </i:EventTrigger>
-                                            <!--<i:EventTrigger EventName="MouseWheelDown">
-                                                <cal:ActionMessage MethodName="CopyAnimeTitleToClipboard">
                                                     <cal:Parameter Value="{Binding EndingThemes}" />
                                                 </cal:ActionMessage>
-                                            </i:EventTrigger>-->
+                                            </i:EventTrigger>
                                         </i:Interaction.Triggers>
                                     </TextBlock>
                                 </DataTemplate>
