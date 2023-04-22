@@ -674,6 +674,29 @@ namespace Miru.ViewModels
             }
         }
 
+        // event handler for right click on anime name
+        public async Task OpenCopySongDataDialog(string title, string opThemes, string edThemes)
+        {
+            ContentDialog.Config($"Copy {title}'s OP or ED?", primaryButtonText: "OP", secondaryButtonText: "ED", closeButtonText: "Cancel",
+                                 content: $"{opThemes}\n{edThemes}");
+
+            UpdateAppStatus(MiruAppStatus.Busy);
+
+            // display pop-up window
+            var result = await ContentDialog.ShowAsync();
+
+            if (result == ModernWpf.Controls.ContentDialogResult.Primary)
+            {
+                CopyAnimeTitleToClipboard(opThemes);
+            }
+            else if (result == ModernWpf.Controls.ContentDialogResult.Secondary)
+            {
+                CopyAnimeTitleToClipboard(edThemes);
+            }
+
+            UpdateAppStatus(MiruAppStatus.Idle);
+        }
+
         #endregion event handlers and guard methods
     }
 }
