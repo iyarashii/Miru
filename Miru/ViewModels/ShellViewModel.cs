@@ -685,13 +685,14 @@ namespace Miru.ViewModels
             // display pop-up window
             var result = await ContentDialog.ShowAsync();
 
-            if (result == ModernWpf.Controls.ContentDialogResult.Primary)
+            switch (result)
             {
-                CopyAnimeTitleToClipboard(opThemes);
-            }
-            else if (result == ModernWpf.Controls.ContentDialogResult.Secondary)
-            {
-                CopyAnimeTitleToClipboard(edThemes);
+                case ModernWpf.Controls.ContentDialogResult.Primary:
+                    CopyAnimeTitleToClipboard(opThemes);
+                    break;
+                case ModernWpf.Controls.ContentDialogResult.Secondary:
+                    CopyAnimeTitleToClipboard(edThemes);
+                    break;
             }
 
             UpdateAppStatus(MiruAppStatus.Idle);
