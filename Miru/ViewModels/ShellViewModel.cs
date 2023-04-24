@@ -677,8 +677,12 @@ namespace Miru.ViewModels
         // event handler for right click on anime name
         public async Task OpenCopySongDataDialog(string title, string opThemes, string edThemes)
         {
-            ContentDialog.Config($"Copy {title}'s OP or ED?", primaryButtonText: "OP", secondaryButtonText: "ED", closeButtonText: "Cancel",
-                                 content: $"{opThemes}\n{edThemes}");
+            ContentDialog.Config(
+                $"Copy {title}'s OP or ED?", 
+                primaryButtonText: "OP", 
+                secondaryButtonText: "ED", 
+                closeButtonText: "Cancel",
+                content: $"{opThemes}\n{edThemes}");
 
             UpdateAppStatus(MiruAppStatus.Busy);
 
