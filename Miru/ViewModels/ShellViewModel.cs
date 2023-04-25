@@ -13,6 +13,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Media;
 
@@ -692,10 +693,28 @@ namespace Miru.ViewModels
             switch (result)
             {
                 case ModernWpf.Controls.ContentDialogResult.Primary:
-                    CopyAnimeTitleToClipboard(opThemes);
+                    var opTitleMatches = Regex.Matches(opThemes, @"(?<="")(.*)(?="")");
+                    var opArtistMatches = Regex.Matches(opThemes, @"(?<=by\s)(.*)(?=\s)");
+                    string opOutput = null;
+                    for (int i = 0; i < opTitleMatches.Count; i++)
+                    {
+                        opOutput += $"{opTitleMatches[i].Value} {opArtistMatches[i].Value}\n";
+                    }
+                    CopyAnimeTitleToClipboard(opOutput);
                     break;
                 case ModernWpf.Controls.ContentDialogResult.Secondary:
-                    CopyAnimeTitleToClipboard(edThemes);
+                    var edTitleMatches = Regex.Matches(edThemes, @"(?<="")(.*)(?="")");
+                    var edArtistMatches = Regex.Matches(edThemes, @"(?<=by\s)(.*)(?=\s)");
+                    string edOutput = null;
+                    for (int i = 0; i < edTitleMatches.Count; i++)
+                    {
+                        var edArtistName = 
+                            edArtistMatches[i].Value.Contains(" (ep") ? 
+                            edArtistMatches[i].Value.Remove(edArtistMatches[i].Value.IndexOf(" (ep"))
+                            : edArtistMatches[i].Value;
+                        edOutput += $"{edTitleMatches[i].Value} {edArtistName}\n";
+                    }
+                    CopyAnimeTitleToClipboard(edOutput);
                     break;
             }
 
