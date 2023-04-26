@@ -693,32 +693,29 @@ namespace Miru.ViewModels
             switch (result)
             {
                 case ModernWpf.Controls.ContentDialogResult.Primary:
-                    var opTitleMatches = Regex.Matches(opThemes, @"(?<="")(.*)(?="")");
-                    var opArtistMatches = Regex.Matches(opThemes, @"(?<=by\s)(.*)(?=\s)");
-                    string opOutput = null;
-                    for (int i = 0; i < opTitleMatches.Count; i++)
-                    {
-                        opOutput += $"{opTitleMatches[i].Value} {opArtistMatches[i].Value}\n";
-                    }
-                    CopyAnimeTitleToClipboard(opOutput);
+                    CopyAnimeTitleToClipboard(GetSongTitleAndArtistName(opThemes));
                     break;
                 case ModernWpf.Controls.ContentDialogResult.Secondary:
-                    var edTitleMatches = Regex.Matches(edThemes, @"(?<="")(.*)(?="")");
-                    var edArtistMatches = Regex.Matches(edThemes, @"(?<=by\s)(.*)(?=\s)");
-                    string edOutput = null;
-                    for (int i = 0; i < edTitleMatches.Count; i++)
-                    {
-                        var edArtistName = 
-                            edArtistMatches[i].Value.Contains(" (ep") ? 
-                            edArtistMatches[i].Value.Remove(edArtistMatches[i].Value.IndexOf(" (ep"))
-                            : edArtistMatches[i].Value;
-                        edOutput += $"{edTitleMatches[i].Value} {edArtistName}\n";
-                    }
-                    CopyAnimeTitleToClipboard(edOutput);
+                    CopyAnimeTitleToClipboard(GetSongTitleAndArtistName(edThemes));
                     break;
             }
-
             UpdateAppStatus(MiruAppStatus.Idle);
+        }
+
+        private string GetSongTitleAndArtistName(string input)
+        {
+            var titleMatches = Regex.Matches(input, @"(?<="")(.*)(?="")");
+            var artistMatches = Regex.Matches(input, @"(?<=by\s)(.*)(?=\s)");
+            string output = null;
+            for (int i = 0; i < titleMatches.Count; i++)
+            {
+                var artistName =
+                    artistMatches[i].Value.Contains(" (ep") 
+                    ? artistMatches[i].Value.Remove(artistMatches[i].Value.IndexOf(" (ep"))
+                    : artistMatches[i].Value;
+                output += $"{titleMatches[i].Value} {artistName}\n";
+            }
+            return output;
         }
 
         #endregion event handlers and guard methods
