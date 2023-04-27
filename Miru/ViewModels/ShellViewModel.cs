@@ -684,12 +684,9 @@ namespace Miru.ViewModels
                 secondaryButtonText: "ED", 
                 closeButtonText: "Cancel",
                 content: $"{opThemes}\n{edThemes}");
-
             UpdateAppStatus(MiruAppStatus.Busy);
-
             // display pop-up window
             var result = await ContentDialog.ShowAsync();
-
             switch (result)
             {
                 case ModernWpf.Controls.ContentDialogResult.Primary:
@@ -701,7 +698,7 @@ namespace Miru.ViewModels
             }
             UpdateAppStatus(MiruAppStatus.Idle);
         }
-
+        #endregion event handlers and guard methods
         private string GetSongTitleAndArtistName(string input)
         {
             var titleMatches = Regex.Matches(input, @"(?<="")(.*)(?="")");
@@ -710,14 +707,12 @@ namespace Miru.ViewModels
             for (int i = 0; i < titleMatches.Count; i++)
             {
                 var artistName =
-                    artistMatches[i].Value.Contains(" (ep") 
+                    artistMatches[i].Value.Contains(" (ep")
                     ? artistMatches[i].Value.Remove(artistMatches[i].Value.IndexOf(" (ep"))
                     : artistMatches[i].Value;
                 output += $"{titleMatches[i].Value} {artistName}\n";
             }
             return output;
         }
-
-        #endregion event handlers and guard methods
     }
 }
