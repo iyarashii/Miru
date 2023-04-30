@@ -12,29 +12,38 @@ using Xunit;
 
 namespace Miru.Tests.UI
 {
-    public class CopyOpEdTests
+    public class CopyOpEdTests : IDisposable
     {
+        UIA2Automation automation;
+        FlaUI.Core.Application app;
+        FlaUI.Core.AutomationElements.Window mainWindow;
+        public CopyOpEdTests()
+        {
+            app = FlaUI.Core.Application.Launch("G:\\repos\\Miru\\Miru\\bin\\Debug\\app.publish\\Miru.exe");
+            automation = new UIA2Automation();
+            // give time to load DataGrids
+            Wait.UntilInputIsProcessed(new TimeSpan(0, 0, 5));
+            mainWindow = app.GetMainWindow(automation);
+        }
+
         [Fact]
         public void CheckDialogButtonsAfterRightClick()
         {
-            var app = FlaUI.Core.Application.Launch("G:\\repos\\Miru\\Miru\\bin\\Debug\\app.publish\\Miru.exe");
-            using (var automation = new UIA2Automation())
-            {
-                // give time to load DataGrids
-                Wait.UntilInputIsProcessed(new TimeSpan(0, 0, 5));
-                var window = app.GetMainWindow(automation);
-                var conFac = new ConditionFactory(new UIA2PropertyLibrary());
-                var animeTitleTextBox = window.FindAllByXPath("/DataGrid[6]/DataItem[2]/Custom[1]/Text").FirstOrDefault();
-                Assert.NotNull(animeTitleTextBox);
-                animeTitleTextBox.RightClick();
-                var opButton = window.FindFirstDescendant(cf => cf.ByName("OP"))?.AsButton();
-                var edButton = window.FindFirstDescendant(cf => cf.ByName("ED"))?.AsButton();
-                var cancelButton = window.FindFirstDescendant(cf => cf.ByName("Cancel"))?.AsButton();
-                Assert.NotNull(opButton);
-                Assert.NotNull(edButton);
-                Assert.NotNull(cancelButton);
-                cancelButton.Invoke();
-            }
+            var animeTitleTextBox = mainWindow.FindAllByXPath("/DataGrid[6]/DataItem[2]/Custom[1]/Text").FirstOrDefault();
+            Assert.NotNull(animeTitleTextBox);
+            animeTitleTextBox.RightClick();
+            var opButton = mainWindow.FindFirstDescendant(cf => cf.ByName("OP"))?.AsButton();
+            var edButton = mainWindow.FindFirstDescendant(cf => cf.ByName("ED"))?.AsButton();
+            var cancelButton = mainWindow.FindFirstDescendant(cf => cf.ByName("Cancel"))?.AsButton();
+            Assert.NotNull(opButton);
+            Assert.NotNull(edButton);
+            Assert.NotNull(cancelButton);
+            cancelButton.Invoke();
+        }
+
+        public void Dispose()
+        {
+            automation.Dispose();
             app.Close();
         }
     }
