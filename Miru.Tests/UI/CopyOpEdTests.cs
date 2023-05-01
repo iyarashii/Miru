@@ -41,6 +41,26 @@ namespace Miru.Tests.UI
             cancelButton.Invoke();
         }
 
+        [Fact]
+        public void CheckToastAfterOpButtonClicked()
+        {
+            // Arrange
+            var animeTitleTextBox = mainWindow.FindAllByXPath("/DataGrid[6]/DataItem[2]/Custom[1]/Text").FirstOrDefault();
+            Assert.NotNull(animeTitleTextBox);
+            animeTitleTextBox.RightClick();
+            var opButton = mainWindow.FindFirstDescendant(cf => cf.ByName("OP"))?.AsButton();
+            Assert.NotNull(opButton);
+
+            // Act
+            opButton.Invoke();
+
+            // Assert
+            Wait.UntilInputIsProcessed(new TimeSpan(0, 0, 2));
+            var toast = mainWindow.FindAllByXPath("/Window/Custom/Text").FirstOrDefault();
+            Assert.NotNull(toast);
+            Assert.Equal("'Karei One Turn (華麗ワンターン) TrySail\n' copied to the clipboard!", toast.Name);
+        }
+
         public void Dispose()
         {
             automation.Dispose();
