@@ -29,9 +29,14 @@ namespace Miru.Tests.UI
         [Fact]
         public void CheckDialogButtonsAfterRightClick()
         {
+            //Arrange
             var animeTitleTextBox = mainWindow.FindAllByXPath("/DataGrid[6]/DataItem[2]/Custom[1]/Text").FirstOrDefault();
             Assert.NotNull(animeTitleTextBox);
+
+            // Act
             animeTitleTextBox.RightClick();
+
+            //Assert
             var opButton = mainWindow.FindFirstDescendant(cf => cf.ByName("OP"))?.AsButton();
             var edButton = mainWindow.FindFirstDescendant(cf => cf.ByName("ED"))?.AsButton();
             var cancelButton = mainWindow.FindFirstDescendant(cf => cf.ByName("Cancel"))?.AsButton();
