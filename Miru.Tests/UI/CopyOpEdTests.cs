@@ -1,9 +1,8 @@
-﻿// Copyright (c) 2022 iyarashii @ https://github.com/iyarashii 
+﻿// Copyright (c) 2023 iyarashii @ https://github.com/iyarashii 
 // Licensed under the GNU General Public License v3.0,
 // go to https://github.com/iyarashii/Miru/blob/master/LICENSE for full license details.
 
 using FlaUI.Core.AutomationElements;
-using FlaUI.Core.Conditions;
 using FlaUI.Core.Input;
 using FlaUI.UIA2;
 using System;
@@ -16,7 +15,7 @@ namespace Miru.Tests.UI
     {
         UIA2Automation automation;
         FlaUI.Core.Application app;
-        FlaUI.Core.AutomationElements.Window mainWindow;
+        Window mainWindow;
         public CopyOpEdTests()
         {
             app = FlaUI.Core.Application.Launch("G:\\repos\\Miru\\Miru\\bin\\Debug\\app.publish\\Miru.exe");
