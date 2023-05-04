@@ -16,7 +16,7 @@ namespace Miru.Tests.UI
     {
         UIA2Automation automation;
         FlaUI.Core.Application app;
-        FlaUI.Core.AutomationElements.Window mainWindow;
+        Window mainWindow;
         public CopyOpEdTests()
         {
             app = FlaUI.Core.Application.Launch("G:\\repos\\Miru\\Miru\\bin\\Debug\\app.publish\\Miru.exe");
