@@ -13,9 +13,9 @@ namespace Miru.Tests.UI
 {
     public class CopyOpEdTests : IDisposable
     {
-        UIA2Automation automation;
-        FlaUI.Core.Application app;
-        Window mainWindow;
+        readonly UIA2Automation automation;
+        readonly FlaUI.Core.Application app;
+        readonly Window mainWindow;
         public CopyOpEdTests()
         {
             app = FlaUI.Core.Application.Launch("G:\\repos\\Miru\\Miru\\bin\\Debug\\app.publish\\Miru.exe");
