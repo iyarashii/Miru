@@ -11,20 +11,8 @@ using Xunit;
 
 namespace Miru.Tests.UI
 {
-    public class CopyOpEdTests : IDisposable
+    public class CopyOpEdTests : UiTestBase
     {
-        readonly UIA2Automation automation;
-        readonly FlaUI.Core.Application app;
-        readonly Window mainWindow;
-        public CopyOpEdTests()
-        {
-            app = FlaUI.Core.Application.Launch("G:\\repos\\Miru\\Miru\\bin\\Debug\\app.publish\\Miru.exe");
-            automation = new UIA2Automation();
-            // give time to load DataGrids
-            Wait.UntilInputIsProcessed(new TimeSpan(0, 0, 5));
-            mainWindow = app.GetMainWindow(automation);
-        }
-
         [Fact]
         public void CheckDialogButtonsAfterRightClick()
         {
@@ -83,12 +71,6 @@ namespace Miru.Tests.UI
             var toast = mainWindow.FindAllByXPath("/Window/Custom/Text").FirstOrDefault();
             Assert.NotNull(toast);
             Assert.Equal("'Karei One Turn (華麗ワンターン) TrySail\nMukyuu Platonic (無窮プラトニック) VALIS\n' copied to the clipboard!", toast.Name);
-        }
-
-        public void Dispose()
-        {
-            automation.Dispose();
-            app.Close();
         }
     }
 }
