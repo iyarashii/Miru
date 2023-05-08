@@ -4,7 +4,6 @@
 
 using FlaUI.Core.AutomationElements;
 using FlaUI.Core.Input;
-using FlaUI.UIA2;
 using System;
 using System.Linq;
 using Xunit;
