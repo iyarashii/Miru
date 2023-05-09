@@ -3,8 +3,6 @@
 // go to https://github.com/iyarashii/Miru/blob/master/LICENSE for full license details.
 
 using FlaUI.Core.AutomationElements;
-using FlaUI.Core.Conditions;
-using FlaUI.UIA2;
 using Xunit;
 
 namespace Miru.Tests.UI
