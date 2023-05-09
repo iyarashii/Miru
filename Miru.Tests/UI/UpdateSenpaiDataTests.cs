@@ -9,26 +9,19 @@ using Xunit;
 
 namespace Miru.Tests.UI
 {
-    public class UpdateSenpaiDataTests
+    public class UpdateSenpaiDataTests : UiTestBase
     {
         [Fact]
         public void CheckDialogButtonsAfterPress()
         {
-            var app = FlaUI.Core.Application.Launch("G:\\repos\\Miru\\Miru\\bin\\Debug\\app.publish\\Miru.exe");
-            using (var automation = new UIA2Automation())
-            {
-                var window = app.GetMainWindow(automation);
-                var conFac = new ConditionFactory(new UIA2PropertyLibrary());
-                var button = window.FindFirstChild(conFac.ByName("Update Senpai Data"))?.AsButton();
-                Assert.NotNull(button);
-                button.Invoke();
-                var closeButton = window.FindFirstDescendant(cf => cf.ByName("No"))?.AsButton();
-                var primaryButton = window.FindFirstDescendant(cf => cf.ByName("Yes"))?.AsButton();
-                Assert.NotNull(closeButton);
-                Assert.NotNull(primaryButton);
-                closeButton.Invoke();
-            }
-            app.Close();
+            var button = mainWindow.FindFirstChild(cf => cf.ByName("Update Senpai Data"))?.AsButton();
+            Assert.NotNull(button);
+            button.Invoke();
+            var closeButton = mainWindow.FindFirstDescendant(cf => cf.ByName("No"))?.AsButton();
+            var primaryButton = mainWindow.FindFirstDescendant(cf => cf.ByName("Yes"))?.AsButton();
+            Assert.NotNull(closeButton);
+            Assert.NotNull(primaryButton);
+            closeButton.Invoke();
         }
     }
 }
