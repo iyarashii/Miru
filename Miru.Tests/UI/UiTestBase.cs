@@ -16,7 +16,7 @@ namespace Miru.Tests.UI
         protected readonly Window mainWindow;
         public UiTestBase()
         {
-            app = FlaUI.Core.Application.Launch("G:\\repos\\Miru\\Miru\\bin\\Debug\\app.publish\\Miru.exe");
+            app = FlaUI.Core.Application.Launch(Environment.GetEnvironmentVariable("MIRU_PATH", EnvironmentVariableTarget.Machine));
             automation = new UIA2Automation();
             // give time to load DataGrids
             Wait.UntilInputIsProcessed(new TimeSpan(0, 0, 5));
