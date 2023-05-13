@@ -30,5 +30,22 @@ namespace Miru.Tests.UI
             var darkModeButton = mainWindow.FindAllByXPath("/Button[5]").FirstOrDefault();
             Assert.False(darkModeButton.AsToggleButton().IsToggled);
         }
+
+        [Fact]
+        public void TurnOnDarkMode()
+        {
+            // Arrange
+            var darkModeSwitchThumb = mainWindow.FindAllByXPath("/Button[5]/Thumb").FirstOrDefault();
+            Assert.NotNull(darkModeSwitchThumb);
+
+            // Act
+            darkModeSwitchThumb.Click();
+            darkModeSwitchThumb.Click();
+
+            // Assert 
+            Wait.UntilInputIsProcessed(new TimeSpan(0, 0, 2));
+            var darkModeButton = mainWindow.FindAllByXPath("/Button[5]").FirstOrDefault();
+            Assert.True(darkModeButton.AsToggleButton().IsToggled);
+        }
     }
 }
