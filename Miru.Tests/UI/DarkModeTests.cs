@@ -15,7 +15,7 @@ namespace Miru.Tests.UI
 {
     public class DarkModeTests : UiTestBase
     {
-        [Fact]
+        [Fact, TestPriority(5)]
         public void TurnOffDarkMode()
         {
             // Arrange
@@ -31,7 +31,7 @@ namespace Miru.Tests.UI
             Assert.False(darkModeButton.AsToggleButton().IsToggled);
         }
 
-        [Fact]
+        [Fact, TestPriority(6)]
         public void TurnOnDarkMode()
         {
             // Arrange

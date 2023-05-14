@@ -12,7 +12,7 @@ namespace Miru.Tests.UI
 {
     public class CopyOpEdTests : UiTestBase
     {
-        [Fact]
+        [Fact, TestPriority(2)]
         public void CheckDialogButtonsAfterRightClick()
         {
             //Arrange
@@ -32,7 +32,7 @@ namespace Miru.Tests.UI
             cancelButton.Invoke();
         }
 
-        [Fact]
+        [Fact, TestPriority(3)]
         public void CheckToastAfterOpButtonClicked()
         {
             // Arrange
@@ -52,7 +52,7 @@ namespace Miru.Tests.UI
             Assert.Equal("'Karei One Turn (華麗ワンターン) TrySail\n' copied to the clipboard!", toast.Name);
         }
 
-        [Fact]
+        [Fact, TestPriority(4)]
         public void CheckToastAfterEdButtonClicked()
         {
             // Arrange
