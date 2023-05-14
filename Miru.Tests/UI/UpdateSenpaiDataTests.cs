@@ -9,7 +9,7 @@ namespace Miru.Tests.UI
 {
     public class UpdateSenpaiDataTests : UiTestBase
     {
-        [Fact]
+        [Fact, TestPriority(1)]
         public void CheckDialogButtonsAfterPress()
         {
             var button = mainWindow.FindFirstChild(cf => cf.ByName("Update Senpai Data"))?.AsButton();

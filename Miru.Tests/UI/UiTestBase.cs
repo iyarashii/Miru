@@ -6,6 +6,11 @@ using FlaUI.Core.AutomationElements;
 using FlaUI.Core.Input;
 using FlaUI.UIA2;
 using System;
+using Xunit;
+
+[assembly: TestCaseOrderer("Miru.Tests.UI.PriorityOrderer", "Miru.Tests.UI")]
+[assembly: CollectionBehavior(DisableTestParallelization = true)]
+
 
 namespace Miru.Tests.UI
 {
