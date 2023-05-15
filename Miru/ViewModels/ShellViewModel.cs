@@ -13,6 +13,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Media;
@@ -703,16 +704,16 @@ namespace Miru.ViewModels
         {
             var titleMatches = Regex.Matches(input, @"(?<="")(.*)(?="")");
             var artistMatches = Regex.Matches(input, @"(?<=by\s)(.*)(?=\s)");
-            string output = null;
+            StringBuilder outputStrBuilder = new StringBuilder();
             for (int i = 0; i < titleMatches.Count; i++)
             {
                 var artistName =
                     artistMatches[i].Value.Contains(" (ep")
                     ? artistMatches[i].Value.Remove(artistMatches[i].Value.IndexOf(" (ep"))
                     : artistMatches[i].Value;
-                output += $"{titleMatches[i].Value} {artistName}\n";
+                outputStrBuilder.Append($"{titleMatches[i].Value} {artistName}\n");
             }
-            return output;
+            return outputStrBuilder.ToString();
         }
     }
 }
