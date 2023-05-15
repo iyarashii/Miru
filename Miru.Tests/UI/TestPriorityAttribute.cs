@@ -3,10 +3,6 @@
 // go to https://github.com/iyarashii/Miru/blob/master/LICENSE for full license details.
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Miru.Tests.UI
 {
