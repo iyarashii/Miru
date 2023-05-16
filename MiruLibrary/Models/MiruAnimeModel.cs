@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.IO;
+using System.Text;
 using System.Windows.Media.Imaging;
 
 namespace MiruLibrary.Models
@@ -91,21 +92,21 @@ namespace MiruLibrary.Models
         {
             get
             {
-                string uiOutput = "OP\n";
+                StringBuilder uiOutput = new StringBuilder("OP\n");
                 try
                 {
                     var openings = JsonConvert.DeserializeObject<List<string>>(_openingThemes);
                     for (int i = 0; i < openings.Count; i++)
                     {
-                        uiOutput += $"{openings[i]}\n";
+                        uiOutput.Append($"{openings[i]}\n");
                     }
                 }
                 catch (Exception)
                 {
-                    uiOutput = _openingThemes;
+                    uiOutput = new StringBuilder(_openingThemes);
                 }
                 
-                return uiOutput;
+                return uiOutput.ToString();
             }
             set => _openingThemes = value;
         }
