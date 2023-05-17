@@ -117,21 +117,21 @@ namespace MiruLibrary.Models
         {
             get
             {
-                string uiOutput = "ED\n";
+                StringBuilder uiOutput = new StringBuilder("ED\n");
                 try
                 {
                     var endings = JsonConvert.DeserializeObject<List<string>>(_endingThemes);
                     for (int i = 0; i < endings.Count; i++)
                     {
-                        uiOutput += $"{endings[i]}\n";
+                        uiOutput.Append($"{endings[i]}\n");
                     }
                 }
                 catch (Exception)
                 {
-                    uiOutput = _endingThemes;
+                    uiOutput = new StringBuilder(_endingThemes);
                 }
                 
-                return uiOutput;
+                return uiOutput.ToString();
             }
             set => _endingThemes = value;
         }
