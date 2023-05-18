@@ -37,9 +37,7 @@ namespace Miru.Tests.UI
         static TValue GetOrCreate<TKey, TValue>(IDictionary<TKey, TValue> dictionary, TKey key)
             where TValue : new()
         {
-            TValue result;
-
-            if (dictionary.TryGetValue(key, out result)) return result;
+            if (dictionary.TryGetValue(key, out TValue result)) return result;
 
             result = new TValue();
             dictionary[key] = result;
