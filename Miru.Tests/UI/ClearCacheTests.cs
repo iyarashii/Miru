@@ -14,7 +14,7 @@ namespace Miru.Tests.UI
 {
     public class ClearCacheTests : UiTestBase
     {
-        [Fact, TestPriority(1)]
+        [Fact]
         public void CheckClearCacheDialogButtons()
         {
             var button = mainWindow.FindFirstChild(cf => cf.ByName("Clear Cache"))?.AsButton();
