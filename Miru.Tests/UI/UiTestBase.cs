@@ -8,12 +8,9 @@ using FlaUI.UIA2;
 using System;
 using Xunit;
 
-[assembly: TestCaseOrderer("Miru.Tests.UI.PriorityOrderer", "Miru.Tests.UI")]
-[assembly: CollectionBehavior(DisableTestParallelization = true)]
-
-
 namespace Miru.Tests.UI
 {
+    [Collection("UI Tests")]
     public class UiTestBase : IDisposable
     {
         protected readonly UIA2Automation automation;
