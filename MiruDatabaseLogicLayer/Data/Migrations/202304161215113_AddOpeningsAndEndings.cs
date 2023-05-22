@@ -1,6 +1,5 @@
 ﻿namespace MiruDatabaseLogicLayer.Migrations
 {
-    using System;
     using System.Data.Entity.Migrations;
     using System.Diagnostics.CodeAnalysis;
 
