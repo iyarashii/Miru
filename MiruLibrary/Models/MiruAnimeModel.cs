@@ -86,28 +86,12 @@ namespace MiruLibrary.Models
         }
 
         public bool Dropped { get; set; }
+
         private string _openingThemes;
         //     Anime's opening themes numerically indexed with array values.
         public string OpeningThemes 
         {
-            get
-            {
-                StringBuilder uiOutput = new StringBuilder("OP\n");
-                try
-                {
-                    var openings = JsonConvert.DeserializeObject<List<string>>(_openingThemes);
-                    for (int i = 0; i < openings.Count; i++)
-                    {
-                        uiOutput.Append($"{openings[i]}\n");
-                    }
-                }
-                catch (Exception)
-                {
-                    uiOutput = new StringBuilder(_openingThemes);
-                }
-                
-                return uiOutput.ToString();
-            }
+            get => FormatThemesOutput("OP", _openingThemes);
             set => _openingThemes = value;
         }
         private string _endingThemes;
@@ -115,25 +99,27 @@ namespace MiruLibrary.Models
         //     Anime's ending themes numerically indexed with array values.
         public string EndingThemes
         {
-            get
-            {
-                StringBuilder uiOutput = new StringBuilder("ED\n");
-                try
-                {
-                    var endings = JsonConvert.DeserializeObject<List<string>>(_endingThemes);
-                    for (int i = 0; i < endings.Count; i++)
-                    {
-                        uiOutput.Append($"{endings[i]}\n");
-                    }
-                }
-                catch (Exception)
-                {
-                    uiOutput = new StringBuilder(_endingThemes);
-                }
-                
-                return uiOutput.ToString();
-            }
+            get => FormatThemesOutput("ED", _endingThemes);
             set => _endingThemes = value;
+        }
+
+        public string FormatThemesOutput(string themeType, string themesJsonContent)
+        {
+            StringBuilder uiOutput = new StringBuilder($"{themeType}\n");
+            try
+            {
+                var themes = JsonConvert.DeserializeObject<List<string>>(themesJsonContent);
+                for (int i = 0; i < themes.Count; i++)
+                {
+                    uiOutput.Append($"{themes[i]}\n");
+                }
+            }
+            catch (Exception)
+            {
+                uiOutput = new StringBuilder(themesJsonContent);
+            }
+
+            return uiOutput.ToString();
         }
     }
 }
