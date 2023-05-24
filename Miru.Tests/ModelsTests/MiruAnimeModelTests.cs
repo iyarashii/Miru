@@ -119,5 +119,21 @@ namespace Miru.Tests.ModelsTests
                 Assert.Equal(nonZeroNumber, sut.TotalEpisodes);
             }
         }
+
+        [Fact]
+        public void FormatThemesOutput_GivenIncorrectJsonString_ReturnsJsonString()
+        {
+            using (var mock = AutoMock.GetLoose())
+            {
+                // Arrange
+                var sut = mock.Create<MiruAnimeModel>();
+
+                // Act
+                var result = sut.FormatThemesOutput(null, "test");
+
+                // Assert
+                Assert.Equal("test", result);
+            }
+        }
     }
 }
