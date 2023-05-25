@@ -5,6 +5,7 @@
 using Autofac.Extras.Moq;
 using MiruLibrary;
 using MiruLibrary.Models;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -133,6 +134,24 @@ namespace Miru.Tests.ModelsTests
 
                 // Assert
                 Assert.Equal("test", result);
+            }
+        }
+
+        [Fact]
+        public void FormatThemesOutput_GivenCorrectJsonString_ReturnsListOfThemes()
+        {
+            using (var mock = AutoMock.GetLoose())
+            {
+                // Arrange
+                var sut = mock.Create<MiruAnimeModel>();
+                var themesList = new List<string> { "theme1", "theme2", "theme3" };
+                var json = JsonConvert.SerializeObject(themesList);
+
+                // Act
+                var result = sut.FormatThemesOutput("OP", json);
+
+                // Assert
+                Assert.Equal("OP\ntheme1\ntheme2\ntheme3\n", result);
             }
         }
     }
