@@ -172,5 +172,23 @@ namespace Miru.Tests.ModelsTests
                 Assert.Equal("OP\nsong1\nsong2\nsong3\n", result);
             }
         }
+
+        [Fact]
+        public void EndingThemes_GetValue_ReturnsFormattedSongs()
+        {
+            using (var mock = AutoMock.GetLoose())
+            {
+                // Arrange
+                var sut = mock.Create<MiruAnimeModel>();
+                var themesList = new List<string> { "song1", "song2", "song3" };
+                sut.EndingThemes = JsonConvert.SerializeObject(themesList);
+
+                // Act
+                var result = sut.EndingThemes;
+
+                // Assert
+                Assert.Equal("ED\nsong1\nsong2\nsong3\n", result);
+            }
+        }
     }
 }
