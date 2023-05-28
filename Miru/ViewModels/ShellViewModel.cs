@@ -700,7 +700,7 @@ namespace Miru.ViewModels
             UpdateAppStatus(MiruAppStatus.Idle);
         }
         #endregion event handlers and guard methods
-        private string GetSongTitleAndArtistName(string input)
+        internal string GetSongTitleAndArtistName(string input)
         {
             var titleMatches = Regex.Matches(input, @"(?<="")(.*)(?="")");
             var artistMatches = Regex.Matches(input, @"(?<=by\s)(.*)(?=\s)");
@@ -708,9 +708,9 @@ namespace Miru.ViewModels
             for (int i = 0; i < titleMatches.Count; i++)
             {
                 var artistName =
-                    artistMatches[i].Value.Contains(" (ep")
-                    ? artistMatches[i].Value.Remove(artistMatches[i].Value.IndexOf(" (ep"))
-                    : artistMatches[i].Value;
+                    artistMatches[i].Value.Contains("(ep")
+                    ? artistMatches[i].Value.Remove(artistMatches[i].Value.IndexOf("(ep")).Trim()
+                    : artistMatches[i].Value.Trim();
                 outputStrBuilder.Append($"{titleMatches[i].Value} {artistName}\n");
             }
             return outputStrBuilder.ToString();
