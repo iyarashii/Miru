@@ -49,7 +49,7 @@ namespace Miru.Tests.UI
             Wait.UntilInputIsProcessed(new TimeSpan(0, 0, 2));
             var toast = mainWindow.FindAllByXPath("/Window/Custom/Text").FirstOrDefault();
             Assert.NotNull(toast);
-            Assert.Equal("'Karei One Turn (華麗ワンターン) TrySail\n' copied to the clipboard!", toast.Name);
+            Assert.Equal("'Karei One Turn (華麗ワンターン) TrySail\nFollow You! TrySail\n' copied to the clipboard!", toast.Name);
         }
 
         [Fact]
