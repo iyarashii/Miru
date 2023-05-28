@@ -700,7 +700,7 @@ namespace Miru.ViewModels
             UpdateAppStatus(MiruAppStatus.Idle);
         }
         #endregion event handlers and guard methods
-        private string GetSongTitleAndArtistName(string input)
+        internal string GetSongTitleAndArtistName(string input)
         {
             var titleMatches = Regex.Matches(input, @"(?<="")(.*)(?="")");
             var artistMatches = Regex.Matches(input, @"(?<=by\s)(.*)(?=\s)");
