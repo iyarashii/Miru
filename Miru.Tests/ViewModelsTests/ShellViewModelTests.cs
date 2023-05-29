@@ -776,6 +776,23 @@ namespace Miru.Tests
                 Assert.Equal("Title Artist\ntitle2 artist2\n", actualResult);
             }
         }
+
+        [Fact]
+        public void GetSongTitleAndArtistName_ValidInputWithoutEps_ReturnsCorrectArtistAndTitle()
+        {
+            using (var autoMock = AutoMock.GetLoose())
+            {
+                // Arrange
+                var sut = autoMock.Create<ShellViewModel>();
+                string validInput = "\"Title\" by Artist\n\"title2\" by artist2 ";
+
+                // Act
+                var actualResult = sut.GetSongTitleAndArtistName(validInput);
+
+                // Assert
+                Assert.Equal("Title Artist\ntitle2 artist2\n", actualResult);
+            }
+        }
         #endregion methods tests
 
         #region properties tests
