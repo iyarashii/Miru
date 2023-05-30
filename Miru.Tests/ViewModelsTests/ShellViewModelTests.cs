@@ -793,6 +793,35 @@ namespace Miru.Tests
                 Assert.Equal("Title Artist\ntitle2 artist2\n", actualResult);
             }
         }
+
+        [Fact]
+        public void OpenCopySongDataDialog_CancelButtonClicked_ValidCall()
+        {
+            using (var mock = AutoMock.GetLoose())
+            {
+                mock.Mock<ISimpleContentDialog>()
+                    .Setup(x => x.ShowAsync())
+                    .ReturnsAsync(ContentDialogResult.None);
+                var cls = mock.Create<ShellViewModel>();
+                var title = "test";
+                var opThemes = "\"Title\" by Artist\n\"title2\" by artist2 ";
+                var edThemes = "";
+                cls.OpenCopySongDataDialog(title, opThemes, edThemes).Wait();
+                Assert.Equal(MiruAppStatus.Idle, cls.AppStatus);
+                mock.Mock<ISimpleContentDialog>()
+                    .Verify(x => x.Config
+                    (
+                        $"Copy {title}'s OP or ED?",
+                        "OP",
+                        "Cancel",
+                        ContentDialogButton.Primary,
+                        $"{opThemes}\n{edThemes}",
+                        "ED"
+                    ),
+                    Times.Once);
+                mock.Mock<ISimpleContentDialog>().Verify(x => x.ShowAsync(), Times.Once);
+            }
+        }
         #endregion methods tests
 
         #region properties tests
