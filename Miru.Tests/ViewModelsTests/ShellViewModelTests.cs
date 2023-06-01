@@ -863,6 +863,47 @@ namespace Miru.Tests
                 staThread.Join();
             }
         }
+
+        [Fact]
+        public void OpenCopySongDataDialog_EdButtonClicked_ValidCall()
+        {
+            using (var mock = AutoMock.GetLoose())
+            {
+                mock.Mock<ISimpleContentDialog>()
+                    .Setup(x => x.ShowAsync())
+                    .ReturnsAsync(ContentDialogResult.Secondary);
+                var cls = mock.Create<ShellViewModel>();
+                var title = "test";
+                var opThemes = "";
+                var edThemes = "\"ending\" by Artist\n\"ending2\" by artist2 ";
+                Thread staThread = new Thread(() =>
+                {
+                    var clipboardContentBeforeTest = System.Windows.Clipboard.GetText();
+
+                    // Act
+                    cls.OpenCopySongDataDialog(title, opThemes, edThemes).Wait();
+
+                    // Assert
+                    Assert.Equal(MiruAppStatus.Idle, cls.AppStatus);
+                    mock.Mock<ISimpleContentDialog>()
+                        .Verify(x => x.Config
+                        (
+                            $"Copy {title}'s OP or ED?",
+                            "OP",
+                            "Cancel",
+                            ContentDialogButton.Primary,
+                            $"{opThemes}\n{edThemes}",
+                            "ED"
+                        ),
+                        Times.Once);
+                    mock.Mock<ISimpleContentDialog>().Verify(x => x.ShowAsync(), Times.Once);
+                    Assert.Equal("ending Artist\nending2 artist2\n", System.Windows.Clipboard.GetText());
+                });
+                staThread.SetApartmentState(ApartmentState.STA);
+                staThread.Start();
+                staThread.Join();
+            }
+        }
         #endregion methods tests
 
         #region properties tests
