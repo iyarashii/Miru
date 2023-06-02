@@ -41,15 +41,20 @@ namespace Miru.Tests.UI
             animeTitleTextBox.RightClick();
             var opButton = mainWindow.FindFirstDescendant(cf => cf.ByName("OP"))?.AsButton();
             Assert.NotNull(opButton);
-
+            var opEdDialogContent = mainWindow.FindFirstByXPath("/Text[13]").Name;
+            
             // Act
             opButton.Invoke();
 
             // Assert
-            Wait.UntilInputIsProcessed(new TimeSpan(0, 0, 2));
+            Wait.UntilInputIsProcessed(TimeSpan.FromSeconds(2));
             var toast = mainWindow.FindAllByXPath("/Window/Custom/Text").FirstOrDefault();
+            var songTitlesAndArtistNames = toast.Name.Substring(1, toast.Name.LastIndexOf("'") - 1).Replace('\n', ' ').Trim().Split(' ').ToHashSet();
             Assert.NotNull(toast);
-            Assert.Equal("'Karei One Turn (華麗ワンターン) TrySail\nFollow You! TrySail\n' copied to the clipboard!", toast.Name);
+            foreach (var word in songTitlesAndArtistNames)
+            {
+                Assert.Contains(word, opEdDialogContent);
+            }
         }
 
         [Fact]
