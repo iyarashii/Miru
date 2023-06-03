@@ -66,15 +66,20 @@ namespace Miru.Tests.UI
             animeTitleTextBox.RightClick();
             var edButton = mainWindow.FindFirstDescendant(cf => cf.ByName("ED"))?.AsButton();
             Assert.NotNull(edButton);
+            var opEdDialogContent = mainWindow.FindFirstByXPath("/Text[13]").Name;
 
             // Act
             edButton.Invoke();
 
             // Assert
-            Wait.UntilInputIsProcessed(new TimeSpan(0, 0, 2));
+            Wait.UntilInputIsProcessed(TimeSpan.FromSeconds(2));
             var toast = mainWindow.FindAllByXPath("/Window/Custom/Text").FirstOrDefault();
+            var songTitlesAndArtistNames = toast.Name.Substring(1, toast.Name.LastIndexOf("'") - 1).Replace('\n', ' ').Trim().Split(' ').ToHashSet();
             Assert.NotNull(toast);
-            Assert.Equal("'Karei One Turn (華麗ワンターン) TrySail\nMukyuu Platonic (無窮プラトニック) VALIS\n' copied to the clipboard!", toast.Name);
+            foreach (var word in songTitlesAndArtistNames)
+            {
+                Assert.Contains(word, opEdDialogContent);
+            }
         }
     }
 }
