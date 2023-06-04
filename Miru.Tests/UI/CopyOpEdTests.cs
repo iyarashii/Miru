@@ -13,6 +13,27 @@ namespace Miru.Tests.UI
     public class CopyOpEdTests : UiTestBase
     {
         [Fact]
+        public void CopyAnimeTitleValidateToast()
+        {
+            //Arrange
+            var animeTitleTextBox = mainWindow.FindAllByXPath("/DataGrid[6]/DataItem[2]/Custom[1]/Text").FirstOrDefault();
+            Assert.NotNull(animeTitleTextBox);
+
+            // Act
+            animeTitleTextBox.Click();
+
+            // Assert
+            Wait.UntilInputIsProcessed(TimeSpan.FromSeconds(2));
+            var toast = mainWindow.FindAllByXPath("/Window/Custom/Text").FirstOrDefault();
+            var animeTitleWords = toast.Name.Substring(1, toast.Name.LastIndexOf("'") - 1).Replace('\n', ' ').Trim().Split(' ').ToHashSet();
+            Assert.NotNull(toast);
+            foreach (var word in animeTitleWords)
+            {
+                Assert.Contains(word, animeTitleTextBox.Name);
+            }
+        }
+
+        [Fact]
         public void CheckDialogButtonsAfterRightClick()
         {
             //Arrange
