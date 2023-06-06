@@ -5,6 +5,7 @@
 using FlaUI.Core.AutomationElements;
 using FlaUI.Core.Input;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Xunit;
 
@@ -12,6 +13,11 @@ namespace Miru.Tests.UI
 {
     public class CopyOpEdTests : UiTestBase
     {
+        public HashSet<string> GetDistinctWordsBetweenSingleQuotes(string source)
+        {
+            return source.Substring(source.IndexOf("'") + 1, source.LastIndexOf("'") - 1).Replace('\n', ' ').Trim().Split(' ').ToHashSet();
+        }
+
         [Fact]
         public void CopyAnimeTitleValidateToast()
         {
@@ -25,7 +31,7 @@ namespace Miru.Tests.UI
             // Assert
             Wait.UntilInputIsProcessed(TimeSpan.FromSeconds(2));
             var toast = mainWindow.FindAllByXPath("/Window/Custom/Text").FirstOrDefault();
-            var animeTitleWords = toast.Name.Substring(1, toast.Name.LastIndexOf("'") - 1).Replace('\n', ' ').Trim().Split(' ').ToHashSet();
+            var animeTitleWords = GetDistinctWordsBetweenSingleQuotes(toast.Name);
             Assert.NotNull(toast);
             foreach (var word in animeTitleWords)
             {
@@ -70,7 +76,7 @@ namespace Miru.Tests.UI
             // Assert
             Wait.UntilInputIsProcessed(TimeSpan.FromSeconds(2));
             var toast = mainWindow.FindAllByXPath("/Window/Custom/Text").FirstOrDefault();
-            var songTitlesAndArtistNames = toast.Name.Substring(1, toast.Name.LastIndexOf("'") - 1).Replace('\n', ' ').Trim().Split(' ').ToHashSet();
+            var songTitlesAndArtistNames = GetDistinctWordsBetweenSingleQuotes(toast.Name);
             Assert.NotNull(toast);
             foreach (var word in songTitlesAndArtistNames)
             {
@@ -95,7 +101,7 @@ namespace Miru.Tests.UI
             // Assert
             Wait.UntilInputIsProcessed(TimeSpan.FromSeconds(2));
             var toast = mainWindow.FindAllByXPath("/Window/Custom/Text").FirstOrDefault();
-            var songTitlesAndArtistNames = toast.Name.Substring(1, toast.Name.LastIndexOf("'") - 1).Replace('\n', ' ').Trim().Split(' ').ToHashSet();
+            var songTitlesAndArtistNames = GetDistinctWordsBetweenSingleQuotes(toast.Name);
             Assert.NotNull(toast);
             foreach (var word in songTitlesAndArtistNames)
             {
