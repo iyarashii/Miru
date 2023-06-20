@@ -9,7 +9,8 @@ This app displays airing animes for each day of the week in the specified timezo
 It uses EF6 and SQL Server's LocalDB to store the data.
 
 SonarQube quality gate:
-![SonarQube result](https://user-images.githubusercontent.com/38395954/181906084-385a3f4a-c902-4138-81f5-d1e92301532d.png)
+![SonarQube result](https://github.com/iyarashii/Miru/assets/38395954/22de7f95-d45e-4656-af96-f7d2c75e4801)
+
 
 # Usage
 After starting the application, you should see an app window that looks like image below.
