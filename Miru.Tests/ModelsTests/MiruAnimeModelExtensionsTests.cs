@@ -197,7 +197,6 @@ namespace Miru.Tests.ModelsTests
         {
             // Arrange
             var sut = new MiruAnimeModel();
-            DateTime airedFromDate = new DateTime(2022, 3, 14);
             var animeInfo = new Anime()
             {
                 MalId = MAL_ID,
