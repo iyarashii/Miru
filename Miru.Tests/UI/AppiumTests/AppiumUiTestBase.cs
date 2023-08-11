@@ -9,24 +9,44 @@ using OpenQA.Selenium.Appium.Windows;
 
 namespace Miru.Tests.UI.AppiumTests
 {
-    public class AppiumUiTestBase
+    public class AppiumUiTestBase : IDisposable
     {
         private WindowsDriver<WindowsElement> appSession;
-        [Fact]
-        public void TurnOffDarkMode()
+        public AppiumUiTestBase()
         {
             AppiumOptions appCapabilities = new AppiumOptions();
             appCapabilities.AddAdditionalCapability("appium:app", "G:\\repos\\Miru\\Miru\\bin\\Debug\\app.publish\\Miru.exe");
             appCapabilities.AddAdditionalCapability("platformName", "Windows");
             appCapabilities.AddAdditionalCapability("appium:automationName", "Windows");
             appSession = new WindowsDriver<WindowsElement>(new Uri("http://127.0.0.1:4723/"), appCapabilities);
+        }
+        public void Dispose()
+        {
+            appSession.Close();
+        }
+
+        [Fact]
+        public void TurnOffDarkMode()
+        {
             //var darkModeSwitch = appSession.FindElementByAccessibilityId("SwitchThumb");
             var darkModeSwitch = appSession.FindElementByClassName("ToggleSwitch");
             Assert.NotNull(darkModeSwitch);
             Assert.Contains("On", darkModeSwitch.Text);
             darkModeSwitch.Click();
             Assert.Contains("Off", darkModeSwitch.Text);
-            appSession.Close();
+        }
+
+        [Fact]
+        public void CheckDialogButtonsAfterPress()
+        {
+            var button = appSession.FindElementByName("Update Senpai Data");
+            Assert.NotNull(button);
+            button.Click();
+            var closeButton = appSession.FindElementByName("No");
+            var primaryButton = appSession.FindElementByName("Yes");
+            Assert.NotNull(closeButton);
+            Assert.NotNull(primaryButton);
+            closeButton.Click();
         }
     }
 }
