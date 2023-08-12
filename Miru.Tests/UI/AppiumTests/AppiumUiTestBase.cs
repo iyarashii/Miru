@@ -9,9 +9,10 @@ using OpenQA.Selenium.Appium.Windows;
 
 namespace Miru.Tests.UI.AppiumTests
 {
+    [Collection("Appium UI Tests")]
     public class AppiumUiTestBase : IDisposable
     {
-        private WindowsDriver<WindowsElement> appSession;
+        protected WindowsDriver<WindowsElement> appSession;
         public AppiumUiTestBase()
         {
             AppiumOptions appCapabilities = new AppiumOptions();
@@ -23,17 +24,6 @@ namespace Miru.Tests.UI.AppiumTests
         public void Dispose()
         {
             appSession.Close();
-        }
-
-        [Fact]
-        public void TurnOffDarkMode()
-        {
-            //var darkModeSwitch = appSession.FindElementByAccessibilityId("SwitchThumb");
-            var darkModeSwitch = appSession.FindElementByClassName("ToggleSwitch");
-            Assert.NotNull(darkModeSwitch);
-            Assert.Contains("On", darkModeSwitch.Text);
-            darkModeSwitch.Click();
-            Assert.Contains("Off", darkModeSwitch.Text);
         }
 
         [Fact]
