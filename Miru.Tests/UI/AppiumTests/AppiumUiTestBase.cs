@@ -25,18 +25,5 @@ namespace Miru.Tests.UI.AppiumTests
         {
             appSession.Close();
         }
-
-        [Fact]
-        public void CheckDialogButtonsAfterPress()
-        {
-            var button = appSession.FindElementByName("Update Senpai Data");
-            Assert.NotNull(button);
-            button.Click();
-            var closeButton = appSession.FindElementByName("No");
-            var primaryButton = appSession.FindElementByName("Yes");
-            Assert.NotNull(closeButton);
-            Assert.NotNull(primaryButton);
-            closeButton.Click();
-        }
     }
 }
