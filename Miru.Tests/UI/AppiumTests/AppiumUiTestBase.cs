@@ -17,8 +17,8 @@ namespace Miru.Tests.UI.AppiumTests
     public class AppiumUiTestBase : IDisposable
     {
         protected WindowsDriver<WindowsElement> appSession;
-        private Process appiumServerProcess;
-        private Window mainWindow;
+        private readonly Process appiumServerProcess;
+        private readonly Window mainWindow;
         public AppiumUiTestBase()
         {
             var cmdsi = new ProcessStartInfo("pwsh.exe");
