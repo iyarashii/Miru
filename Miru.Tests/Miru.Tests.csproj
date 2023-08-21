@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net472</TargetFramework>
@@ -9,7 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Appium.WebDriver" Version="4.4.5" />
+    <PackageReference Include="Appium.WebDriver" Version="5.0.0-beta04" />
     <PackageReference Include="Autofac" Version="5.1.2" />
     <PackageReference Include="Autofac.Extras.Moq" Version="5.0.1" />
     <PackageReference Include="Autofac.Extras.NSubstitute" Version="1.1.0" />
