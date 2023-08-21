@@ -16,7 +16,7 @@ namespace Miru.Tests.UI.AppiumTests
     [Collection("Appium UI Tests")]
     public class AppiumUiTestBase : IDisposable
     {
-        protected WindowsDriver<WindowsElement> appSession;
+        protected WindowsDriver appSession;
         private readonly Process appiumServerProcess;
         private readonly Window mainWindow;
         public AppiumUiTestBase()
@@ -29,10 +29,13 @@ namespace Miru.Tests.UI.AppiumTests
             var textArea = mainWindow.FindFirstDescendant("Text Area");
             Retry.WhileNull(() => textArea.Patterns.Text.Pattern.DocumentRange.FindText("No plugins have been installed.", false, true), interval: TimeSpan.FromSeconds(1), timeout: TimeSpan.FromMinutes(1));
             AppiumOptions appCapabilities = new AppiumOptions();
-            appCapabilities.AddAdditionalCapability("appium:app", "G:\\repos\\Miru\\Miru\\bin\\Debug\\app.publish\\Miru.exe");
-            appCapabilities.AddAdditionalCapability("platformName", "Windows");
-            appCapabilities.AddAdditionalCapability("appium:automationName", "Windows");
-            appSession = new WindowsDriver<WindowsElement>(new Uri("http://127.0.0.1:4723/"), appCapabilities);
+            appCapabilities.App = "G:\\repos\\Miru\\Miru\\bin\\Debug\\app.publish\\Miru.exe";
+            appCapabilities.PlatformName = "Windows";
+            appCapabilities.AutomationName = "Windows";
+            //appCapabilities.AddAdditionalAppiumOption("appium:app", "G:\\repos\\Miru\\Miru\\bin\\Debug\\app.publish\\Miru.exe");
+            //appCapabilities.AddAdditionalAppiumOption("platformName", "Windows");
+            //appCapabilities.AddAdditionalAppiumOption("appium:automationName", "Windows");
+            appSession = new WindowsDriver(new Uri("http://127.0.0.1:4723/"), appCapabilities);
         }
         public void Dispose()
         {

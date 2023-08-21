@@ -2,6 +2,8 @@
 // Licensed under the GNU General Public License v3.0,
 // go to https://github.com/iyarashii/Miru/blob/master/LICENSE for full license details.
 
+using OpenQA.Selenium;
+using OpenQA.Selenium.Appium;
 using Xunit;
 
 namespace Miru.Tests.UI.AppiumTests
@@ -11,11 +13,11 @@ namespace Miru.Tests.UI.AppiumTests
         [Fact]
         public void CheckDialogButtonsAfterPress()
         {
-            var button = appSession.FindElementByName("Update Senpai Data");
+            var button = appSession.FindElement(MobileBy.Name("Update Senpai Data"));
             Assert.NotNull(button);
             button.Click();
-            var closeButton = appSession.FindElementByName("No");
-            var primaryButton = appSession.FindElementByName("Yes");
+            var closeButton = appSession.FindElement(MobileBy.Name("No"));
+            var primaryButton = appSession.FindElement(MobileBy.Name("Yes"));
             Assert.NotNull(closeButton);
             Assert.NotNull(primaryButton);
             closeButton.Click();
