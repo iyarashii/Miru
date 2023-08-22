@@ -21,6 +21,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.editorconfig = .editorconfig
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Miru.UiTests", "Miru.UiTests\Miru.UiTests.csproj", "{1477BFA2-6455-440F-9C31-3C9EDC45BD74}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -91,6 +93,18 @@ Global
 		{A4299171-F33E-4790-975C-574F6917E874}.Release|x64.Build.0 = Release|Any CPU
 		{A4299171-F33E-4790-975C-574F6917E874}.Release|x86.ActiveCfg = Release|x86
 		{A4299171-F33E-4790-975C-574F6917E874}.Release|x86.Build.0 = Release|x86
+		{1477BFA2-6455-440F-9C31-3C9EDC45BD74}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1477BFA2-6455-440F-9C31-3C9EDC45BD74}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1477BFA2-6455-440F-9C31-3C9EDC45BD74}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{1477BFA2-6455-440F-9C31-3C9EDC45BD74}.Debug|x64.Build.0 = Debug|Any CPU
+		{1477BFA2-6455-440F-9C31-3C9EDC45BD74}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{1477BFA2-6455-440F-9C31-3C9EDC45BD74}.Debug|x86.Build.0 = Debug|Any CPU
+		{1477BFA2-6455-440F-9C31-3C9EDC45BD74}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1477BFA2-6455-440F-9C31-3C9EDC45BD74}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1477BFA2-6455-440F-9C31-3C9EDC45BD74}.Release|x64.ActiveCfg = Release|Any CPU
+		{1477BFA2-6455-440F-9C31-3C9EDC45BD74}.Release|x64.Build.0 = Release|Any CPU
+		{1477BFA2-6455-440F-9C31-3C9EDC45BD74}.Release|x86.ActiveCfg = Release|Any CPU
+		{1477BFA2-6455-440F-9C31-3C9EDC45BD74}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
