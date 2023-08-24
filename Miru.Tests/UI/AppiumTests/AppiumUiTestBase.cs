@@ -27,12 +27,14 @@ namespace Miru.Tests.UI.AppiumTests
             var flauiSP = FlaUI.Core.Application.Attach(appiumServerProcess);
             mainWindow = flauiSP.GetMainWindow(new UIA3Automation());
             var textArea = mainWindow.FindFirstDescendant("Text Area");
-            Retry.WhileNull(() => textArea.Patterns.Text.Pattern.DocumentRange.FindText("No plugins have been installed.", false, true), interval: TimeSpan.FromSeconds(1), timeout: TimeSpan.FromMinutes(1));
+            Retry.WhileNull(() => textArea.Patterns.Text.Pattern.DocumentRange
+                .FindText("No plugins have been installed.", false, true), 
+                interval: TimeSpan.FromSeconds(1), 
+                timeout: TimeSpan.FromMinutes(1));
             AppiumOptions appCapabilities = new AppiumOptions();
-            appCapabilities.App = "G:\\repos\\Miru\\Miru\\bin\\Debug\\app.publish\\Miru.exe";
+            appCapabilities.App = Environment.GetEnvironmentVariable("MIRU_PATH", EnvironmentVariableTarget.Machine);
             appCapabilities.PlatformName = "Windows";
             appCapabilities.AutomationName = "Windows";
-            //appCapabilities.AddAdditionalAppiumOption("appium:app", "G:\\repos\\Miru\\Miru\\bin\\Debug\\app.publish\\Miru.exe");
             //appCapabilities.AddAdditionalAppiumOption("platformName", "Windows");
             //appCapabilities.AddAdditionalAppiumOption("appium:automationName", "Windows");
             appSession = new WindowsDriver(new Uri("http://127.0.0.1:4723/"), appCapabilities);
