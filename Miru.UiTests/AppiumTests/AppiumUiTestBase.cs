@@ -48,7 +48,7 @@ namespace Miru.Tests.UI.AppiumTests
             }
             //    if (output.Contains("\u001b[35m[Appium]\u001b[39m No plugins have been installed. Use the \"appium plugin\" command to install the one(s) you want to use."))
             AppiumOptions appCapabilities = new AppiumOptions();
-            appCapabilities.AddAdditionalCapability("appium:app", "G:\\repos\\Miru\\Miru\\bin\\Debug\\app.publish\\Miru.exe");
+            appCapabilities.AddAdditionalCapability("appium:app", Environment.GetEnvironmentVariable("MIRU_PATH", EnvironmentVariableTarget.Machine));
             appCapabilities.AddAdditionalCapability("platformName", "Windows");
             appCapabilities.AddAdditionalCapability("appium:automationName", "Windows");
             appSession = new WindowsDriver<WindowsElement>(new Uri("http://127.0.0.1:4723/"), appCapabilities); // does not work probably because redirect standard output?????
