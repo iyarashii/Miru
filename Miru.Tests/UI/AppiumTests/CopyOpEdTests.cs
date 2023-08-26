@@ -12,6 +12,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Controls;
+using System.Windows.Input;
 using Xunit;
 
 namespace Miru.Tests.UI.AppiumTests
@@ -26,23 +27,18 @@ namespace Miru.Tests.UI.AppiumTests
         [Fact]
         public void CheckDialogButtonsAfterRightClick()
         {
-            //Arrange
+            // Arrange
             // wait for grids to load
             Thread.Sleep(2000);
             var animeTitleTextBox = appSession.FindElements(MobileBy.XPath("/Window/DataGrid[6]/DataItem[1]/Custom[1]/Text")).FirstOrDefault();
             Assert.NotNull(animeTitleTextBox);
 
             // Act
-            //Actions actions = new Actions(appSession);
-            //actions.SendKeys(animeTitleTextBox, Keys.Shift + Keys.F10).Perform();
-            appSession.ExecuteScript("windows:click", new Dictionary<string, object>() { { "button", "right" },
-                { "elementId", animeTitleTextBox.Id }/*{ "x", 1364}, { "y", 175 } */});
-            //animeTitleTextBox.SendKeys(Keys.Shift,  Keys.F10); {X = 1364 Y = 175}
-            //appSession.Mouse.ContextClick(animeTitleTextBox.Coordinates);s
-            //animeTitleTextBox.("RightClick");
-            //animeTitleTextBox.Execute("windows:click", new Dictionary<string, object>() { { "button", "right" },
-            //    { "x", 1364}, { "y",175 } });
-            //Assert
+            appSession.ExecuteScript("windows: click", new Dictionary<string, object>() { { "button", "right" },
+            // not sure why X is 3400 and Y is 700 instead of 1364 and 175 like properties in the found element maybe there is issue with multiple displays (3 screens 1920x1080)
+                /*  { "elementId", animeTitleTextBox.Id }*/{ "x", 3400}, { "y", 700 } }); 
+            
+            // Assert
             var opButton = appSession.FindElement(MobileBy.Name("OP"));
             var edButton = appSession.FindElement(MobileBy.Name("ED"));
             var cancelButton = appSession.FindElement(MobileBy.Name("Cancel"));
