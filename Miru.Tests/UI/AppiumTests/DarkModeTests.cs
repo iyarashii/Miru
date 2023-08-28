@@ -18,5 +18,16 @@ namespace Miru.Tests.UI.AppiumTests
             darkModeSwitch.Click();
             Assert.Contains("Off", darkModeSwitch.Text);
         }
+
+        [Fact]
+        public void TurnOnDarkMode()
+        {
+            var darkModeSwitch = appSession.FindElement(MobileBy.ClassName("ToggleSwitch"));
+            Assert.NotNull(darkModeSwitch);
+            Assert.Contains("On", darkModeSwitch.Text);
+            darkModeSwitch.Click();
+            darkModeSwitch.Click();
+            Assert.Contains("On", darkModeSwitch.Text);
+        }
     }
 }
