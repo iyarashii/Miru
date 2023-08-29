@@ -10,6 +10,7 @@ using System.Diagnostics;
 using FlaUI.UIA3;
 using FlaUI.Core.Tools;
 using FlaUI.Core.AutomationElements;
+using FlaUI.Core.Input;
 
 namespace Miru.Tests.UI.AppiumTests
 {
@@ -32,7 +33,10 @@ namespace Miru.Tests.UI.AppiumTests
                 interval: TimeSpan.FromSeconds(1), 
                 timeout: TimeSpan.FromMinutes(1));
             AppiumOptions appCapabilities = new AppiumOptions();
+            //var app = Process.Start(Environment.GetEnvironmentVariable("MIRU_PATH", EnvironmentVariableTarget.Machine));
+            //Wait.UntilInputIsProcessed(TimeSpan.FromSeconds(5));
             appCapabilities.App = Environment.GetEnvironmentVariable("MIRU_PATH", EnvironmentVariableTarget.Machine);
+            //appCapabilities.AddAdditionalAppiumOption("appium:appTopLevelWindow", app.MainWindowHandle.ToString("x"));
             appCapabilities.PlatformName = "Windows";
             appCapabilities.AutomationName = "Windows";
             //appCapabilities.AddAdditionalAppiumOption("platformName", "Windows");
