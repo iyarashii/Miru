@@ -10,7 +10,6 @@ using System.Diagnostics;
 using FlaUI.UIA3;
 using FlaUI.Core.Tools;
 using FlaUI.Core.AutomationElements;
-using FlaUI.Core.Input;
 
 namespace Miru.Tests.UI.AppiumTests
 {
@@ -39,6 +38,7 @@ namespace Miru.Tests.UI.AppiumTests
             //appCapabilities.AddAdditionalAppiumOption("appium:appTopLevelWindow", app.MainWindowHandle.ToString("x"));
             appCapabilities.PlatformName = "Windows";
             appCapabilities.AutomationName = "Windows";
+            // old way to add appium options below
             //appCapabilities.AddAdditionalAppiumOption("platformName", "Windows");
             //appCapabilities.AddAdditionalAppiumOption("appium:automationName", "Windows");
             appSession = new WindowsDriver(new Uri("http://127.0.0.1:4723/"), appCapabilities);
