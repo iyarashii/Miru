@@ -3,7 +3,6 @@
 // go to https://github.com/iyarashii/Miru/blob/master/LICENSE for full license details.
 
 using OpenQA.Selenium.Appium;
-using OpenQA.Selenium.Interactions;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -16,6 +15,26 @@ namespace Miru.Tests.UI.AppiumTests
         public HashSet<string> GetDistinctWordsBetweenSingleQuotes(string source)
         {
             return source.Substring(source.IndexOf("'") + 1, source.LastIndexOf("'") - 1).Replace('\n', ' ').Trim().Split(' ').ToHashSet();
+        }
+
+        [Fact]
+        public void CopyAnimeTitleValidateToast()
+        {
+            //Arrange
+            Thread.Sleep(2000);
+            var animeTitleTextBox = appSession.FindElements(MobileBy.XPath("/Window/DataGrid[6]/DataItem[2]/Custom[1]/Text")).FirstOrDefault();
+            Assert.NotNull(animeTitleTextBox);
+
+            // Act
+            animeTitleTextBox.Click();
+
+            // Assert
+            var toastText = appSession.FindElements(MobileBy.XPath("/Window/Window/Custom/Text")).FirstOrDefault().Text;
+            var animeTitleWords = GetDistinctWordsBetweenSingleQuotes(toastText);
+            foreach (var word in animeTitleWords)
+            {
+                Assert.Contains(word, animeTitleTextBox.Text);
+            }
         }
 
         [Fact]
