@@ -31,13 +31,15 @@ namespace Miru.Tests.UI.AppiumTests
                 .FindText("No plugins have been installed.", false, true), 
                 interval: TimeSpan.FromSeconds(1), 
                 timeout: TimeSpan.FromMinutes(1));
-            AppiumOptions appCapabilities = new AppiumOptions();
-            //var app = Process.Start(Environment.GetEnvironmentVariable("MIRU_PATH", EnvironmentVariableTarget.Machine));
-            //Wait.UntilInputIsProcessed(TimeSpan.FromSeconds(5));
-            appCapabilities.App = Environment.GetEnvironmentVariable("MIRU_PATH", EnvironmentVariableTarget.Machine);
-            //appCapabilities.AddAdditionalAppiumOption("appium:appTopLevelWindow", app.MainWindowHandle.ToString("x"));
-            appCapabilities.PlatformName = "Windows";
-            appCapabilities.AutomationName = "Windows";
+            AppiumOptions appCapabilities = new AppiumOptions
+            {
+                //var app = Process.Start(Environment.GetEnvironmentVariable("MIRU_PATH", EnvironmentVariableTarget.Machine));
+                //Wait.UntilInputIsProcessed(TimeSpan.FromSeconds(5));
+                App = Environment.GetEnvironmentVariable("MIRU_PATH", EnvironmentVariableTarget.Machine),
+                //appCapabilities.AddAdditionalAppiumOption("appium:appTopLevelWindow", app.MainWindowHandle.ToString("x"));
+                PlatformName = "Windows",
+                AutomationName = "Windows"
+            };
             // old way to add appium options below
             //appCapabilities.AddAdditionalAppiumOption("platformName", "Windows");
             //appCapabilities.AddAdditionalAppiumOption("appium:automationName", "Windows");
