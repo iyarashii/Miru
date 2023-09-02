@@ -10,6 +10,7 @@ using System.Diagnostics;
 using FlaUI.UIA3;
 using FlaUI.Core.Tools;
 using FlaUI.Core.AutomationElements;
+using System.Collections.Generic;
 
 namespace Miru.Tests.UI.AppiumTests
 {
@@ -49,6 +50,16 @@ namespace Miru.Tests.UI.AppiumTests
         {
             appSession.Close();
             mainWindow.Close();
+        }
+
+        public void RightClick(string elementId)
+        {
+            appSession.ExecuteScript(
+                "windows: click", new Dictionary<string, object>() 
+                { 
+                    { "button", "right" },
+                    { "elementId", elementId }
+                });
         }
     }
 }
