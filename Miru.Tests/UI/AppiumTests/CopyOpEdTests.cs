@@ -20,7 +20,7 @@ namespace Miru.Tests.UI.AppiumTests
         [Fact]
         public void CopyAnimeTitleValidateToast()
         {
-            //Arrange
+            // Arrange
             Thread.Sleep(2000);
             var animeTitleTextBox = appSession.FindElements(MobileBy.XPath("/Window/DataGrid[6]/DataItem[2]/Custom[1]/Text")).FirstOrDefault();
             Assert.NotNull(animeTitleTextBox);
@@ -51,8 +51,9 @@ namespace Miru.Tests.UI.AppiumTests
             //// not sure why X is 3400 and Y is 700 instead of 1364 and 175 like properties in the found element maybe there is issue with multiple displays (3 screens 1920x1080)
             //    { "x", 3400}, { "y", 700 } });
             // this works only if you dont have screen that is different height - probably WinAppDriver bug
-            appSession.ExecuteScript("windows: click", new Dictionary<string, object>() { { "button", "right" },
-                  { "elementId", animeTitleTextBox.Id }});
+            //appSession.ExecuteScript("windows: click", new Dictionary<string, object>() { { "button", "right" },
+            //      { "elementId", animeTitleTextBox.Id }});
+            RightClick(animeTitleTextBox.Id);
             // this should work but throws only pen & touch are supported exception probably WinAppDriver bug
             //new Actions(appSession).ContextClick(animeTitleTextBox).Perform();
 
@@ -65,5 +66,30 @@ namespace Miru.Tests.UI.AppiumTests
             Assert.NotNull(cancelButton);
             cancelButton.Click();
         }
+
+        //[Fact]
+        //public void CheckToastAfterOpButtonClicked()
+        //{
+        //    // Arrange
+        //    var animeTitleTextBox = appSession.FindElements(MobileBy.XPath("/Window/DataGrid[6]/DataItem[2]/Custom[1]/Text")).FirstOrDefault();
+        //    Assert.NotNull(animeTitleTextBox);
+        //    animeTitleTextBox.RightClick();
+        //    var opButton = mainWindow.FindFirstDescendant(cf => cf.ByName("OP"))?.AsButton();
+        //    Assert.NotNull(opButton);
+        //    var opEdDialogContent = mainWindow.FindFirstByXPath("/Text[13]").Name;
+
+        //    // Act
+        //    opButton.Invoke();
+
+        //    // Assert
+        //    Wait.UntilInputIsProcessed(TimeSpan.FromSeconds(2));
+        //    var toast = mainWindow.FindAllByXPath("/Window/Custom/Text").FirstOrDefault();
+        //    var songTitlesAndArtistNames = GetDistinctWordsBetweenSingleQuotes(toast.Name);
+        //    Assert.NotNull(toast);
+        //    foreach (var word in songTitlesAndArtistNames)
+        //    {
+        //        Assert.Contains(word, opEdDialogContent);
+        //    }
+        //}
     }
 }
