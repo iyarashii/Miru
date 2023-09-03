@@ -2,7 +2,9 @@
 // Licensed under the GNU General Public License v3.0,
 // go to https://github.com/iyarashii/Miru/blob/master/LICENSE for full license details.
 
+using FlaUI.Core.Input;
 using OpenQA.Selenium.Appium;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -67,29 +69,28 @@ namespace Miru.Tests.UI.AppiumTests
             cancelButton.Click();
         }
 
-        //[Fact]
-        //public void CheckToastAfterOpButtonClicked()
-        //{
-        //    // Arrange
-        //    var animeTitleTextBox = appSession.FindElements(MobileBy.XPath("/Window/DataGrid[6]/DataItem[2]/Custom[1]/Text")).FirstOrDefault();
-        //    Assert.NotNull(animeTitleTextBox);
-        //    animeTitleTextBox.RightClick();
-        //    var opButton = mainWindow.FindFirstDescendant(cf => cf.ByName("OP"))?.AsButton();
-        //    Assert.NotNull(opButton);
-        //    var opEdDialogContent = mainWindow.FindFirstByXPath("/Text[13]").Name;
+        [Fact]
+        public void CheckToastAfterOpButtonClicked()
+        {
+            // Arrange
+            var animeTitleTextBox = appSession.FindElements(MobileBy.XPath("/Window/DataGrid[6]/DataItem[2]/Custom[1]/Text")).FirstOrDefault();
+            Assert.NotNull(animeTitleTextBox);
+            RightClick(animeTitleTextBox.Id);
+            var opButton = appSession.FindElement(MobileBy.Name("OP"));
+            Assert.NotNull(opButton);
+            var opEdDialogContent = appSession.FindElement(MobileBy.XPath("/Window/Text[13]")).Text;
 
-        //    // Act
-        //    opButton.Invoke();
+            // Act
+            opButton.Click();
 
-        //    // Assert
-        //    Wait.UntilInputIsProcessed(TimeSpan.FromSeconds(2));
-        //    var toast = mainWindow.FindAllByXPath("/Window/Custom/Text").FirstOrDefault();
-        //    var songTitlesAndArtistNames = GetDistinctWordsBetweenSingleQuotes(toast.Name);
-        //    Assert.NotNull(toast);
-        //    foreach (var word in songTitlesAndArtistNames)
-        //    {
-        //        Assert.Contains(word, opEdDialogContent);
-        //    }
-        //}
+            // Assert
+            Wait.UntilInputIsProcessed(TimeSpan.FromSeconds(1));
+            var toastText = appSession.FindElement(MobileBy.XPath("/Window/Window/Custom/Text")).Text;
+            var songTitlesAndArtistNames = GetDistinctWordsBetweenSingleQuotes(toastText);
+            foreach (var word in songTitlesAndArtistNames)
+            {
+                Assert.Contains(word, opEdDialogContent);
+            }
+        }
     }
 }
