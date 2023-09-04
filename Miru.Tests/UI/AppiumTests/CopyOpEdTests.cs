@@ -92,5 +92,29 @@ namespace Miru.Tests.UI.AppiumTests
                 Assert.Contains(word, opEdDialogContent);
             }
         }
+
+        [Fact]
+        public void CheckToastAfterEdButtonClicked()
+        {
+            // Arrange
+            var animeTitleTextBox = appSession.FindElements(MobileBy.XPath("/Window/DataGrid[6]/DataItem[2]/Custom[1]/Text")).FirstOrDefault();
+            Assert.NotNull(animeTitleTextBox);
+            RightClick(animeTitleTextBox.Id);
+            var edButton = appSession.FindElement(MobileBy.Name("ED"));
+            Assert.NotNull(edButton);
+            var opEdDialogContent = appSession.FindElement(MobileBy.XPath("/Window/Text[13]")).Text;
+
+            // Act
+            edButton.Click();
+
+            // Assert
+            Wait.UntilInputIsProcessed(TimeSpan.FromSeconds(1));
+            var toastText = appSession.FindElement(MobileBy.XPath("/Window/Window/Custom/Text")).Text;
+            var songTitlesAndArtistNames = GetDistinctWordsBetweenSingleQuotes(toastText);
+            foreach (var word in songTitlesAndArtistNames)
+            {
+                Assert.Contains(word, opEdDialogContent);
+            }
+        }
     }
 }
