@@ -22,8 +22,10 @@ namespace Miru.Tests.UI.AppiumTests
         private readonly Window mainWindow;
         public AppiumUiTestBase()
         {
-            var cmdsi = new ProcessStartInfo("pwsh.exe");
-            cmdsi.Arguments = "-noexit -command \"appium\"";
+            var cmdsi = new ProcessStartInfo("pwsh.exe")
+            {
+                Arguments = "-noexit -command \"appium\""
+            };
             appiumServerProcess = Process.Start(cmdsi);
             var flauiSP = FlaUI.Core.Application.Attach(appiumServerProcess);
             mainWindow = flauiSP.GetMainWindow(new UIA3Automation());
