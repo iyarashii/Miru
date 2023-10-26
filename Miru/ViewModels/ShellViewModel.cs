@@ -3,6 +3,7 @@
 // go to https://github.com/iyarashii/Miru/blob/master/LICENSE for full license details.
 
 using Caliburn.Micro;
+using Miru.Views;
 using MiruDatabaseLogicLayer;
 using MiruLibrary;
 using MiruLibrary.Models;
@@ -679,12 +680,14 @@ namespace Miru.ViewModels
         // event handler for right click on anime name
         public async Task OpenCopySongDataDialog(string title, string opThemes, string edThemes)
         {
+            var customContent = new OpEdCustomContent();
+            customContent.OpEdTextBox.Text = $"{opThemes}\n{edThemes}";
             ContentDialog.Config(
                 $"Copy {title}'s OP or ED?", 
                 primaryButtonText: "OP", 
                 secondaryButtonText: "ED", 
                 closeButtonText: "Cancel",
-                content: $"{opThemes}\n{edThemes}");
+                content: customContent);
             UpdateAppStatus(MiruAppStatus.Busy);
             // display pop-up window
             var result = await ContentDialog.ShowAsync();
