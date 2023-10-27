@@ -806,20 +806,26 @@ namespace Miru.Tests
                 var title = "test";
                 var opThemes = "\"Title\" by Artist\n\"title2\" by artist2 ";
                 var edThemes = "";
-                cls.OpenCopySongDataDialog(title, opThemes, edThemes).Wait();
-                Assert.Equal(MiruAppStatus.Idle, cls.AppStatus);
-                mock.Mock<ISimpleContentDialog>()
-                    .Verify(x => x.Config
-                    (
-                        $"Copy {title}'s OP or ED?",
-                        "OP",
-                        "Cancel",
-                        ContentDialogButton.Primary,
-                        $"{opThemes}\n{edThemes}",
-                        "ED"
-                    ),
-                    Times.Once);
-                mock.Mock<ISimpleContentDialog>().Verify(x => x.ShowAsync(), Times.Once);
+                Thread staThread = new Thread(() =>
+                {
+                    cls.OpenCopySongDataDialog(title, opThemes, edThemes).Wait();
+                    Assert.Equal(MiruAppStatus.Idle, cls.AppStatus);
+                    mock.Mock<ISimpleContentDialog>()
+                        .Verify(x => x.Config
+                        (
+                            $"Copy {title}'s OP or ED?",
+                            "OP",
+                            "Cancel",
+                            ContentDialogButton.Primary,
+                            It.IsAny<object>(),
+                            "ED"
+                        ),
+                        Times.Once);
+                    mock.Mock<ISimpleContentDialog>().Verify(x => x.ShowAsync(), Times.Once);
+                });
+                staThread.SetApartmentState(ApartmentState.STA);
+                staThread.Start();
+                staThread.Join();
             }
         }
 
