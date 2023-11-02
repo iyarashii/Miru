@@ -680,7 +680,7 @@ namespace Miru.ViewModels
         // event handler for right click on anime name
         public async Task OpenCopySongDataDialog(string title, string opThemes, string edThemes)
         {
-            var customContent = new OpEdCustomContent();
+            var customContent = new OpEdCustomContent(opThemes, edThemes, this);
             customContent.OpEdTextBox.Text = $"{opThemes}\n{edThemes}";
             ContentDialog.Config(
                 $"Copy {title}'s OP or ED?", 
@@ -706,7 +706,9 @@ namespace Miru.ViewModels
         internal string GetSongTitleAndArtistName(string input)
         {
             var titleMatches = Regex.Matches(input, @"(?<="")(.*)(?="")");
-            var artistMatches = Regex.Matches(input, @"(?<=by\s)(.*)(?=\s)");
+            var artistMatches = Regex.Matches(input, @"(?<=by\s)(.*)(?=\s|$)");
+            if (titleMatches.Count != artistMatches.Count)
+                return $"Title matches {titleMatches.Count} artist matches {artistMatches.Count}";
             StringBuilder outputStrBuilder = new StringBuilder();
             for (int i = 0; i < titleMatches.Count; i++)
             {

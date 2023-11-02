@@ -16,6 +16,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Miru.ViewModels;
 
 namespace Miru.Views
 {
@@ -24,9 +25,42 @@ namespace Miru.Views
     /// </summary>
     public partial class OpEdCustomContent : UserControl
     {
-        public OpEdCustomContent()
+        private ShellViewModel _shellViewModel;
+        public OpEdCustomContent(string opThemes, string edThemes, ShellViewModel shellViewModelRef)
         {
             InitializeComponent();
+            _shellViewModel = shellViewModelRef;    
+            AddButtons(opThemes, edThemes);
+        }
+        // TODO: figure out why cant scroll content dialog
+        private void AddButtons(string opThemes, string edThemes)
+        {
+            // - 2 is to ignore \n after OP/ED and at the end so dont use [0] and [last] indexes
+            int numberOfOpLines = opThemes.Split('\n').Length - 2;
+            int numberOfEdLines = edThemes.Split('\n').Length - 2;
+            for (int i = 1; i <= numberOfOpLines; i++)
+            {
+                Button btn = new Button
+                {
+                    Content = opThemes.Split('\n')[i],
+                };
+                btn.Click += CopyOpEdSongNameAndArtist;
+                ButtonsPanel.Children.Add(btn);
+            }
+            for (int i = 1; i <= numberOfEdLines; i++)
+            {
+                Button btn = new Button
+                {
+                    Content = edThemes.Split('\n')[i],
+                };
+                btn.Click += CopyOpEdSongNameAndArtist;
+                ButtonsPanel.Children.Add(btn);
+            }
+        }
+
+        private void CopyOpEdSongNameAndArtist(object sender, RoutedEventArgs e)
+        {
+            _shellViewModel.CopyAnimeTitleToClipboard(_shellViewModel.GetSongTitleAndArtistName((sender as Button).Content as string));
         }
     }
 }
