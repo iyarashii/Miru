@@ -32,35 +32,69 @@ namespace Miru.Views
             _shellViewModel = shellViewModelRef;    
             AddButtons(opThemes, edThemes);
         }
-        // TODO: figure out why cant scroll content dialog
         private void AddButtons(string opThemes, string edThemes)
         {
+            FlowDocument flowDoc = new FlowDocument();
+            Paragraph paragraph = new Paragraph();
+            Run opHeader = new Run(opThemes.Split('\n')[0]);
+            Run edHeader = new Run(edThemes.Split('\n')[0]);
+            paragraph.Inlines.Add(opHeader);
+            //OpEdTextBlock.Inlines.Add(opHeader);
+            paragraph.Inlines.Add(new LineBreak());
+            //OpEdTextBlock.Inlines.Add(new LineBreak());
             // - 2 is to ignore \n after OP/ED and at the end so dont use [0] and [last] indexes
             int numberOfOpLines = opThemes.Split('\n').Length - 2;
             int numberOfEdLines = edThemes.Split('\n').Length - 2;
             for (int i = 1; i <= numberOfOpLines; i++)
             {
-                Button btn = new Button
-                {
-                    Content = opThemes.Split('\n')[i],
-                };
-                btn.Click += CopyOpEdSongNameAndArtist;
-                ButtonsPanel.Children.Add(btn);
+                //Button btn = new Button
+                //{
+                //    Content = "Copy",
+                //    Tag = opThemes.Split('\n')[i]
+                //};
+                //btn.Click += CopyOpEdSongNameAndArtist;
+                //InlineUIContainer btnContainer = new InlineUIContainer(btn);
+                Run opThemeName = new Run(opThemes.Split('\n')[i]);
+                opThemeName.MouseLeftButtonDown += CopyOpEdSongNameAndArtist;
+                //OpEdTextBlock.Inlines.Add(opThemeName);
+                //OpEdTextBlock.Inlines.Add(btnContainer);
+                //OpEdTextBlock.Inlines.Add(new LineBreak());
+                paragraph.Inlines.Add(opThemeName);
+                //paragraph.Inlines.Add(btnContainer);
+                paragraph.Inlines.Add(new LineBreak());
+                //ButtonsPanel.Children.Add(btn);
             }
+            //OpEdTextBlock.Inlines.Add(edHeader);
+            //OpEdTextBlock.Inlines.Add(new LineBreak());
+            paragraph.Inlines.Add(edHeader);
+            paragraph.Inlines.Add(new LineBreak());
             for (int i = 1; i <= numberOfEdLines; i++)
             {
-                Button btn = new Button
-                {
-                    Content = edThemes.Split('\n')[i],
-                };
-                btn.Click += CopyOpEdSongNameAndArtist;
-                ButtonsPanel.Children.Add(btn);
+                //Button btn = new Button
+                //{
+                //    Content = "Copy",
+                //    Tag = edThemes.Split('\n')[i]
+                //};
+                //btn.Click += CopyOpEdSongNameAndArtist;
+                //InlineUIContainer btnContainer = new InlineUIContainer(btn);
+                Run edThemeName = new Run(edThemes.Split('\n')[i]);
+                edThemeName.MouseLeftButtonDown += CopyOpEdSongNameAndArtist;
+                //OpEdTextBlock.Inlines.Add(edThemeName);
+                //OpEdTextBlock.Inlines.Add(btnContainer);
+                //OpEdTextBlock.Inlines.Add(new LineBreak());
+                paragraph.Inlines.Add(edThemeName);
+                //paragraph.Inlines.Add(btnContainer);
+                paragraph.Inlines.Add(new LineBreak());
+                //ButtonsPanel.Children.Add(btn);
             }
+            flowDoc.Blocks.Add(paragraph);
+            OpEdTextBox.Document = flowDoc;
         }
 
         private void CopyOpEdSongNameAndArtist(object sender, RoutedEventArgs e)
         {
-            _shellViewModel.CopyAnimeTitleToClipboard(_shellViewModel.GetSongTitleAndArtistName((sender as Button).Content as string));
+            if((sender as Run).Text != "OP" || (sender as Run).Text != "ED")
+                _shellViewModel.CopyAnimeTitleToClipboard(_shellViewModel.GetSongTitleAndArtistName((sender as Run).Text));
         }
     }
 }
