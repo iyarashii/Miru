@@ -31,6 +31,7 @@ namespace Miru.Views
             InitializeComponent();
             _shellViewModel = shellViewModelRef;    
             AddButtons(opThemes, edThemes);
+            //OpEdTextBox.MouseDoubleClick += OpEdTextBox_MouseDoubleClick;
         }
         private void AddButtons(string opThemes, string edThemes)
         {
@@ -55,7 +56,7 @@ namespace Miru.Views
                 //btn.Click += CopyOpEdSongNameAndArtist;
                 //InlineUIContainer btnContainer = new InlineUIContainer(btn);
                 Run opThemeName = new Run(opThemes.Split('\n')[i]);
-                opThemeName.MouseLeftButtonDown += CopyOpEdSongNameAndArtist;
+                opThemeName.MouseDown += CopyOpEdSongNameAndArtist;
                 //OpEdTextBlock.Inlines.Add(opThemeName);
                 //OpEdTextBlock.Inlines.Add(btnContainer);
                 //OpEdTextBlock.Inlines.Add(new LineBreak());
@@ -78,7 +79,7 @@ namespace Miru.Views
                 //btn.Click += CopyOpEdSongNameAndArtist;
                 //InlineUIContainer btnContainer = new InlineUIContainer(btn);
                 Run edThemeName = new Run(edThemes.Split('\n')[i]);
-                edThemeName.MouseLeftButtonDown += CopyOpEdSongNameAndArtist;
+                edThemeName.MouseDown += CopyOpEdSongNameAndArtist;
                 //OpEdTextBlock.Inlines.Add(edThemeName);
                 //OpEdTextBlock.Inlines.Add(btnContainer);
                 //OpEdTextBlock.Inlines.Add(new LineBreak());
@@ -91,10 +92,43 @@ namespace Miru.Views
             OpEdTextBox.Document = flowDoc;
         }
 
-        private void CopyOpEdSongNameAndArtist(object sender, RoutedEventArgs e)
+        private void CopyOpEdSongNameAndArtist(object sender, MouseButtonEventArgs e)
         {
-            if((sender as Run).Text != "OP" || (sender as Run).Text != "ED")
+            if((sender as Run).Text != "OP" 
+                && (sender as Run).Text != "ED" 
+                && (e.ChangedButton == MouseButton.Middle 
+                || e.ChangedButton == MouseButton.Left && e.ClickCount == 2))
                 _shellViewModel.CopyAnimeTitleToClipboard(_shellViewModel.GetSongTitleAndArtistName((sender as Run).Text));
         }
+
+        //private void OpEdTextBox_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        //{
+        //    var runClicked = FindRunFromMousePosition(e.GetPosition((RichTextBox)sender), (RichTextBox)sender);
+        //    if (runClicked != null)
+        //    {
+        //        // Handle the double-click on the specific Run element (runClicked)
+        //        // Your logic here
+        //        _shellViewModel.CopyAnimeTitleToClipboard(_shellViewModel.GetSongTitleAndArtistName(runClicked.Text));
+        //    }
+        //}
+
+        //private Run FindRunFromMousePosition(Point clickPoint, RichTextBox textBox)
+        //{
+        //    int cp = 0;
+        //    var inlines = (textBox.Document.Blocks.FirstBlock as Paragraph).Inlines;
+        //    for (int i = 0; i < inlines.Count; i++)
+        //    {
+        //        if (inlines.ElementAt(i) is Run run)
+        //        {
+        //            cp += run.Text.Length;
+        //            var rect = run.ContentStart.GetCharacterRect(LogicalDirection.Forward);
+        //            if (clickPoint.X >= rect.Left && clickPoint.X <= rect.Right)
+        //            {
+        //                return run;
+        //            }
+        //        }
+        //    }
+        //    return null;
+        //}
     }
 }
