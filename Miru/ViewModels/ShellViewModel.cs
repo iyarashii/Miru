@@ -706,7 +706,9 @@ namespace Miru.ViewModels
         internal string GetSongTitleAndArtistName(string input)
         {
             var titleMatches = Regex.Matches(input, @"(?<="")(.*)(?="")");
-            var artistMatches = Regex.Matches(input, @"(?<=by\s)(.*)(?=\s)");
+            var artistMatches = Regex.Matches(input, @"(?<=by\s)(.*)(?=\s|$)");
+            if (titleMatches.Count != artistMatches.Count)
+                return $"Title matches {titleMatches.Count} artist matches {artistMatches.Count}";
             StringBuilder outputStrBuilder = new StringBuilder();
             for (int i = 0; i < titleMatches.Count; i++)
             {
