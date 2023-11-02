@@ -681,13 +681,13 @@ namespace Miru.ViewModels
         public async Task OpenCopySongDataDialog(string title, string opThemes, string edThemes)
         {
             var customContent = new OpEdCustomContent(opThemes, edThemes, this);
-            customContent.OpEdTextBox.Text = $"{opThemes}\n{edThemes}";
             ContentDialog.Config(
                 $"Copy {title}'s OP or ED?", 
                 primaryButtonText: "OP", 
                 secondaryButtonText: "ED", 
                 closeButtonText: "Cancel",
                 content: customContent);
+        //content: $"{opThemes}\n{edThemes}");
             UpdateAppStatus(MiruAppStatus.Busy);
             // display pop-up window
             var result = await ContentDialog.ShowAsync();
