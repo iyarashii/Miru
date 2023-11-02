@@ -6,11 +6,13 @@
              xmlns:local="clr-namespace:Miru.Views"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <Grid>
+    <StackPanel>
         <TextBox Name="OpEdTextBox" Background="Transparent"
-         BorderThickness="0"
-         Text="{Binding Text, Mode=OneWay}"
-         IsReadOnly="True"
-         TextWrapping="Wrap" />
-    </Grid>
+        BorderThickness="0"
+        Text="{Binding Text, Mode=OneWay}"
+        IsReadOnly="True"
+        TextWrapping="Wrap" />
+        <StackPanel Name="ButtonsPanel">
+        </StackPanel>
+    </StackPanel>
 </UserControl>
