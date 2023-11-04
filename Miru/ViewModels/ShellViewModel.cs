@@ -639,7 +639,7 @@ namespace Miru.ViewModels
 
         public string PrepareAnimeTitleCopiedNotification(string animeTitle)
         {
-            return $"'{animeTitle}' copied to the clipboard!";
+            return $"{animeTitle.Trim()}\ncopied to the clipboard!";
         }
 
         public void UpdateAppStatus(MiruAppStatus newAppStatus, string detailedAppStatusDescription = null)
