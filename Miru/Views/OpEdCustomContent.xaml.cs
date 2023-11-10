@@ -14,7 +14,7 @@ namespace Miru.Views
     /// </summary>
     public partial class OpEdCustomContent : UserControl
     {
-        private ShellViewModel _shellViewModel;
+        private readonly ShellViewModel _shellViewModel;
         public OpEdCustomContent(string opThemes, string edThemes, ShellViewModel shellViewModelRef)
         {
             InitializeComponent();
