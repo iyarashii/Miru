@@ -560,7 +560,7 @@ namespace Miru.Tests
                 var actualResult = cls.PrepareAnimeTitleCopiedNotification(testTitle);
 
                 // Assert
-                Assert.Equal("'2137' copied to the clipboard!", actualResult);
+                Assert.Equal("2137\ncopied to the clipboard!", actualResult);
             }
         }
 
