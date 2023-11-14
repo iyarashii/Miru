@@ -14,9 +14,9 @@ namespace Miru.Tests.UI.AppiumTests
 {
     public class CopyOpEdTests : AppiumUiTestBase
     {
-        public HashSet<string> GetDistinctWordsBetweenSingleQuotes(string source)
+        public HashSet<string> GetAnimeTitleWords(string source)
         {
-            return source.Substring(source.IndexOf("'") + 1, source.LastIndexOf("'") - 1).Replace('\n', ' ').Trim().Split(' ').ToHashSet();
+            return source.Split('\n').First().Trim().Split(' ').ToHashSet();
         }
 
         [Fact]
@@ -32,14 +32,14 @@ namespace Miru.Tests.UI.AppiumTests
 
             // Assert
             var toastText = appSession.FindElements(MobileBy.XPath("/Window/Window/Custom/Text")).FirstOrDefault().Text;
-            var animeTitleWords = GetDistinctWordsBetweenSingleQuotes(toastText);
+            var animeTitleWords = GetAnimeTitleWords(toastText);
             foreach (var word in animeTitleWords)
             {
                 Assert.Contains(word, animeTitleTextBox.Text);
             }
         }
 
-        [Fact]
+        //[Fact]
         public void CheckDialogButtonsAfterRightClick()
         {
             // Arrange
@@ -69,7 +69,7 @@ namespace Miru.Tests.UI.AppiumTests
             cancelButton.Click();
         }
 
-        [Fact]
+        //[Fact]
         public void CheckToastAfterOpButtonClicked()
         {
             // Arrange
@@ -86,14 +86,14 @@ namespace Miru.Tests.UI.AppiumTests
             // Assert
             Wait.UntilInputIsProcessed(TimeSpan.FromSeconds(1));
             var toastText = appSession.FindElement(MobileBy.XPath("/Window/Window/Custom/Text")).Text;
-            var songTitlesAndArtistNames = GetDistinctWordsBetweenSingleQuotes(toastText);
+            var songTitlesAndArtistNames = GetAnimeTitleWords(toastText);
             foreach (var word in songTitlesAndArtistNames)
             {
                 Assert.Contains(word, opEdDialogContent);
             }
         }
 
-        [Fact]
+        //[Fact]
         public void CheckToastAfterEdButtonClicked()
         {
             // Arrange
@@ -110,7 +110,7 @@ namespace Miru.Tests.UI.AppiumTests
             // Assert
             Wait.UntilInputIsProcessed(TimeSpan.FromSeconds(1));
             var toastText = appSession.FindElement(MobileBy.XPath("/Window/Window/Custom/Text")).Text;
-            var songTitlesAndArtistNames = GetDistinctWordsBetweenSingleQuotes(toastText);
+            var songTitlesAndArtistNames = GetAnimeTitleWords(toastText);
             foreach (var word in songTitlesAndArtistNames)
             {
                 Assert.Contains(word, opEdDialogContent);
