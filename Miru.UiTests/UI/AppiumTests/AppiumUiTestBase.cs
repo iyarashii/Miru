@@ -7,10 +7,15 @@ using Xunit;
 using OpenQA.Selenium.Appium;
 using OpenQA.Selenium.Appium.Windows;
 using System.Diagnostics;
-using FlaUI.UIA3;
+using FlaUI.UIA2;
 using FlaUI.Core.Tools;
 using FlaUI.Core.AutomationElements;
 using System.Collections.Generic;
+using FlaUI.UIA3;
+using Namotion.Reflection;
+using OpenQA.Selenium;
+using System.Net;
+using System.Net.Http.Json;
 
 namespace Miru.Tests.UI.AppiumTests
 {
@@ -19,21 +24,41 @@ namespace Miru.Tests.UI.AppiumTests
     {
         protected WindowsDriver appSession;
         private readonly Process appiumServerProcess;
-        private readonly Window mainWindow;
+        //private readonly Window mainWindow;
         public AppiumUiTestBase()
         {
-            var cmdsi = new ProcessStartInfo("pwsh.exe")
+            var cmdsi = new ProcessStartInfo("wt.exe")
             {
-                Arguments = "-noexit -command \"appium\""
+                Arguments = "-p \"appium\""
             };
+            // commented out code is for powershell without windowsterminal.exe installed
+            //var cmdsi = new ProcessStartInfo("pwsh.exe")
+            //{
+            //    Arguments = "-noexit -command \"appium\""
+            //};
             appiumServerProcess = Process.Start(cmdsi);
-            var flauiSP = FlaUI.Core.Application.Attach(appiumServerProcess);
-            mainWindow = flauiSP.GetMainWindow(new UIA3Automation());
-            var textArea = mainWindow.FindFirstDescendant("Text Area");
-            Retry.WhileNull(() => textArea.Patterns.Text.Pattern.DocumentRange
-                .FindText("No plugins have been installed.", false, true), 
-                interval: TimeSpan.FromSeconds(1), 
-                timeout: TimeSpan.FromMinutes(1));
+            //var flauiSP = FlaUI.Core.Application.Attach(appiumServerProcess);
+            //var flauiSP = Retry.WhileException(() => FlaUI.Core.Application.Attach("WindowsTerminal.exe"),
+            //   interval: TimeSpan.FromSeconds(1),
+            //   timeout: TimeSpan.FromMinutes(1)).Result;
+            //mainWindow = flauiSP.GetMainWindow(new UIA3Automation());
+            //var textArea = mainWindow.FindFirstDescendant(x => x.ByName("appium"));
+            //textArea.busy();
+            var httpClient = new HttpClient();
+            bool serverIsResponding = false;
+            while(serverIsResponding == false)
+            {
+                try
+                {
+                    var appiumRequest = httpClient.GetAsync("http://127.0.0.1:4723/").Result;
+                    serverIsResponding = true;
+                }
+                catch (Exception)
+                {
+                    Thread.Sleep(1000);
+                }
+            }
+
             AppiumOptions appCapabilities = new AppiumOptions
             {
                 //var app = Process.Start(Environment.GetEnvironmentVariable("MIRU_PATH", EnvironmentVariableTarget.Machine));
@@ -51,7 +76,8 @@ namespace Miru.Tests.UI.AppiumTests
         public void Dispose()
         {
             appSession.Close();
-            mainWindow.Close();
+            Process.GetProcessesByName("WindowsTerminal").First().Kill();
+            //mainWindow.Close();
         }
 
         public void RightClick(string elementId)

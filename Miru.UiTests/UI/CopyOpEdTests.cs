@@ -13,9 +13,9 @@ namespace Miru.Tests.UI
 {
     public class CopyOpEdTests : UiTestBase
     {
-        public HashSet<string> GetDistinctWordsBetweenSingleQuotes(string source)
+        public HashSet<string> GetAnimeTitleWords(string source)
         {
-            return source.Substring(source.IndexOf("'") + 1, source.LastIndexOf("'") - 1).Replace('\n', ' ').Trim().Split(' ').ToHashSet();
+            return source.Split('\n').First().Trim().Split(' ').ToHashSet();
         }
 
         [Fact]
@@ -31,7 +31,7 @@ namespace Miru.Tests.UI
             // Assert
             Wait.UntilInputIsProcessed(TimeSpan.FromSeconds(2));
             var toast = mainWindow.FindAllByXPath("/Window/Custom/Text").FirstOrDefault();
-            var animeTitleWords = GetDistinctWordsBetweenSingleQuotes(toast.Name);
+            var animeTitleWords = GetAnimeTitleWords(toast.Name);
             Assert.NotNull(toast);
             foreach (var word in animeTitleWords)
             {
@@ -68,7 +68,7 @@ namespace Miru.Tests.UI
             animeTitleTextBox.RightClick();
             var opButton = mainWindow.FindFirstDescendant(cf => cf.ByName("OP"))?.AsButton();
             Assert.NotNull(opButton);
-            var opEdDialogContent = mainWindow.FindFirstByXPath("/Text[13]").Name;
+            var opEdDialogContent = mainWindow.FindFirstDescendant("OpEdTextBox").AsTextBox().Text;
             
             // Act
             opButton.Invoke();
@@ -76,8 +76,8 @@ namespace Miru.Tests.UI
             // Assert
             Wait.UntilInputIsProcessed(TimeSpan.FromSeconds(2));
             var toast = mainWindow.FindAllByXPath("/Window/Custom/Text").FirstOrDefault();
-            var songTitlesAndArtistNames = GetDistinctWordsBetweenSingleQuotes(toast.Name);
             Assert.NotNull(toast);
+            var songTitlesAndArtistNames = GetAnimeTitleWords(toast.Name);
             foreach (var word in songTitlesAndArtistNames)
             {
                 Assert.Contains(word, opEdDialogContent);
@@ -93,7 +93,7 @@ namespace Miru.Tests.UI
             animeTitleTextBox.RightClick();
             var edButton = mainWindow.FindFirstDescendant(cf => cf.ByName("ED"))?.AsButton();
             Assert.NotNull(edButton);
-            var opEdDialogContent = mainWindow.FindFirstByXPath("/Text[13]").Name;
+            var opEdDialogContent = mainWindow.FindFirstDescendant("OpEdTextBox").AsTextBox().Text;
 
             // Act
             edButton.Invoke();
@@ -101,8 +101,8 @@ namespace Miru.Tests.UI
             // Assert
             Wait.UntilInputIsProcessed(TimeSpan.FromSeconds(2));
             var toast = mainWindow.FindAllByXPath("/Window/Custom/Text").FirstOrDefault();
-            var songTitlesAndArtistNames = GetDistinctWordsBetweenSingleQuotes(toast.Name);
             Assert.NotNull(toast);
+            var songTitlesAndArtistNames = GetAnimeTitleWords(toast.Name);
             foreach (var word in songTitlesAndArtistNames)
             {
                 Assert.Contains(word, opEdDialogContent);
