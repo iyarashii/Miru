@@ -46,16 +46,24 @@ namespace Miru.Tests.UI.AppiumTests
             //textArea.busy();
             var httpClient = new HttpClient();
             bool serverIsResponding = false;
+            int count = 0;
+            Thread.Sleep(1000);
             while(serverIsResponding == false)
             {
                 try
                 {
-                    var appiumRequest = httpClient.GetAsync("http://127.0.0.1:4723/").Result;
-                    serverIsResponding = true;
+                    var appiumRequest = httpClient.GetAsync("http://127.0.0.1:4723/status").Result;
+                    if (appiumRequest.StatusCode == HttpStatusCode.OK)
+                    {
+                        serverIsResponding = true;
+                    }
                 }
                 catch (Exception)
                 {
                     Thread.Sleep(1000);
+                    count++;
+                    if (count == 100)
+                        throw new Exception("Failed after 100 tries");
                 }
             }
 
@@ -76,7 +84,7 @@ namespace Miru.Tests.UI.AppiumTests
         public void Dispose()
         {
             appSession.Close();
-            Process.GetProcessesByName("WindowsTerminal").First().Kill();
+            Process.GetProcessesByName("WindowsTerminal").ToList().ForEach(x => x.Kill());
             //mainWindow.Close();
         }
 
