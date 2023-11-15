@@ -2,13 +2,7 @@
 // Licensed under the GNU General Public License v3.0,
 // go to https://github.com/iyarashii/Miru/blob/master/LICENSE for full license details.
 
-using FlaUI.Core.Input;
 using OpenQA.Selenium.Appium;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using Xunit;
 
 namespace Miru.Tests.UI.AppiumTests
 {
@@ -84,7 +78,6 @@ namespace Miru.Tests.UI.AppiumTests
             opButton.Click();
 
             // Assert
-            Wait.UntilInputIsProcessed(TimeSpan.FromSeconds(1));
             var toastText = appSession.FindElement(MobileBy.XPath("/Window/Window/Custom/Text")).Text;
             var songTitlesAndArtistNames = GetAnimeTitleWords(toastText);
             foreach (var word in songTitlesAndArtistNames)
@@ -108,7 +101,6 @@ namespace Miru.Tests.UI.AppiumTests
             edButton.Click();
 
             // Assert
-            Wait.UntilInputIsProcessed(TimeSpan.FromSeconds(1));
             var toastText = appSession.FindElement(MobileBy.XPath("/Window/Window/Custom/Text")).Text;
             var songTitlesAndArtistNames = GetAnimeTitleWords(toastText);
             foreach (var word in songTitlesAndArtistNames)

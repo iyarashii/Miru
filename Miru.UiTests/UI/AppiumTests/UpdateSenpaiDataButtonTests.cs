@@ -3,7 +3,6 @@
 // go to https://github.com/iyarashii/Miru/blob/master/LICENSE for full license details.
 
 using OpenQA.Selenium.Appium;
-using Xunit;
 
 namespace Miru.Tests.UI.AppiumTests
 {
