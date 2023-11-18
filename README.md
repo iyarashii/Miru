@@ -71,3 +71,8 @@ For older changes go to the releases page and browse older releases.
 
 * After using <kbd>CTRL</kbd> + <kbd>F</kbd> or <kbd>CTRL</kbd> + <kbd>M</kbd> to focus text boxes select all text of the text box.
 * **Get Dropped Anime Data** checkbox default value changed to `true`.
+### Coming in Miru 2.4.1
+* Added ability to copy anime opening or ending theme by using mouse `right-click` on the title tile.  
+Then click the `OP` or `ED` button to copy opening or ending themes or `double-click`/`mouse roll button click` a specific theme in the dialog window.  
+Example:  
+![OP/ED dialog window](https://github.com/iyarashii/Miru/assets/38395954/9ad3cdc2-8793-428e-a733-20c9b23231ad)
