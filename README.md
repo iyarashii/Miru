@@ -76,3 +76,6 @@ For older changes go to the releases page and browse older releases.
 Then click the `OP` or `ED` button to copy opening or ending themes or `double-click`/`mouse roll button click` a specific theme in the dialog window.  
 Example:  
 ![OP/ED dialog window](https://github.com/iyarashii/Miru/assets/38395954/9ad3cdc2-8793-428e-a733-20c9b23231ad)
+* You can select any part of the OP/ED dialog content and copy it like in this example:
+![selection of OP/ED dialog content](https://github.com/iyarashii/Miru/assets/38395954/934de3ee-876d-4c84-8450-0afd52949a56)
+
