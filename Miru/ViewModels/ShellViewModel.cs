@@ -687,7 +687,6 @@ namespace Miru.ViewModels
                 secondaryButtonText: "ED", 
                 closeButtonText: "Cancel",
                 content: customContent);
-        //content: $"{opThemes}\n{edThemes}");
             UpdateAppStatus(MiruAppStatus.Busy);
             // display pop-up window
             var result = await ContentDialog.ShowAsync();
