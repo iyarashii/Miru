@@ -6,7 +6,7 @@ using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Input;
 using Miru.ViewModels;
-
+// TODO: rewrite to mvvm
 namespace Miru.Views
 {
     /// <summary>
