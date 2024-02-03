@@ -330,6 +330,12 @@
                     </i:Interaction.Triggers>
                 </ui:ToggleSwitch>
 
+                <!--save settings button-->
+                <Button x:Name="SaveSettings"
+                        IsEnabled="{Binding CanChangeDisplayedAnimeList}"
+                        Margin="10,13,0,0"
+                        Content="Save Settings">
+                </Button>
             </WrapPanel>
         </StackPanel>
 

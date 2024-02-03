@@ -8,6 +8,7 @@ using MiruDatabaseLogicLayer;
 using MiruLibrary;
 using MiruLibrary.Models;
 using MiruLibrary.Services;
+using MiruLibrary.Settings;
 using ModernWpf;
 using System;
 using System.Collections.ObjectModel;
@@ -102,6 +103,7 @@ namespace Miru.ViewModels
                               ISimpleContentDialog contentDialog,
                               IToastNotifierWrapper toastNotifierWrapper,
                               UserSettings userSettings,
+                              ISettingsWriter settingsWriter,
                               ISystemService systemService)
         {
             #region dependency injection
@@ -111,8 +113,9 @@ namespace Miru.ViewModels
             FileSystemService = fileSystemService;
             ContentDialog = contentDialog;
             ToastNotifierWrapper = toastNotifierWrapper;
+            UserSettings = userSettings;
             SystemService = systemService;
-
+            SettingsWriter = settingsWriter;
             #endregion dependency injection
 
             if (CheckSqlLocalDbInstallationPresence())
@@ -169,8 +172,9 @@ namespace Miru.ViewModels
 
         public bool GetDroppedAnimeData { get; set; }
         public ISystemService SystemService { get; }
-
+        public ISettingsWriter SettingsWriter { get; private set; }
         public IToastNotifierWrapper ToastNotifierWrapper { get; }
+        public UserSettings UserSettings { get; }
 
         // content dialog instance
         public ISimpleContentDialog ContentDialog { get; }
@@ -699,6 +703,18 @@ namespace Miru.ViewModels
                     CopyAnimeTitleToClipboard(GetSongTitleAndArtistName(edThemes));
                     break;
             }
+            UpdateAppStatus(MiruAppStatus.Idle);
+        }
+        // event handler for Save settings button
+        public void SaveSettings()
+        {
+            UpdateAppStatus(MiruAppStatus.Busy);
+            UserSettings.AnimeImageSize = AnimeImageSizeInPixels;
+            UserSettings.DisplayedAnimeListType = SelectedDisplayedAnimeList;
+            UserSettings.DisplayedAnimeType = SelectedDisplayedAnimeType;
+            UserSettings.GetDroppedAnimeData = GetDroppedAnimeData;
+            UserSettings.WatchingStatusHighlightOpacity = WatchingStatusHighlightOpacity;
+            SettingsWriter.Write(UserSettings);
             UpdateAppStatus(MiruAppStatus.Idle);
         }
         #endregion event handlers and guard methods
