@@ -717,6 +717,7 @@ namespace Miru.ViewModels
             UserSettings.WatchingStatusHighlightOpacity = WatchingStatusHighlightOpacity;
             _settingsWriter.Write(UserSettings);
             UpdateAppStatus(MiruAppStatus.Idle);
+            ToastNotifierWrapper.DisplayToastNotification("Settings saved!");
         }
         #endregion event handlers and guard methods
         internal string GetSongTitleAndArtistName(string input)
