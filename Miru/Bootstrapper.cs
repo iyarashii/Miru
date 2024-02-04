@@ -30,7 +30,15 @@ namespace Miru
         protected override void ConfigureContainer(ContainerBuilder builder)
         {
             builder.RegisterType<SortedAnimeListsViewModel>().As<ISortedAnimeListsViewModel>();
-            builder.RegisterType<ShellViewModel>().As<IShellViewModel>().SingleInstance();
+            builder.RegisterType<ShellViewModel>()
+                .As<IShellViewModel>()
+                .SingleInstance()
+                // example of method dependency injection with autofac
+                .OnActivated(e => e.Instance.SetSettingsWriter(e.Context.Resolve<ISettingsWriter>()))
+                // example of property dependency injection with autofac
+                // there are other ways for it like PropertiesAutowired() or required properties
+                // but this is the most explicit way for a specific property
+                .WithProperty("ToastNotifierWrapper", new ToastNotifierWrapper());
             builder.RegisterType<MiruDbService>().As<IMiruDbService>();
             builder.RegisterType<SimpleContentDialog>().As<ISimpleContentDialog>();
             builder.RegisterType<CurrentSeasonModel>().As<ICurrentSeasonModel>();

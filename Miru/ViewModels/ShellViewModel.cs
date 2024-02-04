@@ -41,7 +41,7 @@ namespace Miru.ViewModels
         private double _syncProgress;
         private int _totalProgressCount;
         private int _currentProgressCount;
-
+        private ISettingsWriter _settingsWriter;
         // fields with default values for properties with setter logic
         private AnimeListType _selectedDisplayedAnimeList = AnimeListType.Watching;
         private TimeZoneInfo _selectedTimeZone = TimeZoneInfo.Local;
@@ -101,9 +101,7 @@ namespace Miru.ViewModels
                               IMiruDbService miruDbService,
                               IFileSystemService fileSystemService,
                               ISimpleContentDialog contentDialog,
-                              IToastNotifierWrapper toastNotifierWrapper,
                               UserSettings userSettings,
-                              ISettingsWriter settingsWriter,
                               ISystemService systemService)
         {
             #region dependency injection
@@ -112,10 +110,8 @@ namespace Miru.ViewModels
             DbService = miruDbService;
             FileSystemService = fileSystemService;
             ContentDialog = contentDialog;
-            ToastNotifierWrapper = toastNotifierWrapper;
             UserSettings = userSettings;
             SystemService = systemService;
-            SettingsWriter = settingsWriter;
             #endregion dependency injection
 
             if (CheckSqlLocalDbInstallationPresence())
@@ -125,7 +121,7 @@ namespace Miru.ViewModels
                 // load synced data from the db
                 DbService.LoadLastSyncedData();
 
-                LoadUserSettings(userSettings);
+                LoadUserSettings(UserSettings);
 
                 // set default app status
                 UpdateAppStatus(MiruAppStatus.Idle);
@@ -172,8 +168,8 @@ namespace Miru.ViewModels
 
         public bool GetDroppedAnimeData { get; set; }
         public ISystemService SystemService { get; }
-        public ISettingsWriter SettingsWriter { get; private set; }
-        public IToastNotifierWrapper ToastNotifierWrapper { get; }
+        // example of property dependency injection with autofac
+        public IToastNotifierWrapper ToastNotifierWrapper { get; set; }
         public UserSettings UserSettings { get; }
 
         // content dialog instance
@@ -705,6 +701,11 @@ namespace Miru.ViewModels
             }
             UpdateAppStatus(MiruAppStatus.Idle);
         }
+        // example of method dependency injection with autofac
+        public void SetSettingsWriter(ISettingsWriter settingsWriter)
+        {
+            _settingsWriter = settingsWriter;
+        }
         // event handler for Save settings button
         public void SaveSettings()
         {
@@ -714,7 +715,7 @@ namespace Miru.ViewModels
             UserSettings.DisplayedAnimeType = SelectedDisplayedAnimeType;
             UserSettings.GetDroppedAnimeData = GetDroppedAnimeData;
             UserSettings.WatchingStatusHighlightOpacity = WatchingStatusHighlightOpacity;
-            SettingsWriter.Write(UserSettings);
+            _settingsWriter.Write(UserSettings);
             UpdateAppStatus(MiruAppStatus.Idle);
         }
         #endregion event handlers and guard methods
