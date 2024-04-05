@@ -202,19 +202,9 @@
                 </StackPanel>
                 <ui:ProgressBar Margin="0,5,0,0" x:Name="SyncProgressBar" Width="600" Value="{Binding Path=SyncProgress}"/>
             </Grid>
-            <mc:AlternateContent>
-                <mc:Choice Requires="debug">
-                    <Label Margin="10,0,0,0">
-                        <Label.Content>
-                            <TextBlock>
-                        <Run Text="Debug current url:"/>
-                        <LineBreak/>
-                        <Run Text="{x:Static enums:Constants.SenpaiDataSourceURL}"/>
-                            </TextBlock>
-                        </Label.Content>
-                    </Label>
-                </mc:Choice>
-            </mc:AlternateContent>
+            <TextBox x:Name="SenpaiUrl"
+                     ui:ControlHelper.Header="Senpai URL"
+                     Margin="10,0,0,0"/>
         </StackPanel>
         <!-- Row 1 -->
         <StackPanel Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="8" Orientation="Horizontal">
