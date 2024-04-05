@@ -328,6 +328,13 @@ namespace Miru.ViewModels
             }
         }
 
+        public string SenpaiUrl
+        {
+            get { return Constants.SenpaiDataSourceURL; }
+            set { Constants.SenpaiDataSourceURL = value; }
+        }
+
+
         // stores text that says the username of the last synced user
         public string MalUserName
         {

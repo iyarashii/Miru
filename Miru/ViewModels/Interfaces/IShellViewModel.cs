@@ -18,6 +18,7 @@ namespace Miru.ViewModels
     {
         MiruAppStatus AppStatus { get; }
         string AppStatusText { get; }
+        string SenpaiUrl { get; set; }
         bool CanChangeDisplayedAnimeList { get; set; }
         ISimpleContentDialog ContentDialog { get; }
         ApplicationTheme CurrentApplicationTheme { get; set; }

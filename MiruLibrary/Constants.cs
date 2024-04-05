@@ -13,7 +13,7 @@ namespace MiruLibrary
 
         public static string ImageCacheFolderPath { get; } = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), "MiruCache");
 
-        public static string SenpaiDataSourceURL { get; } = @"https://www.senpai.moe/export.php?type=json&src=raw";
+        public static string SenpaiDataSourceURL { get; set; } = @"https://www.senpai.moe/export.php?type=json&src=spring2024";
         // this is info for specific senpai season https://www.senpai.moe/export.php?type=json&src=Spring2022
         public static string SettingsPath { get; } = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), @"MiruCache\config.json");
     }
