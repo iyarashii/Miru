@@ -3,5 +3,6 @@
   "displayedAnimeListType": 1,
   "displayedAnimeType": 1,
   "getDroppedAnimeData": true,
-  "watchingStatusHighlightOpacity": 0.66
+  "watchingStatusHighlightOpacity": 0.66,
+  "senpaiDataSourceUrl": "https://www.senpai.moe/export.php?type=json&src=spring2024"
 }
