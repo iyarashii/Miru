@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2022 iyarashii @ https://github.com/iyarashii 
+﻿// Copyright (c) 2022-2024 iyarashii @ https://github.com/iyarashii 
 // Licensed under the GNU General Public License v3.0,
 // go to https://github.com/iyarashii/Miru/blob/master/LICENSE for full license details.
 
@@ -328,12 +328,11 @@ namespace Miru.ViewModels
             }
         }
 
-        public string SenpaiUrl
-        {
-            get { return Constants.SenpaiDataSourceURL; }
-            set { Constants.SenpaiDataSourceURL = value; }
+        public string SenpaiUrl 
+        { 
+            get => UserSettings.SenpaiDataSourceUrl; 
+            set => UserSettings.SenpaiDataSourceUrl = value;
         }
-
 
         // stores text that says the username of the last synced user
         public string MalUserName
@@ -708,11 +707,13 @@ namespace Miru.ViewModels
             }
             UpdateAppStatus(MiruAppStatus.Idle);
         }
+
         // example of method dependency injection with autofac
         public void SetSettingsWriter(ISettingsWriter settingsWriter)
         {
             _settingsWriter = settingsWriter;
         }
+
         // event handler for Save settings button
         public void SaveSettings()
         {
