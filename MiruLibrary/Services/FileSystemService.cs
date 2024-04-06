@@ -2,6 +2,7 @@
 // Licensed under the GNU General Public License v3.0,
 // go to https://github.com/iyarashii/Miru/blob/master/LICENSE for full license details.
 
+using System;
 using System.IO;
 using System.IO.Abstractions;
 using MiruLibrary.Models;
@@ -12,10 +13,11 @@ namespace MiruLibrary
 {
     public class FileSystemService : IFileSystemService
     {
-        public FileSystemService(IFileSystem fileSystem, IWebService webService)
+        public FileSystemService(IFileSystem fileSystem, IWebService webService, Lazy<UserSettings> userSettings)
         {
             FileSystem = fileSystem;
             WebService = webService;
+            UserSettings = userSettings;
             ImageCacheFolder = FileSystem.DirectoryInfo.FromDirectoryName(Constants.ImageCacheFolderPath);
 
             if (!ImageCacheFolder.Exists)
@@ -28,6 +30,7 @@ namespace MiruLibrary
         public IFileSystem FileSystem { get; }
         public IDirectoryInfo ImageCacheFolder { get; }
         public IWebService WebService { get; }
+        public Lazy<UserSettings> UserSettings { get; }
 
         public void ClearImageCache()
         {
@@ -58,9 +61,10 @@ namespace MiruLibrary
             // serialize JSON directly to a file
             using (StreamWriter file = FileSystem.File.CreateText(Constants.SenpaiFilePath))
             {
+                // TODO: make more readable
                 // get only MALID and airing_date json properties
                 var deserializedSenpaiData = JsonConvert
-                    .DeserializeObject<SenpaiEntryModel>(WebService.Client.GetStringAsync(Constants.SenpaiDataSourceURL).Result);
+                    .DeserializeObject<SenpaiEntryModel>(WebService.Client.GetStringAsync(UserSettings.Value.SenpaiDataSourceUrl).Result);
                 file.Write(JsonConvert.SerializeObject(deserializedSenpaiData, Formatting.Indented));
             }
         }

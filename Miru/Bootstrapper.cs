@@ -94,7 +94,7 @@ namespace Miru
             SaveSettings();
             base.OnExit(sender, e);
         }
-
+        // TODO: Reduce Container.Resolve calls and try to reuse the code in ShellViewModel SaveSettings so that 2 methods don't have to be updated
         private void SaveSettings()
         {
             Container.Resolve<UserSettings>().AnimeImageSize = Container.Resolve<IShellViewModel>().AnimeImageSizeInPixels;
