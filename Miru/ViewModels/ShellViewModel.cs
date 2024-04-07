@@ -715,7 +715,7 @@ namespace Miru.ViewModels
         }
 
         // event handler for Save settings button
-        public void SaveSettings()
+        public void SaveSettings(bool displayToastNotification)
         {
             UpdateAppStatus(MiruAppStatus.Busy);
             UserSettings.AnimeImageSize = AnimeImageSizeInPixels;
@@ -725,7 +725,8 @@ namespace Miru.ViewModels
             UserSettings.WatchingStatusHighlightOpacity = WatchingStatusHighlightOpacity;
             _settingsWriter.Write(UserSettings);
             UpdateAppStatus(MiruAppStatus.Idle);
-            ToastNotifierWrapper.DisplayToastNotification("Settings saved!");
+            if (displayToastNotification)
+                ToastNotifierWrapper.DisplayToastNotification("Settings saved!");
         }
         #endregion event handlers and guard methods
         internal string GetSongTitleAndArtistName(string input)
