@@ -325,6 +325,13 @@
                         IsEnabled="{Binding CanChangeDisplayedAnimeList}"
                         Margin="10,13,0,0"
                         Content="Save Settings">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="Click">
+                            <cal:ActionMessage MethodName="SaveSettings">
+                                <cal:Parameter Value="True" />
+                            </cal:ActionMessage>
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
                 </Button>
             </WrapPanel>
         </StackPanel>
