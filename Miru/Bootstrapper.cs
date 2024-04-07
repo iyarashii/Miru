@@ -91,18 +91,8 @@ namespace Miru
 
         protected override void OnExit(object sender, EventArgs e)
         {
-            SaveSettings();
+            Container.Resolve<IShellViewModel>().SaveSettings(false);
             base.OnExit(sender, e);
-        }
-        // TODO: Reduce Container.Resolve calls and try to reuse the code in ShellViewModel SaveSettings so that 2 methods don't have to be updated
-        private void SaveSettings()
-        {
-            Container.Resolve<UserSettings>().AnimeImageSize = Container.Resolve<IShellViewModel>().AnimeImageSizeInPixels;
-            Container.Resolve<UserSettings>().DisplayedAnimeListType = Container.Resolve<IShellViewModel>().SelectedDisplayedAnimeList;
-            Container.Resolve<UserSettings>().DisplayedAnimeType = Container.Resolve<IShellViewModel>().SelectedDisplayedAnimeType;
-            Container.Resolve<UserSettings>().GetDroppedAnimeData = Container.Resolve<IShellViewModel>().GetDroppedAnimeData;
-            Container.Resolve<UserSettings>().WatchingStatusHighlightOpacity = Container.Resolve<IShellViewModel>().WatchingStatusHighlightOpacity;
-            Container.Resolve<ISettingsWriter>().Write(Container.Resolve<UserSettings>());
         }
     }
 }
