@@ -718,6 +718,7 @@ namespace Miru.ViewModels
         public void SaveSettings(bool displayToastNotification)
         {
             UpdateAppStatus(MiruAppStatus.Busy);
+            // TODO: consider using a settings class to store these settings instead of having separate properties for them
             UserSettings.AnimeImageSize = AnimeImageSizeInPixels;
             UserSettings.DisplayedAnimeListType = SelectedDisplayedAnimeList;
             UserSettings.DisplayedAnimeType = SelectedDisplayedAnimeType;
