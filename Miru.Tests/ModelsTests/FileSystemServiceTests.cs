@@ -87,7 +87,7 @@ namespace Miru.Tests.ModelsTests
                 autoMock.Mock<IWebService>().Setup(x => x.CreateWebClient).Returns(mockWebClientFunc);
 
                 // Act
-                var sut = new FileSystemService(autoMock.Create<IFileSystem>(), autoMock.Create<IWebService>());
+                var sut = new FileSystemService(autoMock.Create<IFileSystem>(), autoMock.Create<IWebService>(), autoMock.Create<Lazy<UserSettings>>());
 
                 // Assert
                 autoMock.Mock<IDirectoryInfo>().Verify(x => x.Create(), Times.Exactly(timesCreateIsCalled));
