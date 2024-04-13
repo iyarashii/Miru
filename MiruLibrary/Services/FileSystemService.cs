@@ -51,7 +51,7 @@ namespace MiruLibrary
         }
 
         // gets the data from senpai.moe in a JSON form
-        public void GetSenpaiData()
+        public async void GetSenpaiData()
         {
             if (FileSystem.File.Exists(Constants.SenpaiFilePath))
             {
@@ -61,10 +61,9 @@ namespace MiruLibrary
             // serialize JSON directly to a file
             using (StreamWriter file = FileSystem.File.CreateText(Constants.SenpaiFilePath))
             {
-                // TODO: make more readable
+                var senpaiData = await WebService.Client.GetStringAsync(UserSettings.Value.SenpaiDataSourceUrl);
                 // get only MALID and airing_date json properties
-                var deserializedSenpaiData = JsonConvert
-                    .DeserializeObject<SenpaiEntryModel>(WebService.Client.GetStringAsync(UserSettings.Value.SenpaiDataSourceUrl).Result);
+                var deserializedSenpaiData = JsonConvert.DeserializeObject<SenpaiEntryModel>(senpaiData);
                 file.Write(JsonConvert.SerializeObject(deserializedSenpaiData, Formatting.Indented));
             }
         }
