@@ -36,7 +36,6 @@ namespace Miru.ViewModels
         private string _malUserName;
         private string _userAnimeListURL;
         private string _currentAnimeNameFilter;
-        private double _animeImageSizeInPixels;
         private double _watchingStatusHighlightOpacity;
         private double _syncProgress;
         private int _totalProgressCount;
@@ -134,16 +133,16 @@ namespace Miru.ViewModels
 
         public double AnimeImageSizeInPixels
         {
-            get { return _animeImageSizeInPixels; }
+            get => UserSettings.AnimeImageSize;
             set
             {
                 if (double.IsNaN(value))
                 {
-                    _animeImageSizeInPixels = 134.0;
+                    UserSettings.AnimeImageSize = 134.0;
                 }
                 else
                 {
-                    _animeImageSizeInPixels = value;
+                    UserSettings.AnimeImageSize = value;
                 }
                 NotifyOfPropertyChange(() => AnimeImageSizeInPixels);
             }
@@ -719,7 +718,6 @@ namespace Miru.ViewModels
         {
             UpdateAppStatus(MiruAppStatus.Busy);
             // TODO: consider using a settings class to store these settings instead of having separate properties for them
-            UserSettings.AnimeImageSize = AnimeImageSizeInPixels;
             UserSettings.DisplayedAnimeListType = SelectedDisplayedAnimeList;
             UserSettings.DisplayedAnimeType = SelectedDisplayedAnimeType;
             UserSettings.GetDroppedAnimeData = GetDroppedAnimeData;
