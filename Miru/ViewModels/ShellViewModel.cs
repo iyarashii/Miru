@@ -42,7 +42,6 @@ namespace Miru.ViewModels
         private int _currentProgressCount;
         private ISettingsWriter _settingsWriter;
         // fields with default values for properties with setter logic
-        private AnimeListType _selectedDisplayedAnimeList = AnimeListType.Watching;
         private TimeZoneInfo _selectedTimeZone = TimeZoneInfo.Local;
 
         private void ConfigureDbService()
@@ -57,8 +56,6 @@ namespace Miru.ViewModels
 
         private void LoadUserSettings(UserSettings userSettings)
         {
-            AnimeImageSizeInPixels = userSettings.AnimeImageSize;
-            _selectedDisplayedAnimeList = userSettings.DisplayedAnimeListType;
             SelectedDisplayedAnimeType = userSettings.DisplayedAnimeType;
             GetDroppedAnimeData = userSettings.GetDroppedAnimeData;
             WatchingStatusHighlightOpacity = userSettings.WatchingStatusHighlightOpacity;
@@ -190,10 +187,10 @@ namespace Miru.ViewModels
         // stores currently selected anime list display type
         public AnimeListType SelectedDisplayedAnimeList
         {
-            get { return _selectedDisplayedAnimeList; }
+            get => UserSettings.DisplayedAnimeListType;
             set
             {
-                _selectedDisplayedAnimeList = value;
+                UserSettings.DisplayedAnimeListType = value;
 
                 // update displayed animes
                 DbService.ChangeDisplayedAnimeList(value, SelectedTimeZone, SelectedDisplayedAnimeType, CurrentAnimeNameFilter);
@@ -718,7 +715,6 @@ namespace Miru.ViewModels
         {
             UpdateAppStatus(MiruAppStatus.Busy);
             // TODO: consider using a settings class to store these settings instead of having separate properties for them
-            UserSettings.DisplayedAnimeListType = SelectedDisplayedAnimeList;
             UserSettings.DisplayedAnimeType = SelectedDisplayedAnimeType;
             UserSettings.GetDroppedAnimeData = GetDroppedAnimeData;
             UserSettings.WatchingStatusHighlightOpacity = WatchingStatusHighlightOpacity;
