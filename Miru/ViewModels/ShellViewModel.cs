@@ -32,7 +32,6 @@ namespace Miru.ViewModels
         private ApplicationTheme _currentApplicationTheme;
         private SolidColorBrush _daysOfTheWeekBrush;
         private bool _canChangeDisplayedAnimeList;
-        private AnimeType _selectedDisplayedAnimeType;
         private string _malUserName;
         private string _userAnimeListURL;
         private string _currentAnimeNameFilter;
@@ -56,7 +55,6 @@ namespace Miru.ViewModels
 
         private void LoadUserSettings(UserSettings userSettings)
         {
-            SelectedDisplayedAnimeType = userSettings.DisplayedAnimeType;
             GetDroppedAnimeData = userSettings.GetDroppedAnimeData;
             WatchingStatusHighlightOpacity = userSettings.WatchingStatusHighlightOpacity;
         }
@@ -201,10 +199,10 @@ namespace Miru.ViewModels
         // stores currently selected anime type "TV", "ONA" etc.
         public AnimeType SelectedDisplayedAnimeType
         {
-            get { return _selectedDisplayedAnimeType; }
+            get { return UserSettings.DisplayedAnimeType; }
             set
             {
-                _selectedDisplayedAnimeType = value;
+                UserSettings.DisplayedAnimeType = value;
 
                 DbService.ChangeDisplayedAnimeList(SelectedDisplayedAnimeList, SelectedTimeZone, value, CurrentAnimeNameFilter);
                 NotifyOfPropertyChange(() => SelectedDisplayedAnimeType);
@@ -715,7 +713,6 @@ namespace Miru.ViewModels
         {
             UpdateAppStatus(MiruAppStatus.Busy);
             // TODO: consider using a settings class to store these settings instead of having separate properties for them
-            UserSettings.DisplayedAnimeType = SelectedDisplayedAnimeType;
             UserSettings.GetDroppedAnimeData = GetDroppedAnimeData;
             UserSettings.WatchingStatusHighlightOpacity = WatchingStatusHighlightOpacity;
             _settingsWriter.Write(UserSettings);
