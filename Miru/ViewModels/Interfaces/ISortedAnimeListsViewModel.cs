@@ -18,6 +18,7 @@ namespace Miru.ViewModels
         IEnumerable<MiruAnimeModel> ThursdayAiringAnimeList { get; set; }
         IEnumerable<MiruAnimeModel> TuesdayAiringAnimeList { get; set; }
         IEnumerable<MiruAnimeModel> WednesdayAiringAnimeList { get; set; }
+        IEnumerable<MiruAnimeModel> NoAiringDateAnimeList { get; set; }
         IMiruAnimeModelProcessor MiruAnimeModelProcessor { get; }
 
         void SetAnimeSortedByAirDayOfWeekAndFilteredByGivenAnimeListType(IEnumerable<MiruAnimeModel> animeModels, AnimeListType animeListType);
