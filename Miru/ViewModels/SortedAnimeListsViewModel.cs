@@ -27,6 +27,7 @@ namespace Miru.ViewModels
         private IEnumerable<MiruAnimeModel> _fridayAiringAnimeList;
         private IEnumerable<MiruAnimeModel> _saturdayAiringAnimeList;
         private IEnumerable<MiruAnimeModel> _sundayAiringAnimeList;
+        private IEnumerable<MiruAnimeModel> _noAiringDateAnimeList;
 
         public IEnumerable<MiruAnimeModel> MondayAiringAnimeList
         {
@@ -74,6 +75,12 @@ namespace Miru.ViewModels
             set { _sundayAiringAnimeList = value; NotifyOfPropertyChange(() => SundayAiringAnimeList); }
         }
 
+        public IEnumerable<MiruAnimeModel> NoAiringDateAnimeList
+        {
+            get { return _noAiringDateAnimeList; }
+            set { _noAiringDateAnimeList = value; NotifyOfPropertyChange(() => NoAiringDateAnimeList); }
+        }
+
         /// <summary>
         /// Assigns animes to the correct day of week airing list properties. 
         /// </summary>
@@ -90,6 +97,7 @@ namespace Miru.ViewModels
             FridayAiringAnimeList = MiruAnimeModelProcessor.FilterAnimeModelsByAirDayOfWeekAndOrderByAirTime(animeModels, DayOfWeek.Friday);
             SaturdayAiringAnimeList = MiruAnimeModelProcessor.FilterAnimeModelsByAirDayOfWeekAndOrderByAirTime(animeModels, DayOfWeek.Saturday);
             SundayAiringAnimeList = MiruAnimeModelProcessor.FilterAnimeModelsByAirDayOfWeekAndOrderByAirTime(animeModels, DayOfWeek.Sunday);
+            NoAiringDateAnimeList = MiruAnimeModelProcessor.FilterAnimeModelsByAirDayOfWeekAndOrderByAirTime(animeModels, null);
         }
     }
 }

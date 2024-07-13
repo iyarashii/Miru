@@ -60,7 +60,7 @@ namespace MiruLibrary.Models
         {
             if (!anime.JSTBroadcastTime.HasValue)
             {
-                anime.LocalBroadcastTime = DateTime.Today;
+                anime.LocalBroadcastTime = null;
                 return;
             }
             // covert JST to UTC

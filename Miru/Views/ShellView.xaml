@@ -140,6 +140,7 @@
             <ColumnDefinition Width="*" />
             <ColumnDefinition Width="*" />
             <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
             <ColumnDefinition Width="20" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
@@ -344,6 +345,7 @@
         <TextBlock Text="FRIDAY" Grid.Row="2" Grid.Column="5" TextAlignment="Center" Background="{Binding DaysOfTheWeekBrush}" />
         <TextBlock Text="SATURDAY" Grid.Row="2" Grid.Column="6" TextAlignment="Center" Background="{Binding DaysOfTheWeekBrush}" />
         <TextBlock Text="SUNDAY" Grid.Row="2" Grid.Column="7" TextAlignment="Center" Background="{Binding DaysOfTheWeekBrush}" />
+        <TextBlock Text="NO AIR TIME" Grid.Row="2" Grid.Column="8" TextAlignment="Center" Background="{Binding DaysOfTheWeekBrush}" />
 
         <!-- Row 3 -->
         <!-- ############################ Datagrid for anime airing on MONDAY  ############################ -->
@@ -373,5 +375,9 @@
         <!-- ############################ Datagrid for anime airing on SUNDAY  ############################ -->
         <ContentControl Grid.Row="3" Grid.Column="7" Template="{StaticResource AiringAnimeDatagridTemplate}"
                         Content="{Binding SortedAnimeLists.SundayAiringAnimeList}" />
+        
+        <!-- ############################ Datagrid for anime with no airing date ############################ -->
+        <ContentControl Grid.Row="3" Grid.Column="8" Template="{StaticResource AiringAnimeDatagridTemplate}"
+                        Content="{Binding SortedAnimeLists.NoAiringDateAnimeList}" />
     </Grid>
 </Window>
