@@ -55,6 +55,8 @@ namespace Miru.ViewModels
 
         private void LoadUserSettings(UserSettings userSettings)
         {
+            // TODO: this fixes the bug with no list on load, but it's a workaround, find a better solution
+            SelectedDisplayedAnimeList = SelectedDisplayedAnimeList;
             GetDroppedAnimeData = userSettings.GetDroppedAnimeData;
             WatchingStatusHighlightOpacity = userSettings.WatchingStatusHighlightOpacity;
         }
