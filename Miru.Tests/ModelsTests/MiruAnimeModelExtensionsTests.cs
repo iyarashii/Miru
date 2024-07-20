@@ -164,7 +164,7 @@ namespace Miru.Tests.ModelsTests
         }
 
         [Fact]
-        public void ConvertJstBroadcastTimeToSelectedTimeZone_GivenEmptyJstBroadcastTime_SetLocalBroadcastTimeForToday()        
+        public void ConvertJstBroadcastTimeToSelectedTimeZone_GivenEmptyJstBroadcastTime_SetLocalBroadcastTimeToNull()        
         {
             // Arrange
             var sut = new MiruAnimeModel { JSTBroadcastTime = null };
@@ -173,7 +173,7 @@ namespace Miru.Tests.ModelsTests
             sut.ConvertJstBroadcastTimeToSelectedTimeZone(It.IsAny<TimeZoneInfo>());
 
             // Assert
-            Assert.True(sut.LocalBroadcastTime == DateTime.Today);
+            Assert.Null(sut.LocalBroadcastTime);
         }
 
         const string TITLE = "takodachis adventure";
