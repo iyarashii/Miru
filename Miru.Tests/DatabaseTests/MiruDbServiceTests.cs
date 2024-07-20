@@ -309,7 +309,7 @@ namespace Miru.Tests.DatabaseTests
                 // Assert
                 Assert.All(result, x => Assert.Contains(title, x.Title));
                 Assert.All(result, x => Assert.Contains(x.Type, animeBroadcastTypeDescription));
-                Assert.All(result, x => Assert.Equal(DateTime.Today, x.LocalBroadcastTime));
+                Assert.All(result, x => Assert.Null(x.LocalBroadcastTime));
                 Assert.Equal(expectedFilteredListSize, result.Count);
             }
         }
