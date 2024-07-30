@@ -544,8 +544,6 @@ namespace Miru.ViewModels
             // update displayed username and sync date
             MalUserName = TypedInUsername;
 
-            // display sorted animes from user's watching anime list
-            SelectedDisplayedAnimeList = AnimeListType.Watching;
             SelectedTimeZone = TimeZoneInfo.Local;
 
             // update app status
