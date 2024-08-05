@@ -543,7 +543,6 @@ namespace Miru.ViewModels
         {
             // update displayed username and sync date
             MalUserName = TypedInUsername;
-
             SelectedTimeZone = TimeZoneInfo.Local;
 
             // update app status
