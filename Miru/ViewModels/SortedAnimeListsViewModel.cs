@@ -3,10 +3,10 @@
 // go to https://github.com/iyarashii/Miru/blob/master/LICENSE for full license details.
 
 using Caliburn.Micro;
+using MiruLibrary;
 using MiruLibrary.Models;
 using System;
 using System.Collections.Generic;
-using MiruLibrary;
 
 namespace Miru.ViewModels
 {
