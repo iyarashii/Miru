@@ -167,7 +167,7 @@
                           SpinButtonPlacementMode="Inline"
                           SmallChange="1"
                           LargeChange="50"
-                          Maximum="225"
+                          Maximum="215"
                           Minimum="20"
                           Text="{Binding AnimeImageSizeInPixels}"
                           Value="{Binding AnimeImageSizeInPixels, FallbackValue=134, Mode=TwoWay}"/>
