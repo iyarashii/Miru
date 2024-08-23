@@ -3,17 +3,17 @@
 // go to https://github.com/iyarashii/Miru/blob/master/LICENSE for full license details.
 
 using JikanDotNet;
+using MiruLibrary;
 using MiruLibrary.Models;
+using MiruLibrary.Services;
 using MyInternetConnectionLibrary;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
-using MiruLibrary;
 using AnimeType = MiruLibrary.AnimeType;
-using MiruLibrary.Services;
-using System.Data.Entity;
-using Newtonsoft.Json;
 
 namespace MiruDatabaseLogicLayer
 {
