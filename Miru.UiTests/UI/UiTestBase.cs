@@ -19,7 +19,7 @@ namespace Miru.Tests.UI
             app = FlaUI.Core.Application.Launch(Environment.GetEnvironmentVariable("MIRU_PATH", EnvironmentVariableTarget.Machine));
             automation = new UIA2Automation();
             // give time to load DataGrids
-            Wait.UntilInputIsProcessed(new TimeSpan(0, 0, 5));
+            Wait.UntilInputIsProcessed(TimeSpan.FromSeconds(5));
             mainWindow = app.GetMainWindow(automation);
         }
         public void Dispose()
