@@ -8,10 +8,11 @@ namespace Miru.UiTests.UI.FlaUIWebDriverTests
 {
     public class FlaUIWebDriverTestBase
     {
+        protected WindowsDriver driver;
         public FlaUIWebDriverTestBase()
         {
             var pathToApp = Environment.GetEnvironmentVariable("MIRU_PATH", EnvironmentVariableTarget.Machine);
-            var driver = new WindowsDriver(new Uri("http://localhost:4723"), FlaUIDriverOptions.ForApp(pathToApp));
+            driver = new WindowsDriver(new Uri("http://localhost:4723"), FlaUIDriverOptions.ForApp(pathToApp));
         }
     }
 }
