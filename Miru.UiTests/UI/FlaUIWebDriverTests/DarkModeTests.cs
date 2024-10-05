@@ -17,5 +17,16 @@ namespace Miru.UiTests.UI.FlaUIWebDriverTests
             darkModeSwitch.Click();
             Assert.Contains("Off", darkModeSwitch.Text);
         }
+
+        [Fact]
+        public void TurnOnDarkMode()
+        {
+            var darkModeSwitch = driver.FindElement(By.ClassName("ToggleSwitch"));
+            Assert.NotNull(darkModeSwitch);
+            Assert.Contains("On", darkModeSwitch.Text);
+            darkModeSwitch.Click();
+            darkModeSwitch.Click();
+            Assert.Contains("On", darkModeSwitch.Text);
+        }
     }
 }
