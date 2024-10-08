@@ -3,13 +3,6 @@
 // go to https://github.com/iyarashii/Miru/blob/master/LICENSE for full license details.
 
 using OpenQA.Selenium;
-using OpenQA.Selenium.Appium;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Management.Automation.Runspaces;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Miru.UiTests.UI.FlaUIWebDriverTests
 {
