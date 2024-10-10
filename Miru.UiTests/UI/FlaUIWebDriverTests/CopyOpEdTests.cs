@@ -32,5 +32,27 @@ namespace Miru.UiTests.UI.FlaUIWebDriverTests
                 Assert.Contains(word, animeTitleTextBox.Text);
             }
         }
+
+        [Fact]
+        public void CheckDialogButtonsAfterRightClick()
+        {
+            // Arrange
+            // wait for grids to load
+            Thread.Sleep(2000);
+            var animeTitleTextBox = driver.FindElements(By.XPath("/DataGrid[6]/DataItem[1]/Custom[1]/Text")).FirstOrDefault();
+            Assert.NotNull(animeTitleTextBox);
+
+            // Act
+            RightClick(animeTitleTextBox.Id);
+
+            // Assert
+            var opButton = driver.FindElement(By.Name("OP"));
+            var edButton = driver.FindElement(By.Name("ED"));
+            var cancelButton = driver.FindElement(By.Name("Cancel"));
+            Assert.NotNull(opButton);
+            Assert.NotNull(edButton);
+            Assert.NotNull(cancelButton);
+            cancelButton.Click();
+        }
     }
 }
