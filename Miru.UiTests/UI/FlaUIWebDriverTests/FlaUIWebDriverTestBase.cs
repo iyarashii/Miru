@@ -28,6 +28,16 @@ namespace Miru.UiTests.UI.FlaUIWebDriverTests
             }
         }
 
+        public void RightClick(string elementId)
+        {
+            driver.ExecuteScript(
+                "windows: click", new Dictionary<string, object>()
+                {
+                    { "button", "right" },
+                    { "elementId", elementId }
+                });
+        }
+
         public void Dispose()
         {
             driver.Close();
