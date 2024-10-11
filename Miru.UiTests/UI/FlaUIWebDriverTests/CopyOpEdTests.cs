@@ -54,5 +54,29 @@ namespace Miru.UiTests.UI.FlaUIWebDriverTests
             Assert.NotNull(cancelButton);
             cancelButton.Click();
         }
+
+        [Fact]
+        public void CheckToastAfterOpButtonClicked()
+        {
+            // Arrange
+            var animeTitleTextBox = driver.FindElements(By.XPath("/DataGrid[6]/DataItem[2]/Custom[1]/Text")).FirstOrDefault();
+            Assert.NotNull(animeTitleTextBox);
+            RightClick(animeTitleTextBox.Id);
+            var opButton = driver.FindElement(By.Name("OP"));
+            Assert.NotNull(opButton);
+            var opEdDialogContent = driver.FindElement(By.Id("OpEdTextBox")).Text;
+
+            // Act
+            opButton.Click();
+            Thread.Sleep(1000);
+
+            // Assert
+            var toastText = driver.FindElement(By.XPath("/Window/Custom/Text")).Text;
+            var songTitlesAndArtistNames = GetAnimeTitleWords(toastText);
+            foreach (var word in songTitlesAndArtistNames)
+            {
+                Assert.Contains(word, opEdDialogContent);
+            }
+        }
     }
 }
