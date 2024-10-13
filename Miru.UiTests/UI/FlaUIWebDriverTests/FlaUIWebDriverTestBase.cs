@@ -8,6 +8,7 @@ using System.Runtime.InteropServices;
 
 namespace Miru.UiTests.UI.FlaUIWebDriverTests
 {
+    [Collection("FlaUI WebDriver UI Tests")]
     public class FlaUIWebDriverTestBase : IDisposable
     {
         protected WindowsDriver driver;
