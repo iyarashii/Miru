@@ -12,9 +12,11 @@ namespace Miru.UiTests.UI.FlaUIWebDriverTests
     public class FlaUIWebDriverTestBase : IDisposable
     {
         protected WindowsDriver driver;
-        private Process flaUiWebDriverProcess;
+        private readonly Process flaUiWebDriverProcess;
+
         [DllImport("user32.dll")]
         private static extern bool SetForegroundWindow(IntPtr hWnd);
+
         public FlaUIWebDriverTestBase()
         {
             var pathToFlaUIWebDriver = Environment.GetEnvironmentVariable("FLAUI_WEB_DRIVER_PATH", EnvironmentVariableTarget.Machine);
