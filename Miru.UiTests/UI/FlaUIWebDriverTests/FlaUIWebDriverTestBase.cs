@@ -11,6 +11,8 @@ namespace Miru.UiTests.UI.FlaUIWebDriverTests
     [Collection("FlaUI WebDriver UI Tests")]
     public class FlaUIWebDriverTestBase : IDisposable
     {
+        private const string FlaUiWebDriverPathEnvVarName = "FLAUI_WEB_DRIVER_PATH";
+        private const string MiruPathEnvVarName = "MIRU_PATH";
         protected WindowsDriver driver;
         private readonly Process flaUiWebDriverProcess;
 
@@ -19,8 +21,8 @@ namespace Miru.UiTests.UI.FlaUIWebDriverTests
 
         public FlaUIWebDriverTestBase()
         {
-            var pathToFlaUIWebDriver = Environment.GetEnvironmentVariable("FLAUI_WEB_DRIVER_PATH", EnvironmentVariableTarget.Machine);
-            var pathToApp = Environment.GetEnvironmentVariable("MIRU_PATH", EnvironmentVariableTarget.Machine);
+            var pathToFlaUIWebDriver = Environment.GetEnvironmentVariable(FlaUiWebDriverPathEnvVarName, EnvironmentVariableTarget.Machine);
+            var pathToApp = Environment.GetEnvironmentVariable(MiruPathEnvVarName, EnvironmentVariableTarget.Machine);
             flaUiWebDriverProcess = Process.Start(pathToFlaUIWebDriver);
             driver = new WindowsDriver(new Uri("http://localhost:5000"), FlaUIDriverOptions.ForApp(pathToApp));
             // Wait for the application to start and get the main window handle
