@@ -8,25 +8,29 @@ namespace Miru.UiTests.UI.FlaUIWebDriverTests
 {
     public class DarkModeTests : FlaUIWebDriverTestBase
     {
+        private const string On = "On";
+        private const string Off = "Off";
+        private const string ToggleSwitch = "ToggleSwitch";
+
         [Fact]
         public void TurnOffDarkMode()
         {
-            var darkModeSwitch = driver.FindElement(By.ClassName("ToggleSwitch"));
+            var darkModeSwitch = driver.FindElement(By.ClassName(ToggleSwitch));
             Assert.NotNull(darkModeSwitch);
-            Assert.Contains("On", darkModeSwitch.Text);
+            Assert.Contains(On, darkModeSwitch.Text);
             darkModeSwitch.Click();
-            Assert.Contains("Off", darkModeSwitch.Text);
+            Assert.Contains(Off, darkModeSwitch.Text);
         }
 
         [Fact]
         public void TurnOnDarkMode()
         {
-            var darkModeSwitch = driver.FindElement(By.ClassName("ToggleSwitch"));
+            var darkModeSwitch = driver.FindElement(By.ClassName(ToggleSwitch));
             Assert.NotNull(darkModeSwitch);
-            Assert.Contains("On", darkModeSwitch.Text);
+            Assert.Contains(On, darkModeSwitch.Text);
             darkModeSwitch.Click();
             darkModeSwitch.Click();
-            Assert.Contains("On", darkModeSwitch.Text);
+            Assert.Contains(On, darkModeSwitch.Text);
         }
     }
 }
