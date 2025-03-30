@@ -30,8 +30,23 @@ namespace MiruLibrary.Settings
         {
             if (!_fileSystemService.FileSystem.File.Exists(_configurationFilePath))
                 return Activator.CreateInstance(type);
-
+            
             var jsonFile = _fileSystemService.FileSystem.File.ReadAllText(_configurationFilePath);
+
+            // this is a fix for very annoying bug - when config.json becomes empty for any reason
+            // without this check the app will crash on launch with very weird errors like
+            /*
+            Description: The process was terminated due to an unhandled exception.
+            Exception Info: Autofac.Core.DependencyResolutionException
+            at Autofac.Core.Activators.Delegate.DelegateActivator.ActivateInstance(Autofac.IComponentContext, System.Collections.Generic.IEnumerable`1<Autofac.Core.Parameter>)
+            at Autofac.Core.Resolving.InstanceLookup.CreateInstance(System.Collections.Generic.IEnumerable`1<Autofac.Core.Parameter>)
+            */
+            if (string.IsNullOrEmpty(jsonFile))
+            {
+                var jsonString = JsonConvert.SerializeObject(Activator.CreateInstance(type), Formatting.Indented, JsonSerializerSettings);
+                _fileSystemService.FileSystem.File.WriteAllText(_configurationFilePath, jsonString);
+                jsonFile = jsonString;
+            }
 
             return JsonConvert.DeserializeObject(jsonFile, type, JsonSerializerSettings);
         }
