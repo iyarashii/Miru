@@ -43,9 +43,8 @@ namespace MiruLibrary.Settings
             */
             if (string.IsNullOrEmpty(jsonFile))
             {
-                var jsonString = JsonConvert.SerializeObject(Activator.CreateInstance(type), Formatting.Indented, JsonSerializerSettings);
-                _fileSystemService.FileSystem.File.WriteAllText(_configurationFilePath, jsonString);
-                jsonFile = jsonString;
+                jsonFile = JsonConvert.SerializeObject(Activator.CreateInstance(type), Formatting.Indented, JsonSerializerSettings);
+                _fileSystemService.FileSystem.File.WriteAllText(_configurationFilePath, jsonFile);
             }
 
             return JsonConvert.DeserializeObject(jsonFile, type, JsonSerializerSettings);
