@@ -48,4 +48,17 @@ namespace MiruLibrary
         [Description("OVA")]
         OVA
     }
+
+    [TypeConverter(typeof(EnumDescriptionTypeConverter))]
+    public enum AgeRating
+    {
+        //[Description("G - All Ages")]
+        //AllAges,
+        //[Description("PG - Children")]
+        //Children,
+        [Description("Any")]
+        Any,
+        [Description("No PG and G rated (kids)")]
+        ExcludeAllAgesAndChildren,
+    }
 }

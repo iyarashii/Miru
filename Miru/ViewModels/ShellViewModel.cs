@@ -198,6 +198,21 @@ namespace Miru.ViewModels
             }
         }
 
+        // stores currently selected age rating filter
+        public AgeRating SelectedAgeRating
+        {
+            get => UserSettings.AgeRating;
+            set
+            {
+                UserSettings.AgeRating = value;
+
+                // update displayed animes
+                // TODO: add age rating filter
+                DbService.ChangeDisplayedAnimeList(SelectedDisplayedAnimeList, SelectedTimeZone, SelectedDisplayedAnimeType, CurrentAnimeNameFilter);
+                NotifyOfPropertyChange(() => SelectedAgeRating);
+            }
+        }
+
         // stores currently selected anime type "TV", "ONA" etc.
         public AnimeType SelectedDisplayedAnimeType
         {

@@ -9,6 +9,7 @@ namespace MiruLibrary.Models
         public double AnimeImageSize { get; set; } = 90.0;
         public AnimeListType DisplayedAnimeListType { get; set; } = AnimeListType.Watching;
         public AnimeType DisplayedAnimeType { get; set; } = AnimeType.TV;
+        public AgeRating AgeRating { get; set; } = AgeRating.Any;
         public bool GetDroppedAnimeData { get; set; } = true;
         public double WatchingStatusHighlightOpacity { get; set; } = 0.66;
         public string SenpaiDataSourceUrl { get; set; } = @"https://www.senpai.moe/export.php?type=json&src=spring2025";
