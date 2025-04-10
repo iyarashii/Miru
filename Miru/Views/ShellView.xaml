@@ -203,9 +203,19 @@
                 </StackPanel>
                 <ui:ProgressBar Margin="0,5,0,0" x:Name="SyncProgressBar" Width="600" Value="{Binding Path=SyncProgress}"/>
             </Grid>
+            <!--senpai url field -->
+            <!--TODO: remove later-->
             <TextBox x:Name="SenpaiUrl"
                      ui:ControlHelper.Header="Senpai URL"
                      Margin="10,0,0,0"/>
+            <!--age rating like PG, G etc.-->
+            <ComboBox x:Name="AgeRating"
+               Margin="10,0,0,0"
+               IsEnabled="{Binding CanChangeDisplayedAnimeList}"
+               ui:ControlHelper.Header="Age Rating"
+               SelectedItem="{Binding SelectedAgeRating}"
+               ItemsSource="{Binding Source={local:EnumBindingSource {x:Type enums:AgeRating}}}">
+            </ComboBox>
         </StackPanel>
         <!-- Row 1 -->
         <StackPanel Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="8" Orientation="Horizontal">
