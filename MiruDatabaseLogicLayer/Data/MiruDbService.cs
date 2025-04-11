@@ -14,6 +14,7 @@ using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
 using AnimeType = MiruLibrary.AnimeType;
+using AgeRating = MiruLibrary.AgeRating;
 
 namespace MiruDatabaseLogicLayer
 {
@@ -126,11 +127,12 @@ namespace MiruDatabaseLogicLayer
         public void ChangeDisplayedAnimeList(AnimeListType animeListType, 
                                              TimeZoneInfo selectedTimeZone, 
                                              AnimeType selectedAnimeBroadcastType, 
-                                             string animeTitleToFilterBy)
+                                             string animeTitleToFilterBy,
+                                             AgeRating ageRating)
         {
             using (var db = CreateMiruDbContext.Invoke())
             {
-                var userAnimeList = GetFilteredUserAnimeList(db, selectedAnimeBroadcastType, animeTitleToFilterBy, selectedTimeZone);
+                var userAnimeList = GetFilteredUserAnimeList(db, selectedAnimeBroadcastType, animeTitleToFilterBy, selectedTimeZone, ageRating);
                 // set airing anime list entries for each day of the week
                 UpdateAnimeListEntriesUI(userAnimeList, animeListType);
             }
@@ -139,7 +141,8 @@ namespace MiruDatabaseLogicLayer
         public List<MiruAnimeModel> GetFilteredUserAnimeList(IMiruDbContext db, 
                                                              AnimeType selectedBroadcastType, 
                                                              string title,
-                                                             TimeZoneInfo selectedTimeZone)
+                                                             TimeZoneInfo selectedTimeZone,
+                                                             AgeRating ageRating)
         {
             // get the user's list of the airing animes from the db
             var userAnimeList = db.MiruAnimeModels.ToList();
@@ -147,6 +150,7 @@ namespace MiruDatabaseLogicLayer
             // filter the anime list
             userAnimeList.FilterByBroadcastType(selectedBroadcastType);
             userAnimeList.FilterByTitle(title);
+            userAnimeList.FilterByAgeRating(ageRating);
 
             foreach (var animeEntry in userAnimeList)
             {

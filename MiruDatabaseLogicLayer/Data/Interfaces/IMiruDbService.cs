@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using MiruLibrary;
 using AnimeType = MiruLibrary.AnimeType;
+using AgeRating = MiruLibrary.AgeRating;
 
 namespace MiruDatabaseLogicLayer
 {
@@ -24,13 +25,13 @@ namespace MiruDatabaseLogicLayer
         event MiruDbService.UpdateAppStatusEventHandler UpdateAppStatusUI;
         event EventHandler<int> UpdateSyncProgress;
 
-        void ChangeDisplayedAnimeList(AnimeListType animeListType, TimeZoneInfo selectedTimeZone, AnimeType selectedAnimeBroadcastType, string animeTitleToFilterBy);
+        void ChangeDisplayedAnimeList(AnimeListType animeListType, TimeZoneInfo selectedTimeZone, AnimeType selectedAnimeBroadcastType, string animeTitleToFilterBy, AgeRating ageRating);
         void ClearDb();
         Task<List<MiruAnimeModel>> GetDetailedUserAnimeList(IMiruDbContext db, ICollection<AnimeListEntry> currentUserAnimeListEntries, bool seasonSyncOn);
         void LoadLastSyncedData();
         Task<bool> SaveDetailedAnimeListData(bool seasonSyncOn);
         Task SaveSyncedUserData(string typedInUsername);
-        List<MiruAnimeModel> GetFilteredUserAnimeList(IMiruDbContext db, AnimeType selectedBroadcastType, string title, TimeZoneInfo selectedTimeZone);
+        List<MiruAnimeModel> GetFilteredUserAnimeList(IMiruDbContext db, AnimeType selectedBroadcastType, string title, TimeZoneInfo selectedTimeZone, AgeRating ageRating);
 
         DateTime SyncDateData { get; set; }
     }

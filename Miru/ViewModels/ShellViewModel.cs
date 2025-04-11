@@ -193,7 +193,7 @@ namespace Miru.ViewModels
                 UserSettings.DisplayedAnimeListType = value;
 
                 // update displayed animes
-                DbService.ChangeDisplayedAnimeList(value, SelectedTimeZone, SelectedDisplayedAnimeType, CurrentAnimeNameFilter);
+                DbService.ChangeDisplayedAnimeList(value, SelectedTimeZone, SelectedDisplayedAnimeType, CurrentAnimeNameFilter, SelectedAgeRating);
                 NotifyOfPropertyChange(() => SelectedDisplayedAnimeList);
             }
         }
@@ -208,7 +208,7 @@ namespace Miru.ViewModels
 
                 // update displayed animes
                 // TODO: add age rating filter
-                DbService.ChangeDisplayedAnimeList(SelectedDisplayedAnimeList, SelectedTimeZone, SelectedDisplayedAnimeType, CurrentAnimeNameFilter);
+                DbService.ChangeDisplayedAnimeList(SelectedDisplayedAnimeList, SelectedTimeZone, SelectedDisplayedAnimeType, CurrentAnimeNameFilter, value);
                 NotifyOfPropertyChange(() => SelectedAgeRating);
             }
         }
@@ -221,7 +221,7 @@ namespace Miru.ViewModels
             {
                 UserSettings.DisplayedAnimeType = value;
 
-                DbService.ChangeDisplayedAnimeList(SelectedDisplayedAnimeList, SelectedTimeZone, value, CurrentAnimeNameFilter);
+                DbService.ChangeDisplayedAnimeList(SelectedDisplayedAnimeList, SelectedTimeZone, value, CurrentAnimeNameFilter, SelectedAgeRating);
                 NotifyOfPropertyChange(() => SelectedDisplayedAnimeType);
             }
         }
@@ -235,7 +235,7 @@ namespace Miru.ViewModels
                 _selectedTimeZone = value;
 
                 // update displayed animes
-                DbService.ChangeDisplayedAnimeList(SelectedDisplayedAnimeList, value, SelectedDisplayedAnimeType, CurrentAnimeNameFilter);
+                DbService.ChangeDisplayedAnimeList(SelectedDisplayedAnimeList, value, SelectedDisplayedAnimeType, CurrentAnimeNameFilter, SelectedAgeRating);
                 NotifyOfPropertyChange(() => SelectedTimeZone);
             }
         }
@@ -246,7 +246,7 @@ namespace Miru.ViewModels
             set
             {
                 _currentAnimeNameFilter = value;
-                DbService.ChangeDisplayedAnimeList(SelectedDisplayedAnimeList, SelectedTimeZone, SelectedDisplayedAnimeType, value);
+                DbService.ChangeDisplayedAnimeList(SelectedDisplayedAnimeList, SelectedTimeZone, SelectedDisplayedAnimeType, value, SelectedAgeRating);
                 NotifyOfPropertyChange(() => CurrentAnimeNameFilter);
             }
         }

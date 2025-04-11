@@ -15,6 +15,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AgeRating = MiruLibrary.AgeRating;
 
 namespace Miru.Benchmarks
 {
@@ -53,7 +54,7 @@ namespace Miru.Benchmarks
             var animeTitleToFilterBy = "Some Anime Title";
 
             // Act
-            _miruDbService.ChangeDisplayedAnimeList(animeListType, selectedTimeZone, selectedAnimeBroadcastType, animeTitleToFilterBy);
+            _miruDbService.ChangeDisplayedAnimeList(animeListType, selectedTimeZone, selectedAnimeBroadcastType, animeTitleToFilterBy, AgeRating.Any);
         }
     }
 }
