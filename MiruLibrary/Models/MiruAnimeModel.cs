@@ -66,6 +66,7 @@ namespace MiruLibrary.Models
         // is the anime currently airing status flag
         public bool CurrentlyAiring { get; set; }
         public int? WatchedEpisodes { get; set; }
+        public AgeRating AgeRating { get; set; } // "G", "PG", "R" etc.
 
         // "Movie", "TV" etc.
         public string Type { get; set; }
