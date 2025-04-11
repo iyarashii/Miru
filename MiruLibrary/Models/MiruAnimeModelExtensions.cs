@@ -55,6 +55,18 @@ namespace MiruLibrary.Models
             }
         }
 
+        public static void FilterByAgeRating(this List<MiruAnimeModel> animeList, AgeRating ageRating)
+        {
+            switch (ageRating)
+            {
+                case AgeRating.Any:
+                    break;
+                case AgeRating.ExcludeAllAgesAndChildren:
+                    animeList.RemoveAll(x => x.AgeRating is "G - All Ages" || x.AgeRating is "PG - Children");
+                    break;
+            }
+        }
+
         public static void ConvertJstBroadcastTimeToSelectedTimeZone(this MiruAnimeModel anime, 
             TimeZoneInfo selectedTimeZone)
         {
@@ -194,6 +206,7 @@ namespace MiruLibrary.Models
             animeModel.UpdateDroppedStatus(currentUserAnimeList);
             animeModel.OpeningThemes = JsonConvert.SerializeObject(animeInfo.OpeningTheme);
             animeModel.EndingThemes = JsonConvert.SerializeObject(animeInfo.EndingTheme);
+            animeModel.AgeRating = animeInfo.Rating;
         }
 
         public static void SetSeasonalAnimeModelData(this MiruAnimeModel animeModel, Anime animeInfo, 
@@ -211,6 +224,7 @@ namespace MiruLibrary.Models
             animeModel.UpdateDroppedStatus(currentUserAnimeList);
             animeModel.OpeningThemes = JsonConvert.SerializeObject(animeInfo.OpeningTheme);
             animeModel.EndingThemes = JsonConvert.SerializeObject(animeInfo.EndingTheme);
+            animeModel.AgeRating = animeInfo.Rating;
         }
 
         public static void UpdateDroppedStatus(this MiruAnimeModel animeModel, ICurrentUserAnimeListModel currentUserAnimeListModel)

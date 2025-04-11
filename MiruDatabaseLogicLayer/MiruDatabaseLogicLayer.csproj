@@ -156,6 +156,10 @@
     <Compile Include="Data\Migrations\202304161215113_AddOpeningsAndEndings.designer.cs">
       <DependentUpon>202304161215113_AddOpeningsAndEndings.cs</DependentUpon>
     </Compile>
+    <Compile Include="Data\Migrations\202504112236232_AddAgeRating.cs" />
+    <Compile Include="Data\Migrations\202504112236232_AddAgeRating.Designer.cs">
+      <DependentUpon>202504112236232_AddAgeRating.cs</DependentUpon>
+    </Compile>
     <Compile Include="Data\Migrations\Configuration.cs" />
     <Compile Include="Data\MiruDbContext.cs" />
     <Compile Include="Data\MiruDbService.cs" />
@@ -197,6 +201,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Data\Migrations\202304161215113_AddOpeningsAndEndings.resx">
       <DependentUpon>202304161215113_AddOpeningsAndEndings.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Data\Migrations\202504112236232_AddAgeRating.resx">
+      <DependentUpon>202504112236232_AddAgeRating.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
