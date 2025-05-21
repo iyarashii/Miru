@@ -203,11 +203,6 @@
                 </StackPanel>
                 <ui:ProgressBar Margin="0,5,0,0" x:Name="SyncProgressBar" Width="600" Value="{Binding Path=SyncProgress}"/>
             </Grid>
-            <!--senpai url field -->
-            <!--TODO: remove later-->
-            <TextBox x:Name="SenpaiUrl"
-                     ui:ControlHelper.Header="Senpai URL"
-                     Margin="10,0,0,0"/>
             <!--age rating like PG, G etc.-->
             <ComboBox x:Name="AgeRating"
                Margin="10,0,0,0"
@@ -312,13 +307,6 @@
                         Margin="10,13,0,0"
                         IsEnabled="{Binding CanChangeDisplayedAnimeList}"
                         Content="Clear Cache">
-                </Button>
-
-                <!--update senpai button-->
-                <Button x:Name="UpdateSenpaiData"
-                        IsEnabled="{Binding CanChangeDisplayedAnimeList}"
-                        Margin="10,13,0,0"
-                        Content="Update Senpai Data">
                 </Button>
 
                 <!--dark mode switch-->
