@@ -18,7 +18,6 @@ namespace Miru.Views
         {
             switch (values[1])
             {
-                case AnimeListType.Senpai:
                 case AnimeListType.Season:
                     if ((bool)values[0])
                         return Brushes.Red.Color;
