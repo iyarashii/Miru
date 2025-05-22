@@ -26,10 +26,6 @@ namespace MiruLibrary.Models
                 case AnimeListType.Season:
                     animeModels = animeModels.Where(a => a.CurrentlyAiring).ToList();
                     break;
-
-                case AnimeListType.Senpai:
-                    animeModels = animeModels.Where(a => a.IsOnSenpai).ToList();
-                    break;
             }
             return animeModels;
         }
