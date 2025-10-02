@@ -68,5 +68,7 @@ namespace Miru.ViewModels
         void UpdateUiAfterDataSync();
         Task<bool> GetUserDroppedAnimeList();
         void SaveSettings(bool displayToastNotification);
+        void SetListTypeToWatching();
+        void SetListTypeToCurrentSeason();
     }
 }

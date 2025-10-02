@@ -752,5 +752,15 @@ namespace Miru.ViewModels
             }
             return outputStrBuilder.ToString();
         }
+
+        public void SetListTypeToCurrentSeason()
+        {
+            SelectedDisplayedAnimeList = AnimeListType.Season;
+        }
+
+        public void SetListTypeToWatching()
+        {
+            SelectedDisplayedAnimeList = AnimeListType.Watching;
+        }
     }
 }
