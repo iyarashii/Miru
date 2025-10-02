@@ -4,6 +4,7 @@
 
 using System.Diagnostics.CodeAnalysis;
 using System.Windows;
+using System.Windows.Input;
 
 namespace Miru.Views
 {
@@ -16,6 +17,27 @@ namespace Miru.Views
         public ShellView()
         {
             InitializeComponent();
+        }
+        protected override void OnPreviewKeyDown(KeyEventArgs e)
+        {
+            base.OnPreviewKeyDown(e);
+
+            if (Keyboard.Modifiers == ModifierKeys.Control)
+            {
+                var vm = DataContext as Miru.ViewModels.ShellViewModel;
+                if (vm == null) return;
+
+                if (e.Key == Key.S)
+                {
+                    vm.SetListTypeToCurrentSeason();
+                    e.Handled = true;
+                }
+                else if (e.Key == Key.W)
+                {
+                    vm.SetListTypeToWatching();
+                    e.Handled = true;
+                }
+            }
         }
     }
 }
