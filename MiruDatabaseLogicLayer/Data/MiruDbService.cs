@@ -23,6 +23,7 @@ namespace MiruDatabaseLogicLayer
     {
         private DateTime _syncDateData;
         private string currentUsername;
+        private List<MiruAnimeModel> _cachedAnimeList;
 
         // constructor
         public MiruDbService(
@@ -110,8 +111,12 @@ namespace MiruDatabaseLogicLayer
                     // load the username of the last synchronized user
                     CurrentUsername = db.SyncedMyAnimeListUsers.FirstOrDefault().Username;
                 }
+
+                // Cache all anime models
+                _cachedAnimeList = db.MiruAnimeModels.ToList();
             }
         }
+
 
         // clears anime models and synced users tables
         public void ClearDb()
@@ -121,6 +126,7 @@ namespace MiruDatabaseLogicLayer
                 db.ExecuteSqlCommand("TRUNCATE TABLE [MiruAnimeModels]");
                 db.ExecuteSqlCommand("TRUNCATE TABLE [SyncedMyAnimeListUsers]");
             }
+            _cachedAnimeList = null;
         }
 
         // changes data for the displayed anime list to match time zone and anime list type passed as parameters
@@ -130,22 +136,30 @@ namespace MiruDatabaseLogicLayer
                                              string animeTitleToFilterBy,
                                              AgeRating ageRating)
         {
+            if (_cachedAnimeList == null)
+            {
             using (var db = CreateMiruDbContext.Invoke())
             {
-                var userAnimeList = GetFilteredUserAnimeList(db, selectedAnimeBroadcastType, animeTitleToFilterBy, selectedTimeZone, ageRating);
-                // set airing anime list entries for each day of the week
+                    _cachedAnimeList = db.MiruAnimeModels.ToList();
+                }
+            }
+            var userAnimeList = GetFilteredUserAnimeList(selectedAnimeBroadcastType, animeTitleToFilterBy, selectedTimeZone, ageRating);
+
                 UpdateAnimeListEntriesUI(userAnimeList, animeListType);
             }
-        }
 
-        public List<MiruAnimeModel> GetFilteredUserAnimeList(IMiruDbContext db, 
-                                                             AnimeType selectedBroadcastType, 
+        public List<MiruAnimeModel> GetFilteredUserAnimeList(AnimeType selectedBroadcastType, 
                                                              string title,
                                                              TimeZoneInfo selectedTimeZone,
                                                              AgeRating ageRating)
         {
-            // get the user's list of the airing animes from the db
-            var userAnimeList = db.MiruAnimeModels.ToList();
+            if (_cachedAnimeList == null || _cachedAnimeList.Count == 0)
+            {
+                return new List<MiruAnimeModel>();
+            }
+
+            // get the user's list of the airing animes from the cache
+            var userAnimeList = _cachedAnimeList.ToList();
 
             // filter the anime list
             userAnimeList.FilterByBroadcastType(selectedBroadcastType);
@@ -216,6 +230,9 @@ namespace MiruDatabaseLogicLayer
 
                 // update database
                 await db.SaveChangesAsync();
+
+                // Refresh cache
+                _cachedAnimeList = db.MiruAnimeModels.ToList();
             }
             return true;
         }
