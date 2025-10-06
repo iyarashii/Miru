@@ -31,7 +31,7 @@ namespace MiruDatabaseLogicLayer
         void LoadLastSyncedData();
         Task<bool> SaveDetailedAnimeListData(bool seasonSyncOn);
         Task SaveSyncedUserData(string typedInUsername);
-        List<MiruAnimeModel> GetFilteredUserAnimeList(IMiruDbContext db, AnimeType selectedBroadcastType, string title, TimeZoneInfo selectedTimeZone, AgeRating ageRating);
+        List<MiruAnimeModel> GetFilteredUserAnimeList(AnimeType selectedBroadcastType, string title, TimeZoneInfo selectedTimeZone, AgeRating ageRating);
 
         DateTime SyncDateData { get; set; }
     }
