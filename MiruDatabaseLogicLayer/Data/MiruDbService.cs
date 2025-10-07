@@ -93,15 +93,22 @@ namespace MiruDatabaseLogicLayer
         public event EventHandler<string> UpdateCurrentUsername;
         public event SortedAnimeListEventHandler UpdateAnimeListEntriesUI;
         public event UpdateAppStatusEventHandler UpdateAppStatusUI;
-        public event EventHandler<int> UpdateSyncProgress; 
+        public event EventHandler<int> UpdateSyncProgress;
 
         // load data from the last sync
         public void LoadLastSyncedData()
         {
             Database.SetInitializer(new MigrateDatabaseToLatestVersion<MiruDbContext, Migrations.Configuration>());
+
+            // create the database if it doesn't exist
+            Database.SetInitializer(new CreateDatabaseIfNotExists<MiruDbContext>());
+
             // open temporary connection to the database
             using (var db = CreateMiruDbContext.Invoke())
             {
+                // Force database creation if it doesn't exist
+                db.Database.CreateIfNotExists();
+
                 // if SyncedMyAnimeListUsers table is not empty
                 if (db.SyncedMyAnimeListUsers.Any())
                 {
@@ -138,15 +145,15 @@ namespace MiruDatabaseLogicLayer
         {
             if (_cachedAnimeList == null)
             {
-            using (var db = CreateMiruDbContext.Invoke())
-            {
+                using (var db = CreateMiruDbContext.Invoke())
+                {
                     _cachedAnimeList = db.MiruAnimeModels.ToList();
                 }
             }
             var userAnimeList = GetFilteredUserAnimeList(selectedAnimeBroadcastType, animeTitleToFilterBy, selectedTimeZone, ageRating);
 
-                UpdateAnimeListEntriesUI(userAnimeList, animeListType);
-            }
+            UpdateAnimeListEntriesUI(userAnimeList, animeListType);
+        }
 
         public List<MiruAnimeModel> GetFilteredUserAnimeList(AnimeType selectedBroadcastType, 
                                                              string title,
