@@ -20,6 +20,11 @@ namespace MiruLibrary.Models
                 animeList.RemoveAll(x => x.Title.IndexOf(title, StringComparison.OrdinalIgnoreCase) < 0);
             }
         }
+        public static bool MatchesTitle(this MiruAnimeModel x, string title)
+        {
+            // indexof cuz no contains overload for case insensitive in this version of net framework
+            return (x.Title?.IndexOf(title, StringComparison.OrdinalIgnoreCase) >= 0);
+        }
 
         // filter list of the animes depending on the broadcast type
         public static void FilterByBroadcastType(this List<MiruAnimeModel> animeList, AnimeType broadcastType)
@@ -54,6 +59,36 @@ namespace MiruLibrary.Models
                     break;
             }
         }
+
+        public static bool MatchesBroadcastType(this MiruAnimeModel x, AnimeType broadcastType)
+        {
+            switch (broadcastType)
+            {
+                case AnimeType.Any:
+                    return true;
+                case AnimeType.Both:
+                    return x.Type == "TV" || x.Type == "ONA";
+                default:
+                    return x.Type == broadcastType.ToString();
+                //case AnimeType.TV:
+                //    return x.Type == "TV";
+                //case AnimeType.ONA:
+                //    return x.Type == "ONA";
+                //case AnimeType.Movie:
+                //    return x.Type == "Movie";
+                //case AnimeType.Special:
+                //    return x.Type == "Special";
+                //case AnimeType.OVA:
+                //    return x.Type != "OVA";
+            }
+        }
+        public static bool MatchesAgeRating(this MiruAnimeModel x, AgeRating ageRating)
+        {
+            if (ageRating == AgeRating.Any) return true;
+            return x.AgeRating != "G - All Ages" && x.AgeRating != "PG - Children";
+        }
+
+  
 
         public static void FilterByAgeRating(this List<MiruAnimeModel> animeList, AgeRating ageRating)
         {

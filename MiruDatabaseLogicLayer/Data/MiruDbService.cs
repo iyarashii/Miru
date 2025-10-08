@@ -24,6 +24,11 @@ namespace MiruDatabaseLogicLayer
         private DateTime _syncDateData;
         private string currentUsername;
         private List<MiruAnimeModel> _cachedAnimeList;
+        private AnimeType _lastBroadcastType = AnimeType.Any;
+        private AgeRating _lastAgeRating = AgeRating.Any;
+        private TimeZoneInfo _lastTimeZone = null;
+        private List<MiruAnimeModel> _filteredByTypeAndAge = null;
+        private List<MiruAnimeModel> _timeZoneConvertedList = null;
 
         // constructor
         public MiruDbService(
@@ -155,28 +160,56 @@ namespace MiruDatabaseLogicLayer
             UpdateAnimeListEntriesUI(userAnimeList, animeListType);
         }
 
-        public List<MiruAnimeModel> GetFilteredUserAnimeList(AnimeType selectedBroadcastType, 
+        public List<MiruAnimeModel> GetFilteredUserAnimeList(AnimeType selectedBroadcastType,
                                                              string title,
                                                              TimeZoneInfo selectedTimeZone,
                                                              AgeRating ageRating)
         {
             if (_cachedAnimeList == null || _cachedAnimeList.Count == 0)
-            {
                 return new List<MiruAnimeModel>();
+
+            // Step 1: Filter by type and age rating if changed
+            if (_filteredByTypeAndAge == null ||
+                selectedBroadcastType != _lastBroadcastType ||
+                ageRating != _lastAgeRating)
+            {
+                _filteredByTypeAndAge = _cachedAnimeList
+                    .Where(x => x.MatchesBroadcastType(selectedBroadcastType)
+                             && x.MatchesAgeRating(ageRating))
+                    .ToList();
+
+                _lastBroadcastType = selectedBroadcastType;
+                _lastAgeRating = ageRating;
+                _timeZoneConvertedList = null; // Invalidate time zone cache
             }
 
-            // get the user's list of the airing animes from the cache
-            var userAnimeList = _cachedAnimeList.ToList();
-
-            // filter the anime list
-            userAnimeList.FilterByBroadcastType(selectedBroadcastType);
-            userAnimeList.FilterByTitle(title);
-            userAnimeList.FilterByAgeRating(ageRating);
-
-            foreach (var animeEntry in userAnimeList)
+            // Step 2: Convert time zone if changed
+            if (_timeZoneConvertedList == null || selectedTimeZone != _lastTimeZone)
             {
-                // save JST broadcast time converted to the selected timezone as local broadcast time
-                animeEntry.ConvertJstBroadcastTimeToSelectedTimeZone(selectedTimeZone);
+                _timeZoneConvertedList = _filteredByTypeAndAge
+                    .Select(x =>
+                    {
+                        // Clone or shallow copy if needed to avoid mutating cache
+                        var animeCopy = x; // If you need a deep copy, implement Clone()
+                        animeCopy.ConvertJstBroadcastTimeToSelectedTimeZone(selectedTimeZone);
+                        return animeCopy;
+                    })
+                    .ToList();
+
+                _lastTimeZone = selectedTimeZone;
+            }
+
+            // Step 3: Filter by title (fast, on already filtered+converted list)
+            List<MiruAnimeModel> userAnimeList;
+            if (string.IsNullOrWhiteSpace(title))
+            {
+                userAnimeList = _timeZoneConvertedList.ToList();
+            }
+            else
+            {
+                userAnimeList = _timeZoneConvertedList
+                    .Where(x => x.MatchesTitle(title))
+                    .ToList();
             }
 
             return userAnimeList;
