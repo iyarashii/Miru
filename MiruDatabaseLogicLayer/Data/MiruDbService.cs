@@ -273,6 +273,13 @@ namespace MiruDatabaseLogicLayer
 
                 // Refresh cache
                 _cachedAnimeList = db.MiruAnimeModels.ToList();
+
+                // Clear all dependent caches so next filter will use fresh data
+                _filteredByTypeAndAge = null;
+                _timeZoneConvertedList = null;
+                _lastBroadcastType = AnimeType.Any;
+                _lastAgeRating = AgeRating.Any;
+                _lastTimeZone = null;
             }
             return true;
         }
