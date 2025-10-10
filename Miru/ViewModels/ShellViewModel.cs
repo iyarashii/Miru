@@ -558,6 +558,7 @@ namespace Miru.ViewModels
         {
             // update displayed username and sync date
             MalUserName = TypedInUsername;
+            // ui refresh happens here since we set new timezone so all filtr caches are rerun after this
             SelectedTimeZone = TimeZoneInfo.Local;
 
             // update app status
