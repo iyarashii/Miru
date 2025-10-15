@@ -88,8 +88,6 @@ namespace MiruLibrary.Models
             return x.AgeRating != "G - All Ages" && x.AgeRating != "PG - Children";
         }
 
-  
-
         public static void FilterByAgeRating(this List<MiruAnimeModel> animeList, AgeRating ageRating)
         {
             switch (ageRating)
