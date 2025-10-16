@@ -383,7 +383,20 @@ namespace MiruDatabaseLogicLayer
                     var modelToBeUpdated = detailedUserAnimeList.FirstOrDefault(x => x.MalId == seasonEntry.MalId);
                     modelToBeUpdated.CurrentlyAiring = true;
                     modelToBeUpdated.UpdateDroppedStatus(CurrentUserAnimeList);
-                    // TODO: add here updating age rating or just always do full update
+                    // Anime rating update if it becomes different after season started
+                    Anime animeInfo;
+                    try
+                    {
+                        animeInfo = await WebService.TryToGetAnimeInfo(seasonEntry.MalId, 10, JikanWrapper);
+                    }
+                    catch (NoInternetConnectionException)
+                    {
+                        return null;
+                    }
+                    if (modelToBeUpdated.AgeRating != animeInfo.Rating)
+                    {
+                        modelToBeUpdated.AgeRating = animeInfo.Rating;
+                    }
                 }
                 else
                 {
