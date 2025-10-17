@@ -314,7 +314,7 @@ namespace MiruDatabaseLogicLayer
                     // try to get detailed anime info from the jikan API
                     try
                     {
-                        animeInfo = await WebService.TryToGetAnimeInfo(animeListEntry.MalId, 500, JikanWrapper);
+                        animeInfo = await WebService.TryToGetAnimeInfo(animeListEntry.MalId, 10, JikanWrapper);
                     }
                     catch (NoInternetConnectionException)
                     {
@@ -405,7 +405,7 @@ namespace MiruDatabaseLogicLayer
                     // get detailed anime info from the jikan API
                     try
                     {
-                        animeInfo = await WebService.TryToGetAnimeInfo(seasonEntry.MalId, 500, JikanWrapper);
+                        animeInfo = await WebService.TryToGetAnimeInfo(seasonEntry.MalId, 10, JikanWrapper);
                     }
                     catch (NoInternetConnectionException)
                     {
