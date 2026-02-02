@@ -11,6 +11,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace MiruDatabaseLogicLayer
 {
     // app's default db context
+    // TODO: try to use different db than localdb maybe sqlite or something
     [ExcludeFromCodeCoverage]
     public class MiruDbContext : DbContext, IMiruDbContext
     {
